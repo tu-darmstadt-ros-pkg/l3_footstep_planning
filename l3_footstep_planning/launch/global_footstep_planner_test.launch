@@ -1,1 +1,34 @@
-../../l3_global_footstep_planner/launch/global_footstep_planner_test.launch
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="ns" default="l3/footstep_planning" />
+  <group ns="$(arg ns)">
+    <!-- run map servers -->
+    <node name="map_server_1" pkg="map_server" type="map_server" args="$(find l3_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
+      <param name="frame_id" value="/world" />
+      <remap from="map" to="/body_level_grid_map" />
+    </node>
+
+    <node name="map_server_2" pkg="map_server" type="map_server" args="$(find l3_footstep_planner)/maps/RCGO2011_Hector_Mission4_2.yaml">
+      <param name="frame_id" value="/world" />
+      <remap from="map" to="/ground_level_grid_map" />
+    </node>
+
+    <!-- start up footstep planning system -->
+    <include file="$(find l3_footstep_planning)/launch/footstep_planning_basics.launch" />
+
+    <!-- start footstep planner -->
+    <!-- launch-prefix="valgrind -\-tool=callgrind -\-log-file=/home/alex/l3/cachegrind/cachegrind.out" -->
+    <node name="global_footstep_planner" pkg="l3_global_footstep_planner" type="global_footstep_planner_node" respawn="true" output="screen">
+      <remap from="body_level_grid_map" to="ground_level_grid_map" />
+    </node>
+
+    <!-- load plugin sets from YAML file to parameter server -->
+    <rosparam file="$(find l3_footstep_planner)/config/default_plugin_sets.yaml" command="load" />
+
+    <!-- specify where to load robot specific parameters -->
+    <rosparam file="$(find l3_footstep_planner)/config/robot_params.yaml" command="load" />
+    <param name="params_path" value="$(find l3_footstep_planner)/config/planner/" />
+    <param name="default_params" value="default" />
+  </group>
+</launch>

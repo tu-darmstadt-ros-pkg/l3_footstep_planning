@@ -52,7 +52,7 @@ plugin_sets:
       params:
         step_cost: &step_cost 0.1
     euclidean_step_cost_estimator: none
-    ground_contact_step_cost_estimator: none
+    #ground_contact_step_cost_estimator: none
 
     # HeuristicPlugins
     euclidean_heuristic: none
@@ -64,15 +64,15 @@ plugin_sets:
         max_step_dist_y: 0.15
 
     # PostProcessPlugins
-    ground_contact_post_process:
-      params:
-        min_sampling_steps_x: 6
-        min_sampling_steps_y: 4
-        max_sampling_steps_x: 16
-        max_sampling_steps_y: 12
-        max_intrusion_z: 0.03
-        max_ground_clearance: 0.02
-        minimal_support: 0.9
+    #ground_contact_post_process:
+    #  params:
+    #    min_sampling_steps_x: 6
+    #    min_sampling_steps_y: 4
+    #    max_sampling_steps_x: 16
+    #    max_sampling_steps_y: 12
+    #    max_intrusion_z: 0.03
+    #    max_ground_clearance: 0.02
+    #    minimal_support: 0.9
     step_dynamics_post_process:
       params:
         sway_duration: 0.10

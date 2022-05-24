@@ -25,10 +25,6 @@ robot_model:
         neutral_stance: {x:  0.00, y:  0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
         vis:
           color: {r: 0.0, g: 1.0, b: 0.0, a: 0.6}
-          mesh_resource: "package://l3_footstep_planner/meshes/thormang3_left_foot.stl"
-          # position of mesh frame given in foot sole frame
-          mesh_offset: {x:  0.00, y: -0.0155, z:  0.0275, roll:  0.00, pitch:  0.00, yaw:  0.00}
-          mesh_scale: [0.001, 0.001, 0.001]
 
       - <<: *base_foot
         idx: 1
@@ -40,11 +36,6 @@ robot_model:
         neutral_stance: {x:  0.00, y: -0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
         vis:
           color: {r: 1.0, g: 0.0, b: 0.0, a: 0.6}
-          mesh_resource: "package://l3_footstep_planner/meshes/thormang3_right_foot.stl"
-          # position of mesh frame given in foot sole frame
-          mesh_offset: {x:  0.00, y:  0.0155, z:  0.0275, roll:  0.00, pitch:  0.00, yaw:  0.00}
-          mesh_scale: [0.001, 0.001, 0.001]
-
   plugins:
     gait_generator:
       name: bipedal_gait_generator
