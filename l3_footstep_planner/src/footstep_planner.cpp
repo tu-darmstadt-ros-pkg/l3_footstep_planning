@@ -307,7 +307,7 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
   Heuristic::mutableInstance().loadParams(params);
 
   // reinitialize hfs heuristics
-  HFSHeuristic::mutableInstance().loadPlugins();
+  HFSHeuristic::mutableInstance().loadPlugins(false);
   HFSHeuristic::mutableInstance().loadParams(params);
 
   // reinitialize StateManager
