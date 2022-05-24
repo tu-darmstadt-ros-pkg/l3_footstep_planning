@@ -1,0 +1,37 @@
+<library path="lib/libl3_footstep_planning_vis_tools">
+  <class name="step_plan_path_vis" type="l3_footstep_planning::StepPlanPathVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of step plan as a path
+    </description>
+  </class>
+  <class name="inverse_kinematics_vis" type="l3_footstep_planning::InverseKinematicsVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of robot using basic inverse kinematics
+    </description>
+  </class>
+  <class name="step_plan_request_vis" type="l3_footstep_planning::StepPlanRequestVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of step plan requests
+    </description>
+  </class>
+  <class name="step_plan_vis" type="l3_footstep_planning::StepPlanVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of step plans
+    </description>
+  </class>
+  <class name="upper_body_vis" type="l3_footstep_planning::UpperBodyVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of upper body bounding box
+    </description>
+  </class>
+  <class name="ground_contact_estimation_vis" type="l3_footstep_planning::GroundContactEstimationVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization for results of the ground contact estimation
+    </description>
+  </class>
+  <class name="planning_feedback_vis" type="l3_footstep_planning::PlanningFeedbackVis" base_class_type="l3_footstep_planning::PlanningVisPlugin">
+    <description>
+      Visualization of planning feedback
+    </description>
+  </class>
+</library>

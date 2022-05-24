@@ -1,0 +1,51 @@
+robot_model:
+  description:
+    ### upper body settings ########################################################
+    bases:
+      - idx: 0
+        name: "BASE"
+        shape: "SPHERICAL" # CUBOID, SPHERICAL
+        size: {x: 0.7, y: 1.1, z: 1.95} # [m]
+        link: "pelvis"
+        link_to_center_offset: {x: -0.1, y: 0.00, z: 0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad], transformation from body center to tf frame
+    
+    ### foot settings ##############################################################
+    base_foot: &base_foot
+      - shape: "CUBOID" # CUBOID, SPHERICAL
+        size: {x: 0.22, y: 0.15, z: 0.015} # [m]
+
+    feet:
+      - <<: *base_foot
+        idx: 0
+        name: "LEFT_FOOT"
+        link: "l_foot"
+        # position (offset) of planner foot frame (center of sole) given in robot's "foot" link frame
+        link_to_sole_offset: {x:  0.00, y:  0.0155, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad]
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x:  0.00, y:  0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 0.0, g: 1.0, b: 0.0, a: 0.6}
+          mesh_resource: "package://l3_footstep_planner/meshes/thormang3_left_foot.stl"
+          # position of mesh frame given in foot sole frame
+          mesh_offset: {x:  0.00, y: -0.0155, z:  0.0275, roll:  0.00, pitch:  0.00, yaw:  0.00}
+          mesh_scale: [0.001, 0.001, 0.001]
+
+      - <<: *base_foot
+        idx: 1
+        name: "RIGHT_FOOT"
+        link: "r_foot"
+        # position (offset) of planner foot frame (center of sole) given in robot's "foot" link frame
+        link_to_sole_offset: {x:  0.00, y: -0.0155, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad]
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x:  0.00, y: -0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 1.0, g: 0.0, b: 0.0, a: 0.6}
+          mesh_resource: "package://l3_footstep_planner/meshes/thormang3_right_foot.stl"
+          # position of mesh frame given in foot sole frame
+          mesh_offset: {x:  0.00, y:  0.0155, z:  0.0275, roll:  0.00, pitch:  0.00, yaw:  0.00}
+          mesh_scale: [0.001, 0.001, 0.001]
+
+  plugins:
+    gait_generator:
+      name: bipedal_gait_generator
+

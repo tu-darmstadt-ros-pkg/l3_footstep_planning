@@ -1,0 +1,5 @@
+l3_footstep_planning_msgs/StepPlan step_plan
+std_msgs/String target_frame
+---
+l3_footstep_planning_msgs/StepPlan step_plan
+l3_footstep_planning_msgs/ErrorStatus status

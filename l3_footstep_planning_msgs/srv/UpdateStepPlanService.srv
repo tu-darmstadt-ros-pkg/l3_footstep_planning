@@ -1,0 +1,6 @@
+l3_footstep_planning_msgs/StepPlan step_plan
+l3_footstep_planning_msgs/UpdateMode update_mode
+std_msgs/String parameter_set_name
+---
+l3_footstep_planning_msgs/StepPlan step_plan
+l3_footstep_planning_msgs/ErrorStatus status

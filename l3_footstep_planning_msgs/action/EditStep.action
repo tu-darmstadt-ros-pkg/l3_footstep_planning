@@ -1,0 +1,6 @@
+l3_footstep_planning_msgs/StepPlan step_plan
+l3_footstep_planning_msgs/EditStep edit_step
+---
+l3_footstep_planning_msgs/StepPlan[] step_plans
+l3_footstep_planning_msgs/ErrorStatus status
+---

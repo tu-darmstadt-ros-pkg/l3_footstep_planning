@@ -1,0 +1,61 @@
+<library path="src">
+  <class name="ExecuteStepPlanWidgetPlugin" type="l3_footstep_planning_widgets.execute_step_plan_rqt_widget.ExecuteStepPlanDialog" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin to execute manually footstep plans
+    </description>
+    <qtgui>
+      <group>
+        <label>Footstep Planning</label>
+        <icon type="theme">folder</icon>
+      </group>
+      <label>Execute Step Plan</label>
+      <icon type="theme">preferences-desktop-keyboard</icon>
+      <statustip>A Python GUI plugin to execute manually footstep plans</statustip>
+    </qtgui>
+  </class>
+
+  <class name="ParameterEditorWidgetPlugin" type="l3_footstep_planning_widgets.parameter_editor_rqt_widget.ParameterEditorDialog" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin to edit planner parameters
+    </description>
+    <qtgui>
+      <group>
+        <label>Footstep Planning</label>
+        <icon type="theme">folder</icon>
+      </group>
+      <label>Parameter Editor</label>
+      <icon type="theme">preferences-desktop-keyboard</icon>
+      <statustip>A Python GUI plugin to edit planner parameters</statustip>
+    </qtgui>
+  </class>
+
+  <class name="PatternGeneratorWidgetPlugin" type="l3_footstep_planning_widgets.pattern_generator_rqt_widget.PatternGeneratorDialog" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin to control pattern generator
+    </description>
+    <qtgui>
+      <group>
+        <label>Footstep Planning</label>
+        <icon type="theme">folder</icon>
+      </group>
+      <label>Pattern Generator</label>
+      <icon type="theme">preferences-desktop-keyboard</icon>
+      <statustip>A Python GUI plugin to control pattern generator</statustip>
+    </qtgui>
+  </class>
+
+  <class name="StepInterfaceWidgetPlugin" type="l3_footstep_planning_widgets.step_interface_rqt_widget.StepInterfaceDialog" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin to generate basic step plans
+    </description>
+    <qtgui>
+      <group>
+        <label>Footstep Planning</label>
+      </group>
+      <label>Step Interface</label>
+      <icon type="theme">preferences-desktop-keyboard</icon>
+      <statustip>A Python GUI plugin to generate basic step plans</statustip>
+    </qtgui>
+  </class>
+</library>
+

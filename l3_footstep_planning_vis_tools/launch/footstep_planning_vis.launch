@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="vis_plugin_set" default="vis" />
+
+  <node name="footstep_planning_vis" pkg="l3_footstep_planning_vis_tools" type="footstep_planning_vis_node" respawn="true" output="screen">
+    <param name="plugin_set" value="$(arg vis_plugin_set)" />
+  </node>
+</launch>

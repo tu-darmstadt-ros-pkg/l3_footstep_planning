@@ -1,0 +1,5 @@
+l3_footstep_planning_msgs/FeetPoseRequest request
+---
+l3_msgs/Foothold[] feet
+l3_footstep_planning_msgs/ErrorStatus status
+---

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="namespace" default="l3/footstep_planning" />
+  <node name="parameter_editor_rqt_widget" pkg="l3_footstep_planning_widgets" type="parameter_editor_rqt" ns="$(arg namespace)" output="screen" respawn="true"/>
+</launch>

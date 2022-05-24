@@ -1,0 +1,8 @@
+l3_footstep_planning_msgs/StepPlanRequest plan_request
+---
+l3_footstep_planning_msgs/StepPlan step_plan
+l3_footstep_planning_msgs/ErrorStatus status
+
+l3_footstep_planning_msgs/PlanningStatistics statistics
+---
+l3_footstep_planning_msgs/PlanningFeedback feedback

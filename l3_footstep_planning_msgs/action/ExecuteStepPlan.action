@@ -1,0 +1,28 @@
+l3_footstep_planning_msgs/StepPlan step_plan
+---
+int8 controller_state                               # final state of walk controller
+l3_footstep_planning_msgs/ErrorStatus error_status  # error status of walk controller
+---
+std_msgs/Header header
+
+uint8 NOT_READY = 0
+uint8 READY     = 1
+uint8 ACTIVE    = 2
+uint8 PAUSED    = 3
+uint8 FINISHED  = 4
+uint8 FAILED    = 5
+int8 controller_state                               # current state of walk controller
+
+l3_footstep_planning_msgs/ErrorStatus error_status  # error status of walk controller
+
+int32 queue_size                                    # number of steps enqueued
+int32 first_queued_step_idx                         # first step index in queue
+int32 last_queued_step_idx                          # last step index in queue
+
+int32 last_performed_step_idx                       # latest step which execution was already performed and finished
+int32 currently_executing_step_idx                  # current step which is executed
+int32 first_changeable_step_idx                     # first step which may be changed
+
+int32 stepping_status                               # Use FootstepExecutionStatus.msg values
+
+l3_footstep_planning_msgs/StepPlanFeedback feedback

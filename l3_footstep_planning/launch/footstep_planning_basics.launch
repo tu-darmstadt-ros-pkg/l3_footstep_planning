@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="ui" default="True" />
+  <arg name="vis_plugin_set" default="vis" />
+
+  <!-- run feet pose generator -->
+  <include file="$(find l3_footstep_planning_tools)/launch/feet_pose_generator.launch" />
+
+  <!-- run foot pose transformer -->
+  <include file="$(find l3_footstep_planning_tools)/launch/foot_pose_transformer.launch" />
+
+  <!-- run vis node -->
+  <include file="$(find l3_footstep_planning_vis_tools)/launch/footstep_planning_vis.launch" if="$(arg ui)">
+    <arg name="vis_plugin_set" value="$(arg vis_plugin_set)" />
+  </include>
+</launch>

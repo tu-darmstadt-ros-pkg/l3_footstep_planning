@@ -1,0 +1,5 @@
+l3_msgs/Foothold[] feet
+std_msgs/String target_frame
+---
+l3_msgs/Foothold[] feet
+l3_footstep_planning_msgs/ErrorStatus status

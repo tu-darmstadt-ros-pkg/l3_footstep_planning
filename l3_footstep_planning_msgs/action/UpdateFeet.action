@@ -1,0 +1,6 @@
+l3_msgs/Foothold[] feet
+l3_footstep_planning_msgs/UpdateMode update_mode
+---
+l3_msgs/Foothold[] feet
+l3_footstep_planning_msgs/ErrorStatus status
+---

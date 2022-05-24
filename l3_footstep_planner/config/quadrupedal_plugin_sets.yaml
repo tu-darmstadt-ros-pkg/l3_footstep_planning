@@ -1,0 +1,86 @@
+plugin_sets:
+  quadrupedal:
+    # StateGeneratorPlugin
+    direct_goal_state_generator: none
+    polygonal_state_generator:
+      params:
+        reachability_polygons: &reachability_polygons
+          base_polygon: &base_polygon
+            - x: [ 0.00, -0.10, -0.07,  0.00,  0.07,  0.10]
+              y: [-0.02, -0.02,  0.06,  0.08,  0.06, -0.02]
+              yaw: [-0.30, 0.40]
+
+          feet:
+            - <<: *base_polygon
+              idx: 0 # front left
+
+            - <<: *base_polygon
+              idx: 1 # front right
+              mirror_y: True
+              mirror_yaw: True
+
+            - <<: *base_polygon
+              idx: 2 # back left
+              mirror_x: True
+
+            - <<: *base_polygon
+              idx: 3 # back right
+              mirror_x: True
+              mirror_y: True
+              mirror_yaw: True
+
+    # ReachabilityPlugins
+    polygonal_reachability:
+      params:
+        reachability_polygons: *reachability_polygons
+
+    # StepCostEstimatorPlugins
+    const_step_cost_estimator:
+      params:
+        step_cost: &step_cost 0.1
+    euclidean_step_cost_estimator: none
+
+    # HeuristicPlugins
+    euclidean_heuristic: none
+    dynamics_heuristic:
+      params:
+        max_body_vel: 0.0
+        max_body_acc: 0.0
+    step_cost_heuristic:
+      params:
+        step_cost: *step_cost
+        diff_angle_cost: 0.05
+        max_step_dist_x: 0.38
+        max_step_dist_y: 0.15
+
+    # PostProcessPlugins
+    step_dynamics_post_process:
+      params:
+        sway_duration: 0.10
+        step_duration: 0.63
+        swing_height:  0.10
+
+    # WorldModelPlugins
+    1_upper_body_grid_map_model:
+      import: upper_body_grid_map_model
+      params:
+        collision_check_flag: 2 # Upper Body
+        topic: /body_level_grid_map
+    2_foot_grid_map_model:
+      import: foot_grid_map_model
+      params:
+        collision_check_flag: 1 # Foot
+        topic: /ground_level_grid_map
+
+    # TerrainModelPlugins
+    terrain_model:
+      import: basic_terrain_model
+      params:
+        topic: /terrain_model
+  vis:
+    step_plan_request_vis: none
+    step_plan_vis: none
+    step_plan_path_vis: none
+    upper_body_vis: none
+    planning_feedback_vis: none
+

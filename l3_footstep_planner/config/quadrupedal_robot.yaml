@@ -1,0 +1,62 @@
+robot_model:
+  description:
+    ### upper body settings ########################################################
+    bases:
+      - idx: 0
+        name: "BASE"
+        shape: "SPHERICAL" # CUBOID, SPHERICAL
+        size: {x: 0.7, y: 1.1, z: 1.95} # [m]
+        link: "pelvis"
+        link_to_center_offset: {x: -0.1, y: 0.00, z: 0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad], transformation from body center to tf frame
+    
+    ### foot settings ##############################################################
+    base_foot: &base_foot
+      - shape: "SPHERICAL" # CUBOID, SPHERICAL
+        size: {x: 0.05, y: 0.05, z: 0.05} # [m]
+        # position (offset) of planner foot frame (center of sole) given in robot's "foot" link frame
+        link_to_sole_offset: {x:  0.00, y:  0.00, z: -0.085, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad]
+
+    feet:
+      - <<: *base_foot
+        idx: 0
+        name: "LEFT_F_FOOT"
+        link: "l_f_foot"
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x:  0.15, y:  0.10, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 0.0, g: 1.0, b: 0.0, a: 0.6}
+
+      - <<: *base_foot
+        idx: 1
+        name: "RIGHT_F_FOOT"
+        link: "r_f_foot"
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x:  0.15, y: -0.10, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 1.0, g: 0.0, b: 0.0, a: 0.6}
+
+      - <<: *base_foot
+        idx: 2
+        name: "LEFT_B_FOOT"
+        link: "l_b_foot"
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x: -0.15, y:  0.10, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 0.0, g: 0.6, b: 0.0, a: 0.6}
+
+      - <<: *base_foot
+        idx: 3
+        name: "RIGHT_B_FOOT"
+        link: "r_b_foot"
+        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        neutral_stance: {x: -0.15, y: -0.10, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
+        vis:
+          color: {r: 0.6, g: 0.0, b: 0.0, a: 0.6}
+
+  plugins:
+    gait_generator:
+      name: cyclic_gait_generator
+      params:
+        cycle: [0, 3, 2, 1]
+        start: [0, 1]
+

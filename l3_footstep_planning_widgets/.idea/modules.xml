@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../l3_footstep_planning_msgs/.idea/l3_footstep_planning_msgs.iml" filepath="$PROJECT_DIR$/../../l3_footstep_planning_msgs/.idea/l3_footstep_planning_msgs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../l3_footstep_planning_vis_tools/.idea/l3_footstep_planning_vis_tools.iml" filepath="$PROJECT_DIR$/../l3_footstep_planning_vis_tools/.idea/l3_footstep_planning_vis_tools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/l3_footstep_planning_widgets.iml" filepath="$PROJECT_DIR$/.idea/l3_footstep_planning_widgets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../vigir/vigir_pluginlib/vigir_pluginlib_manager/.idea/vigir_pluginlib_manager.iml" filepath="$PROJECT_DIR$/../../../../vigir/vigir_pluginlib/vigir_pluginlib_manager/.idea/vigir_pluginlib_manager.iml" />
+    </modules>
+  </component>
+</project>

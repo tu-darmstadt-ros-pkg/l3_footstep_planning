@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="ns" default="l3/footstep_planning" />
+  <node name="step_interface_rqt_widget" pkg="l3_footstep_planning_widgets" type="step_interface_rqt" ns="$(arg ns)" output="screen" respawn="true" />
+</launch>

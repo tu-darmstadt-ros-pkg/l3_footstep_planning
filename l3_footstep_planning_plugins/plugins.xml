@@ -1,0 +1,171 @@
+<library path="lib/libl3_footstep_planning_libs">
+  <class name="step_plan_msg_plugin" type="l3_footstep_planning::StepPlanMsgPlugin" base_class_type="l3_footstep_planning::StepPlanMsgPlugin">
+    <description>
+      StepPlanMsgPlugin: Plugin for (un-)packing robot specific messages
+    </description>
+  </class>
+
+  <class name="collision_check_grid_map_plugin" type="l3_footstep_planning::CollisionCheckGridMapPlugin" base_class_type="l3_footstep_planning::WorldModelPlugin">
+    <description>
+      CollisionCheckGridMapPlugin: Plugin for performing collision checking using occupancy grid maps
+    </description>
+  </class>
+
+  <!-- UseMaskGeneratorPlugin -->
+  <class name="occ_grid_use_mask_generator" type="l3_footstep_planning::OccGridUseMaskGenerator" base_class_type="l3_footstep_planning::UseMaskGeneratorPlugin">
+    <description>
+      OccGridUseMaskGenerator: Determines use mask based on an occupancy grid map
+    </description>
+  </class>
+
+  <!-- StateGeneratorPlugin -->
+  <class name="direct_goal_state_generator" type="l3_footstep_planning::DirectGoalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
+    <description>
+      DirectGoalStateGenerator: Generates naively goal states by taking the goal footholds in the resulting new state.
+    </description>
+  </class>
+  <class name="polygonal_state_generator" type="l3_footstep_planning::PolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
+    <description>
+      StateGeneratorPlugin: Generates states based on reachability polygon
+    </description>
+  </class>
+  <class name="ik_polygonal_state_generator" type="l3_footstep_planning::IKPolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
+    <description>
+      IKPolygonalStateGenerator: Generates states based on reachability polygon determined by inverse kinematics
+    </description>
+  </class>
+
+  <!-- ReachabilityPlugin -->
+  <class name="dynamics_reachability" type="l3_footstep_planning::DynamicsReachability" base_class_type="l3_footstep_planning::ReachabilityPlugin">
+    <description>
+      DynamicsReachability: Checking step limits based on dynamical behavior (e.g. upper body acceleration and velocity)
+    </description>
+  </class>
+  <class name="ik_reachability" type="l3_footstep_planning::IKReachability" base_class_type="l3_footstep_planning::ReachabilityPlugin">
+    <description>
+      IKReachability: Checking 3D IK reachability
+    </description>
+  </class>
+  <class name="polygonal_reachability" type="l3_footstep_planning::PolygonalReachability" base_class_type="l3_footstep_planning::ReachabilityPlugin">
+    <description>
+      PolygonalReachability: Checking reachability of step based on reachability polygon
+    </description>
+  </class>
+  <class name="state_3d_reachability" type="l3_footstep_planning::State3DReachability" base_class_type="l3_footstep_planning::ReachabilityPlugin">
+    <description>
+      State3DReachability: Checking 3d state limits (e.g. max pitch and roll)
+    </description>
+  </class>
+  <class name="support_polygon_check" type="l3_footstep_planning::SupportPolygonCheck" base_class_type="l3_footstep_planning::ReachabilityPlugin">
+    <description>
+      SupportPolygonCheck: Checking if support polygon satisfies required hull
+    </description>
+  </class>
+
+  <!-- StepCostEstimatorPlugin -->
+  <class name="const_step_cost_estimator" type="l3_footstep_planning::ConstStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      ConstStepCostEstimator: Adds a constant value to each step
+    </description>
+  </class>
+  <class name="euclidean_step_cost_estimator" type="l3_footstep_planning::EuclideanStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      EuclideanStepCostEstimator: Adds travel distance of upper body
+    </description>
+  </class>
+  <class name="boundary_step_cost_estimator" type="l3_footstep_planning::BoundaryStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      BoundaryStepCostEstimator: Adds risk if step is has exceeded "special" constraints
+    </description>
+  </class>
+  <class name="dynamics_step_cost_estimator" type="l3_footstep_planning::DynamicsStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      DynamicsStepCostEstimator: Adds risk for high dynamic steps (e.g. high acceleration)
+    </description>
+  </class>
+  <class name="ground_contact_step_cost_estimator" type="l3_footstep_planning::GroundContactStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      GroundContactStepCostEstimator: Scales costs for steps which are not hitting the ground perfectly (overhang, needs 3D terrain model) 
+    </description>
+  </class>
+  <class name="diagonal_step_cost_estimator" type="l3_footstep_planning::DiagonalStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      DiagonalStepCostEstimator: Punishes diagonal movements
+    </description>
+  </class>
+  <class name="travel_time_step_cost_estimator" type="l3_footstep_planning::TravelTimeStepCostEstimator" base_class_type="l3_footstep_planning::StepCostEstimatorPlugin">
+    <description>
+      TravelTimeStepCostEstimator: Estimates travel time for given step
+    </description>
+  </class>
+
+  <!-- HeuristicPlugin -->
+  <class name="euclidean_heuristic" type="l3_footstep_planning::EuclideanHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      EuclideanHeuristic: Estimates remaining travel distance to goals state
+    </description>
+  </class>
+  <class name="heading_heuristic" type="l3_footstep_planning::HeadingHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      HeadingHeuristic: Calculates sliding heading near start and goal state 
+    </description>
+  </class>
+  <class name="step_cost_heuristic" type="l3_footstep_planning::StepCostHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Estimates remaining step cost with respect to estimated number of steps needed
+    </description>
+  </class>
+  <class name="dynamics_heuristic" type="l3_footstep_planning::DynamicsHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      DynamicsHeuristic: Checking reachability of goal state based on dynamic walking capabilites (e.g. upper body acceleration and velocity)
+    </description>
+  </class>
+  <class name="occupancy_grid_map_heuristic" type="l3_footstep_planning::OccupancyGridMapHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      OccupancyGridMapHeuristic: Punishing states which are near to obstacles
+    </description>
+  </class>
+  <class name="travel_time_heuristic" type="l3_footstep_planning::TravelTimeHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      TravelTimeHeuristic: Estimates remaining travel time to goal state
+    </description>
+  </class>
+
+  <!-- PostProcessPlugin -->
+  <class name="ground_contact_post_process" type="l3_footstep_planning::GroundContactPostProcess" base_class_type="l3_footstep_planning::PostProcessPlugin">
+    <description>
+      GroundContactPostProcess: Estimates the ground contact area underneath the foot
+    </description>
+  </class>
+
+  <class name="simple_floating_base_post_process" type="l3_footstep_planning::SimpleFloatingBasePostProcess" base_class_type="l3_footstep_planning::PostProcessPlugin">
+    <description>
+      SimpleFloatingBasePostProcess: Determines floating base on simple geometrical feet center
+    </description>
+  </class>
+
+  <class name="step_dynamics_post_process" type="l3_footstep_planning::StepDynamicsPostProcess" base_class_type="l3_footstep_planning::PostProcessPlugin">
+    <description>
+      StepDynamicsPostProcess: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
+    </description>
+  </class>
+
+  <!-- WorldModelPlugin -->
+  <class name="foot_grid_map_model" type="l3_footstep_planning::FootGridMapModel" base_class_type="l3_footstep_planning::WorldModelPlugin">
+    <description>
+      FootGridMapModel: Performs collision checking for rectangular shaped feet using occupance grid maps
+    </description>
+  </class>
+  <class name="upper_body_grid_map_model" type="l3_footstep_planning::UpperBodyGridMapModel" base_class_type="l3_footstep_planning::WorldModelPlugin">
+    <description>
+      UpperBodyGridMapModel: Performs collision checking for rectangular shaped upper body geometry using occupance grid maps
+    </description>
+  </class>
+
+  <!-- TerrainModelPlugin -->
+  <class name="basic_terrain_model" type="l3_footstep_planning::BasicTerrainModel" base_class_type="l3_footstep_planning::TerrainModelPlugin">
+    <description>
+      TerrainModel: Provides terrain model plugin based on l3_terrain_classifier
+    </description>
+  </class>
+</library>

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>l3_footstep_planning_plugins</name>
+  <version>0.0.0</version>
+  <description>The l3_footstep_planning_plugins package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="stumpf@sim.tu-darmstadt.de">Alexander Stumpf</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>BSD</license>
+
+
+  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <!-- Example: -->
+  <!-- <url type="website">http://wiki.ros.org/l3_footstep_planning_plugins</url> -->
+
+
+  <!-- Author tags are optional, mutiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintianers, but could be -->
+  <!-- Example: -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="stumpf@sim.tu-darmstadt.de">Alexander Stumpf</author>
+
+
+  <!-- The depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>tf</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>pcl_conversions</depend>
+  <depend>vigir_generic_params</depend>
+  <depend>vigir_pluginlib</depend>
+  <depend>l3_plugins</depend>
+  <depend>l3_footstep_planning_msgs</depend>
+  <depend>l3_footstep_planning_libs</depend>
+  <depend>l3_terrain_model</depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <!-- <metapackage/> -->
+
+    <l3_footstep_planning_plugins plugin="${prefix}/plugins.xml" />
+  </export>
+</package>
