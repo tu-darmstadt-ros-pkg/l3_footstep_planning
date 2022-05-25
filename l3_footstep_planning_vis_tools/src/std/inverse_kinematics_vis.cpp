@@ -57,7 +57,8 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   const std::string& base_link = base_info.link;
   const std::string& root_link = RobotModel::kinematics()->getRootLink();
   if (!RobotModel::kinematics()->calcStaticTransformForChain(base_link, root_link, base_to_root_))
-    ROS_WARN("[%s] calcFeetCenterToBase: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(), root_link.c_str());
+    ROS_WARN("[%s] calcFeetCenterToBase: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(),
+             root_link.c_str());
 
   // get other parameters
   tf_prefix_ = param("tf_prefix", std::string("planning_vis"), true);
@@ -122,7 +123,11 @@ void InverseKinematicsVis::visualize(const msgs::StepPlanRequest& step_plan_requ
     FloatingBaseArray floating_bases;
     floatingBaseArrayMsgToL3(step_plan_request.goal_floating_bases, floating_bases);
 
-    visualize(footholds, floating_bases, step_plan_request.header.frame_id);
+    FloatingBaseMap floating_bases_map;
+    for (const FloatingBase& fb : floating_bases)
+      floating_bases_map[fb.idx] = fb;
+
+    visualize(footholds, floating_bases_map, step_plan_request.header.frame_id);
   }
 }
 
@@ -151,12 +156,6 @@ void InverseKinematicsVis::visualize(const StepPlan& step_plan)
 
 void InverseKinematicsVis::visualize(const Step& step, const std::string& frame_id)
 {
-  if (!step.hasMovingFloatingBase() && !step.hasRestingFloatingBase())
-  {
-    ROS_WARN("[%s] Step %u has no floating base.", getName().c_str(), step.getStepIndex());
-    return;
-  }
-
   FootholdArray footholds;
   for (const Step::StepDataPair& p : step.getStepDataMap())
     footholds.push_back(*p.second->target);
@@ -164,20 +163,34 @@ void InverseKinematicsVis::visualize(const Step& step, const std::string& frame_
   for (const FootholdConstPtrPair& p : step.getSupportMap())
     footholds.push_back(*p.second);
 
-  FloatingBaseArray floating_bases;
+  FloatingBaseMap floating_bases;
   for (const Step::BaseStepDataPair& p : step.getMovingFloatingBaseMap())
-    floating_bases.push_back(*p.second->target);
+    floating_bases[p.first] = (*p.second->target);
 
   for (const FloatingBaseConstPtrPair& p : step.getRestingFloatingBaseMap())
-    floating_bases.push_back(*p.second);
+    floating_bases[p.first] = (*p.second);
+
+  // in case of the planner does not use floating bases, generate one based on central body estimate
+  if (floating_bases.find(BaseInfo::MAIN_BODY_IDX) == floating_bases.end())
+  {
+    ROS_WARN("[%s] Step %u has no main body floating base.", getName().c_str(), step.getStepIndex());
+    return;
+  }
 
   visualize(footholds, floating_bases, frame_id);
 }
 
-void InverseKinematicsVis::visualize(const FootholdArray& footholds, const FloatingBaseArray& floating_bases, const std::string& frame_id)
+void InverseKinematicsVis::visualize(const FootholdArray& footholds, const FloatingBaseMap& floating_bases, const std::string& frame_id)
 {
-  ///@todo Implement visualization for multi floating bases
-  FloatingBase floating_base = floating_bases[BaseInfo::MAIN_BODY_IDX];
+  /// @todo Implement visualization for multi floating bases
+  FloatingBaseMap::const_iterator itr = floating_bases.find(BaseInfo::MAIN_BODY_IDX);
+  if (itr == floating_bases.end())
+  {
+    ROS_WARN("[%s] Cannot visualize due to missing floating base.", getName().c_str());
+    return;
+  }
+
+  FloatingBase floating_base = itr->second;
 
   if (frame_id.empty())
     ROS_WARN("[%s] visualize(...) called with empty frame id!", getName().c_str());
@@ -223,7 +236,7 @@ void InverseKinematicsVis::visualize(const FootholdArray& footholds, const Float
 }
 
 bool InverseKinematicsVis::calcLegIK(const Pose& base_pose, const Foothold& foothold, std::vector<double>& q) const
-{ 
+{
   const LegInfo& leg_info = RobotModel::description()->getLegInfo(foothold.idx);
 
   std::map<LegIndex, std::vector<double>>::const_iterator joint_states_itr = def_leg_joint_states_.find(leg_info.idx);
@@ -235,7 +248,8 @@ bool InverseKinematicsVis::calcLegIK(const Pose& base_pose, const Foothold& foot
 
 bool InverseKinematicsVis::calcNeutralStanceIK(std::map<LegIndex, std::vector<double>>& leg_joint_states) const
 {
-  return RobotModel::kinematics()->calcNeutralStanceIK(RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description()), *RobotModel::description(), leg_joint_states);
+  return RobotModel::kinematics()->calcNeutralStanceIK(RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description()), *RobotModel::description(),
+                                                       leg_joint_states);
 }
 
 void InverseKinematicsVis::jointStateCB(const sensor_msgs::JointStateConstPtr& msg)
@@ -284,11 +298,13 @@ void InverseKinematicsVis::publishTF(const ros::TimerEvent& /*event*/)
 {
   if (robot_state_publisher_ && !vis_joint_states_.empty())
   {
-    world_to_root_.header.stamp = ros::Time().now();
+    ros::Time current_time = ros::Time().now();
+
+    world_to_root_.header.stamp = current_time;
     tf_broadcaster_.sendTransform(world_to_root_);
 
     // publish moving joints
-    robot_state_publisher_->publishTransforms(vis_joint_states_, ros::Time().now(), tf_prefix_);
+    robot_state_publisher_->publishTransforms(vis_joint_states_, current_time, tf_prefix_);
 
     // publish fixed joints
     robot_state_publisher_->publishFixedTransforms(tf_prefix_, true);
@@ -314,7 +330,7 @@ void InverseKinematicsVis::scheduleAnimationStep(double time_step)
 {
   if (animate_time_scale_ > 0.0)
   {
-    animation_timer_.setPeriod(ros::Duration(time_step*animate_time_scale_));
+    animation_timer_.setPeriod(ros::Duration(time_step * animate_time_scale_));
     animation_timer_.start();
   }
 }

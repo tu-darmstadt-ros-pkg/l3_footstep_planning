@@ -74,7 +74,7 @@ protected:
    * @param frame_id frame id in which the footholds are given;
    * Note: A tf transform from this frame to the used planning_vis tf tree will be published.
    */
-  virtual void visualize(const FootholdArray& footholds, const FloatingBaseArray& floating_bases, const std::string& frame_id);
+  virtual void visualize(const FootholdArray& footholds, const FloatingBaseMap& floating_bases, const std::string& frame_id);
 
   virtual bool calcLegIK(const Pose& base_pose, const Foothold& foothold, std::vector<double>& q) const;
 
