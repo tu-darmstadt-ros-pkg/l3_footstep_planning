@@ -42,17 +42,24 @@ bool SimpleFloatingBasePostProcess::postProcess(StepPlan& step_plan) const
       Step::Ptr step = e.second;
       FootholdConstPtrArray footholds = step->getFootholds();
 
-      ///@todo Implement BaseStepData Generation (origin, target)
-      //FloatingBase floating_base = determineFloatingBase(footholds, RobotModel::calcFeetCenter(footholds));
-      //step->updateFloatingBaseStepData(FloatingBase::ConstPtr(new FloatingBase(std::move(floating_base))));
+      FloatingBase::Ptr floating_base = determineFloatingBase(footholds, RobotModel::calcFeetCenter(footholds));
+
+      if (floating_base)
+        step->updateMovingFloatingBase(BaseStepData::make(floating_base, floating_base)); /// @todo determine origin floating base
     }
   }
 
   return true;
 }
 
-FloatingBase SimpleFloatingBasePostProcess::determineFloatingBase(const FootholdConstPtrArray& footholds, const Pose& feet_center) const
+FloatingBase::Ptr SimpleFloatingBasePostProcess::determineFloatingBase(const FootholdConstPtrArray& footholds, const Pose& feet_center) const
 {
+  if (footholds.empty())
+  {
+    ROS_WARN("[%s] Receveived empty footholds!", getName().c_str());
+    return FloatingBase::Ptr();
+  }
+
   Pose center = feet_center;
 
   // set roll and pitch to zero for stabilized base
@@ -66,9 +73,7 @@ FloatingBase SimpleFloatingBasePostProcess::determineFloatingBase(const Foothold
   Pose base_pose = center * RobotModel::kinematics()->calcFeetCenterToBase(*RobotModel::description(), center, footholds);
 
   // generate discretized floating base
-  BaseInfo base_info;
-  RobotModel::description()->getBaseInfo(BaseInfo::MAIN_BODY_IDX, base_info);
-  return FloatingBase(base_info.idx, base_pose);
+  return makeShared<FloatingBase>(BaseInfo::MAIN_BODY_IDX, base_pose, footholds.front()->header);
 }
 }  // namespace l3_footstep_planning
 

@@ -47,7 +47,7 @@ public:
   bool postProcess(StepPlan& step_plan) const override;
 
 protected:
-  FloatingBase determineFloatingBase(const FootholdConstPtrArray& footholds, const Pose& feet_center) const;
+  FloatingBase::Ptr determineFloatingBase(const FootholdConstPtrArray& footholds, const Pose& feet_center) const;
 
   DiscreteResolution res_;
 
