@@ -38,7 +38,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
   for (const Step::BaseStepDataPair& p : state.getStep()->getMovingFloatingBaseMap())
   {
     BaseStepData::ConstPtr base_step_data = p.second;
-    ROS_ASSERT(step_data);
+    ROS_ASSERT(base_step_data);
 
     double c, c_m, r, r_m;
     if (!getCost(*base_step_data, c, c_m, r, r_m))

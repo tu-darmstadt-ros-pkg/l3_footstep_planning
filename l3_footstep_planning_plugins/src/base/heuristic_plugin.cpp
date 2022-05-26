@@ -24,7 +24,7 @@ double HeuristicPlugin::getHeuristicValue(const State& from, const State& to, co
 
   for (Foothold::ConstPtr fh_from : from.getFootholds())
   {
-    ROS_ASSERT(f_from);
+    ROS_ASSERT(fh_from);
 
     // do only consider specific foot ids when given
     if (ignoreFootIdx(fh_from->idx))
@@ -37,7 +37,7 @@ double HeuristicPlugin::getHeuristicValue(const State& from, const State& to, co
 
   for(FloatingBase::ConstPtr fb_from : from.getFloatingBases())
   {
-    ROS_ASSERT(f_from);
+    ROS_ASSERT(fb_from);
 
     FloatingBase::ConstPtr fb_to = to.getFloatingBase(fb_from->idx);
     if(fb_to)
