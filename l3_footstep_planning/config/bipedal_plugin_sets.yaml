@@ -37,7 +37,7 @@ plugin_sets:
       params:
         step_cost: &step_cost 0.1
     euclidean_step_cost_estimator: none
-    #ground_contact_step_cost_estimator: none
+    ground_contact_step_cost_estimator: none
 
     # HeuristicPlugins
     euclidean_heuristic: none
@@ -90,3 +90,4 @@ plugin_sets:
     nav_goal_marker_vis:
       params:
         step_controller_topic: /l3/execute_step_plan
+
