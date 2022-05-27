@@ -71,7 +71,10 @@ bool GroundContactPostProcess::getFootContactSupport(const Foothold& foothold, d
   checked_positions.clear();
 
   if (!WorldModel::instance().isTerrainModelAvailable())
+  {
+    support = 1.0;
     return true;
+  }
 
   unsigned int contacts = 0;
   unsigned int unknown = 0;
