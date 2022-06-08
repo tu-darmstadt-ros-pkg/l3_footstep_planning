@@ -37,6 +37,7 @@ bool SimpleFloatingBasePostProcess::postProcess(StepPlan& step_plan) const
 {
   if (post_process_step_plan_)
   {
+    // post process step plan
     for (StepQueue::Entry& e : step_plan.getSteps())
     {
       Step::Ptr step = e.second;

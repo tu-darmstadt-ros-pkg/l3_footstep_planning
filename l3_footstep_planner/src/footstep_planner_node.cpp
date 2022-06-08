@@ -343,7 +343,6 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
                                              boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
 
   // visualize request
-
   msgs::StepPlanRequest req_vis = step_plan_request.plan_request;
   postProcessRequestVis(req_vis);
   step_plan_request_vis_pub.publish(req_vis);

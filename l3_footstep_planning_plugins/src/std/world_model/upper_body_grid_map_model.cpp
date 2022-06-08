@@ -17,7 +17,7 @@ bool UpperBodyGridMapModel::loadParams(const vigir_generic_params::ParameterSet&
   BaseInfo base_info;
   RobotModel::description()->getBaseInfo(BaseInfo::MAIN_BODY_IDX, base_info);
   upper_body_size_ = base_info.size;
-  upper_body_offset_ = base_info.link_to_center_offset;
+  upper_body_offset_ = base_info.link_to_feet_center_offset;
 
   return true;
 }
