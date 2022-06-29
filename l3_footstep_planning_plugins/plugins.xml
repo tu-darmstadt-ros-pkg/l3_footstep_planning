@@ -24,9 +24,14 @@
       DirectGoalStateGenerator: Generates naively goal states by taking the goal footholds in the resulting new state.
     </description>
   </class>
+  <class name="lattice_state_generator" type="l3_footstep_planning::LatticeStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
+    <description>
+      LatticeStateGenerator: Generates kinodynamic-constrained states
+    </description>
+  </class>
   <class name="polygonal_state_generator" type="l3_footstep_planning::PolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
     <description>
-      StateGeneratorPlugin: Generates states based on reachability polygon
+      PolygonalStateGenerator: Generates states based on reachability polygon
     </description>
   </class>
   <class name="ik_polygonal_state_generator" type="l3_footstep_planning::IKPolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
