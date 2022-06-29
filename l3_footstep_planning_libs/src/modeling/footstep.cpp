@@ -39,7 +39,7 @@ Foothold::Ptr Footstep::getPredFoothold(const Pose& robot_pose) const
 
   const FootstepXY& xy = backward_steps_[yaw];
 
-  return Foothold::Ptr(new Foothold(foot_idx_, robot_pose.x() + xy.first, robot_pose.y() + xy.second, robot_pose.z(), 0.0, 0.0, normalizeAngle(robot_pose.yaw() - dyaw_)));
+  return makeShared<Foothold>(foot_idx_, robot_pose.x() + xy.first, robot_pose.y() + xy.second, robot_pose.z(), 0.0, 0.0, normalizeAngle(robot_pose.yaw() - dyaw_));
 }
 
 Foothold::Ptr Footstep::getPredFoothold(const State& current) const
@@ -60,7 +60,7 @@ Foothold::Ptr Footstep::getSuccFoothold(const Pose& robot_pose) const
 
   const FootstepXY& xy = forward_steps_[yaw];
 
-  return Foothold::Ptr(new Foothold(foot_idx_, robot_pose.x() + xy.first, robot_pose.y() + xy.second, robot_pose.z(), 0.0, 0.0, normalizeAngle(robot_pose.yaw() + dyaw_)));
+  return makeShared<Foothold>(foot_idx_, robot_pose.x() + xy.first, robot_pose.y() + xy.second, robot_pose.z(), 0.0, 0.0, normalizeAngle(robot_pose.yaw() + dyaw_));
 }
 
 Foothold::Ptr Footstep::getSuccFoothold(const State& current) const

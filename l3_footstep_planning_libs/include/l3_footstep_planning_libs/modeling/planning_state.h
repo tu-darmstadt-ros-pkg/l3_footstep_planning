@@ -57,8 +57,8 @@ public:
   PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr pred = StateHashed::ConstPtr(), StateHashed::ConstPtr succ = StateHashed::ConstPtr(),
                 Step::ConstPtr step = Step::ConstPtr());
 
-  inline void addStepData(StepData::Ptr step_data) { step_->updateStepData(step_data); }
-  inline void addSupport(Foothold::ConstPtr foothold) { step_->updateSupport(foothold); }
+  inline void addMovedFoot(StepData::Ptr foot_step_data) { step_->updateStepData(foot_step_data); }
+  inline void addSupportFoot(Foothold::ConstPtr foothold) { step_->updateSupport(foothold); }
 
   inline void addMovedFloatingBase(BaseStepData::Ptr base_step_data) { step_->updateMovingFloatingBase(base_step_data); }
   inline void addRestingFloatingBase(FloatingBase::ConstPtr floating_base) { step_->updateRestingFloatingBase(floating_base); }

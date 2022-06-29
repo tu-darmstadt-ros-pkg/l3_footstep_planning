@@ -35,6 +35,11 @@
 
 namespace l3_footstep_planning
 {
+/**
+ * @brief The PolygonalStateGenerator does expand footholds based on pre-defined
+ * polygon that expresses the feasible foot locations (in flat world) relative to the
+ * base. This plugin does not expand any floating bases.
+ */
 class PolygonalStateGenerator : public StateGeneratorPlugin
 {
 protected:

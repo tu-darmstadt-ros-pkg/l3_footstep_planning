@@ -62,8 +62,8 @@ struct StepRangePolygon
 
 protected:
   bool parseAngles(XmlRpc::XmlRpcValue& p, const std::string& key, const DiscreteResolution& res, int& min_angle, int& max_angle);
-
   bool parseEdges(XmlRpc::XmlRpcValue& p, const DiscreteResolution& res);
+
   bool generateRechabilityMap();
 
   DiscreteResolution res_;

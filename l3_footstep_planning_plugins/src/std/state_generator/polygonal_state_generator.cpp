@@ -191,8 +191,6 @@ std::list<StateGenResult> PolygonalStateGenerator::generatePredFootholds(const P
 {
   std::list<StateGenResult> result;
 
-  /// @todo Expand floating bases as well
-
   // generate new footholds for each foot
   for (const FootIndex& idx : state_expansion_idx.foot_idx)
   {
@@ -242,8 +240,6 @@ std::list<StateGenResult> PolygonalStateGenerator::generateSuccFootholds(const P
                                                                          const FootstepSetMap& footsteps) const
 {
   std::list<StateGenResult> result;
-
-  /// @todo Expand floating bases as well
 
   // generate new footholds for each foot
   for (const FootIndex& idx : state_expansion_idx.foot_idx)
