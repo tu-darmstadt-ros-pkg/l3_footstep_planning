@@ -33,8 +33,7 @@
 
 #include <vigir_generic_params/parameter_manager.h>
 
-#include <l3_footstep_planning_libs/modeling/footstep.h>
-#include <l3_footstep_planning_libs/math.h>
+#include <l3_footstep_planning_libs/typedefs.h>
 
 namespace l3_footstep_planning
 {

@@ -214,8 +214,8 @@ msgs::ErrorStatus PatternPlanner::generateWalkPattern(const l3_footstep_planning
 
       for (const FootIndex& idx : pattern.foot_idx)
       {
-        const Footstep& footstep = footsteps_.find(idx)->second;
-        Foothold::Ptr foothold = footstep.getSuccFoothold(current_state);
+        const FootStep& footstep = footsteps_.find(idx)->second;
+        Foothold::Ptr foothold = footstep.getSuccessor(current_state);
 
         if (params.override)
         {
@@ -387,15 +387,15 @@ msgs::ErrorStatus PatternPlanner::extractPath(StepPtrArray& path)
   return msgs::ErrorStatus();
 }
 
-std::map<FootIndex, Footstep> PatternPlanner::generateFootsteps(double dx, double dy, double dyaw) const
+std::map<FootIndex, FootStep> PatternPlanner::generateFootsteps(double dx, double dy, double dyaw) const
 {
-  std::map<FootIndex, Footstep> result;
+  std::map<FootIndex, FootStep> result;
 
   RobotDescription::ConstPtr description = RobotModel::instance().description();
   for (const Foothold& f : description->getNeutralStance(Pose(dx, dy, 0.0, 0.0, 0.0, dyaw)))
   {
     const Pose& n = description->getFootInfo(f.idx).neutral_stance;
-    result.emplace(f.idx, Footstep(n, f.idx, f.x() - n.x(), f.y() - n.y(), f.yaw() - n.yaw(), 0.0, res_));
+    result.emplace(f.idx, FootStep(n, f.idx, f.x() - n.x(), f.y() - n.y(), f.yaw() - n.yaw(), 0.0, res_));
   }
 
   return result;

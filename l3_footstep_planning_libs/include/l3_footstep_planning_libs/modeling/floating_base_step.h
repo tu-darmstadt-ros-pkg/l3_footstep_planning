@@ -1,6 +1,5 @@
 //=================================================================================================
 // Copyright (c) 2022, Alexander Stumpf, TU Darmstadt
-// Based on http://wiki.ros.org/footstep_planner by Johannes Garimort and Armin Hornung
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -27,56 +26,31 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef L3_FOOTSTEP_PLANNING_STATE_SPACE_H__
-#define L3_FOOTSTEP_PLANNING_STATE_SPACE_H__
+#ifndef L3_FOOTSTEP_PLANNING_LIBS_BASESTEP_H__
+#define L3_FOOTSTEP_PLANNING_LIBS_BASESTEP_H__
 
-#include <ros/ros.h>
-
-#include <boost/thread/mutex.hpp>
-
-#include <tr1/unordered_set>
-#include <tr1/hashtable.h>
-
-#include <sbpl/headers.h>
-
-#include <l3_footstep_planning_libs/modeling/state_space_manager.h>
-#include <l3_footstep_planning_libs/modeling/foot_step.h>
-#include <l3_footstep_planning_libs/modeling/planning_state.h>
-
-#include <l3_footstep_planner/environment_parameters.h>
+#include <l3_footstep_planning_libs/modeling/discrete_step.h>
 
 namespace l3_footstep_planning
 {
-class StateSpace
+/**
+ * @brief Basestep represents the discrete translation. The constructor takes the
+ * parameters relative to the base center, but afterwards a Basestep represents
+ * the possible placement relative to the robot body (center). This means that the
+ * final Footstep already considers the neutral stance pose of the base relative to
+ * the robot's body.
+ */
+class FloatingBaseStep : public DiscreteStep<FloatingBase>
 {
 public:
   // typedefs
-  typedef l3::SharedPtr<StateSpace> Ptr;
-  typedef l3::SharedPtr<StateSpace> ConstPtr;
+  typedef l3::SharedPtr<FloatingBaseStep> Ptr;
+  typedef l3::SharedPtr<const FloatingBaseStep> ConstPtr;
 
-  StateSpace(const EnvironmentParameters& params);
-
-  void reset();
-
-  UID updateStart(const State& state);
-  UID updateGoal(const State& state);
-
-  inline PlanningStateHashed::ConstPtr getStartPlanningState() const { return start_state_; }
-  inline PlanningStateHashed::ConstPtr getGoalPlanningState() const { return goal_state_; }
-
-  inline StateHashed::ConstPtr getStartState() const { return start_state_->getState(); }
-  inline StateHashed::ConstPtr getGoalState() const { return goal_state_->getState(); }
-
-  inline void setStartFootIndex(const FootIndex& start_foot_idx) { start_foot_idx_ = start_foot_idx; }
-  inline const FootIndex& getStartFootIndex() const { return start_foot_idx_; }
-
-protected:
-  const EnvironmentParameters& params_;
-
-  PlanningStateHashed::ConstPtr start_state_;
-  PlanningStateHashed::ConstPtr goal_state_;
-  FootIndex start_foot_idx_;
+  FloatingBaseStep(const Pose& neutral_stance, const BaseIndex& base_idx, double dx, double dy, double dpitch, double dyaw, double step_cost, const DiscreteResolution& res);
 };
+
+L3_STATIC_ASSERT_MOVEABLE(FloatingBaseStep)
 }  // namespace l3_footstep_planning
 
 #endif

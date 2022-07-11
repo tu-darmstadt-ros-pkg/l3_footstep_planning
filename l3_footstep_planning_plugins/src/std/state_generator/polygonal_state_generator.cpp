@@ -37,7 +37,7 @@ bool PolygonalStateGenerator::loadParams(const vigir_generic_params::ParameterSe
     return false;
   }
 
-  footstep_sets_.clear();
+  foot_step_sets_.clear();
 
   // iterate all feet
   for (size_t i = 0; i < p.size(); i++)
@@ -61,7 +61,7 @@ bool PolygonalStateGenerator::loadParams(const vigir_generic_params::ParameterSe
 
         // sample area
         for (int yaw = polygon.min_yaw; yaw <= polygon.max_yaw; yaw++)
-          footstep_sets_[foot_idx].push_back(Footstep(neutral_stance, foot_idx, res.toContX(x), res.toContY(y), res.toContAngle(yaw), 0.0, res));
+          foot_step_sets_[foot_idx].push_back(FootStep(neutral_stance, foot_idx, res.toContX(x), res.toContY(y), res.toContAngle(yaw), 0.0, res));
       }
     }
 
@@ -177,17 +177,17 @@ bool PolygonalStateGenerator::loadParams(const vigir_generic_params::ParameterSe
 std::list<StateGenResult> PolygonalStateGenerator::generatePredStateResults(const PlanningState& state, const State& start, const State& goal,
                                                                             const ExpandStatesIdx& state_expansion_idx) const
 {
-  return generatePredFootholds(state, state_expansion_idx, footstep_sets_);
+  return generatePredFootholds(state, state_expansion_idx, foot_step_sets_);
 }
 
 std::list<StateGenResult> PolygonalStateGenerator::generateSuccStateResults(const PlanningState& state, const State& start, const State& goal,
                                                                             const ExpandStatesIdx& state_expansion_idx) const
 {
-  return generateSuccFootholds(state, state_expansion_idx, footstep_sets_);
+  return generateSuccFootholds(state, state_expansion_idx, foot_step_sets_);
 }
 
 std::list<StateGenResult> PolygonalStateGenerator::generatePredFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx,
-                                                                         const FootstepSetMap& footsteps) const
+                                                                         const FootStepSetMap& footsteps) const
 {
   std::list<StateGenResult> result;
 
@@ -199,14 +199,14 @@ std::list<StateGenResult> PolygonalStateGenerator::generatePredFootholds(const P
       continue;
 
     // get pred footsteps
-    FootstepSetMap::const_iterator itr = footsteps.find(idx);
+    FootStepSetMap::const_iterator itr = footsteps.find(idx);
     if (itr == footsteps.end())
       continue;
 
     // generate all states within reachability polygon
     FootholdPtrArray footholds;
-    for (const Footstep& footstep : itr->second)
-      footholds.push_back(footstep.getPredFoothold(state.getState()));
+    for (const FootStep& footstep : itr->second)
+      footholds.push_back(footstep.getPredecessor(state.getState()));
 
     // trivial case: only one leg is moved -> return list of list each with a single foothold
     if (result.empty())
@@ -237,7 +237,7 @@ std::list<StateGenResult> PolygonalStateGenerator::generatePredFootholds(const P
 }
 
 std::list<StateGenResult> PolygonalStateGenerator::generateSuccFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx,
-                                                                         const FootstepSetMap& footsteps) const
+                                                                         const FootStepSetMap& footsteps) const
 {
   std::list<StateGenResult> result;
 
@@ -249,14 +249,14 @@ std::list<StateGenResult> PolygonalStateGenerator::generateSuccFootholds(const P
       continue;
 
     // get succ footsteps
-    FootstepSetMap::const_iterator itr = footsteps.find(idx);
+    FootStepSetMap::const_iterator itr = footsteps.find(idx);
     if (itr == footsteps.end())
       continue;
 
     // generate all states within reachability polygon
     FootholdPtrArray footholds;
-    for (const Footstep& footstep : itr->second)
-      footholds.push_back(footstep.getSuccFoothold(state.getState()));
+    for (const FootStep& footstep : itr->second)
+      footholds.push_back(footstep.getSuccessor(state.getState()));
 
     // trivial case: only one leg is moved -> return list of list each with a single foothold
     if (result.empty())

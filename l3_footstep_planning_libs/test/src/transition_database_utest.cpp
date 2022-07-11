@@ -34,7 +34,7 @@ TEST(Typedefs, Transition)
   fh2_ptr.push_back(db.insert(fh[3]));
   StateHashed::ConstPtr s2_ptr = state_db.insert(State(fh2_ptr, FloatingBaseHashedConstPtrArray()));
 
-  Transition t(Footstep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
+  Transition t(FootStep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
   TransitionHashed::ConstPtr t_ptr = trans_db.insert(t);
 
   // check footholds
@@ -100,7 +100,7 @@ TEST(Typedefs, TransitionHashing)
   StateID s2_id(fh2_ptr, FloatingBaseHashedConstPtrArray());
   StateHashed::ConstPtr s2_ptr = state_db.insert(State(fh2_ptr, FloatingBaseHashedConstPtrArray()));
 
-  Transition t(Footstep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
+  Transition t(FootStep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
   TransitionHashed::ConstPtr t_ptr = trans_db.insert(t);
 
   // check if id still matches
@@ -174,7 +174,7 @@ TEST(Database, TransitionDataBase)
 
   // insert first transition
   TransitionID t1_id(s1_id, s2_id);
-  Transition t1(Footstep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
+  Transition t1(FootStep::ConstPtr(), s1_ptr, s2_ptr, 0.2, 0.1);
   TransitionHashed::ConstPtr t1_ptr = trans_db.insert(t1);
 
   EXPECT_EQ(1, trans_db.size());
@@ -187,21 +187,21 @@ TEST(Database, TransitionDataBase)
 
   // insert second transition
   TransitionID t2_id(s2_id, s3_id);
-  Transition t2(Footstep::ConstPtr(), s2_ptr, s3_ptr, 0.14, 0.01);
+  Transition t2(FootStep::ConstPtr(), s2_ptr, s3_ptr, 0.14, 0.01);
   TransitionHashed::ConstPtr t2_ptr = trans_db.insert(t2);
 
   EXPECT_EQ(2, trans_db.size());
 
   // insert third transition
   TransitionID t3_id(s1_id, s4_id);
-  Transition t3(Footstep::ConstPtr(), s1_ptr, s4_ptr, 0.05, 0.11);
+  Transition t3(FootStep::ConstPtr(), s1_ptr, s4_ptr, 0.05, 0.11);
   TransitionHashed::ConstPtr t3_ptr = trans_db.insert(t3);
 
   EXPECT_EQ(3, trans_db.size());
 
   // insert fourth transition
   TransitionID t4_id(s4_id, s2_id);
-  Transition t4(Footstep::ConstPtr(), s4_ptr, s2_ptr, 0.4, 0.1);
+  Transition t4(FootStep::ConstPtr(), s4_ptr, s2_ptr, 0.4, 0.1);
   TransitionHashed::ConstPtr t4_ptr = trans_db.insert(t4);
 
   EXPECT_EQ(4, trans_db.size());

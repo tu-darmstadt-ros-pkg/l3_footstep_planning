@@ -33,7 +33,7 @@
 
 #include <l3_footstep_planning_libs/modeling/planning_state.h>
 #include <l3_footstep_planning_libs/modeling/step_plan.h>
-#include <l3_footstep_planning_libs/modeling/footstep.h>
+#include <l3_footstep_planning_libs/modeling/foot_step.h>
 
 namespace l3_footstep_planning
 {
@@ -84,14 +84,14 @@ protected:
    * @param dyaw Delta in yaw
    * @return Map of footsteps for each leg
    */
-  std::map<FootIndex, Footstep> generateFootsteps(double dx, double dy, double dyaw) const;
+  std::map<FootIndex, FootStep> generateFootsteps(double dx, double dy, double dyaw) const;
 
   /// @brief Returns the foot pose of a leg for a given robot pose.
   Foothold getFootPose(const Pose& robot, const FootIndex& foot_idx, double dx = 0.0, double dy = 0.0, double dyaw = 0.0) const;
 
   DiscreteResolution res_;
 
-  std::map<FootIndex, Footstep> footsteps_;
+  std::map<FootIndex, FootStep> footsteps_;
   bool single_step_mode_;
   bool change_z_;
 

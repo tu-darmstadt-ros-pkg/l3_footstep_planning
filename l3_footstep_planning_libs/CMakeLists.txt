@@ -97,12 +97,13 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${boost_INCLUDE_DIRS})
 
 ## Specify additional locations of header files
 set(HEADERS
-  include/${PROJECT_NAME}/modeling/basestep.h
+  include/${PROJECT_NAME}/modeling/discrete_step.h
   include/${PROJECT_NAME}/modeling/floating_base_database.h
   include/${PROJECT_NAME}/modeling/floating_base_id.h
+  include/${PROJECT_NAME}/modeling/floating_base_step.h
   include/${PROJECT_NAME}/modeling/foothold_database.h
   include/${PROJECT_NAME}/modeling/foothold_id.h
-  include/${PROJECT_NAME}/modeling/footstep.h
+  include/${PROJECT_NAME}/modeling/foot_step.h
   include/${PROJECT_NAME}/modeling/planning_state.h
   include/${PROJECT_NAME}/modeling/state_space_manager.h
   include/${PROJECT_NAME}/modeling/state.h
@@ -122,10 +123,10 @@ set(HEADERS
 )
 
 set(SOURCES
-  src/modeling/basestep.cpp
   src/modeling/floating_base_database.cpp
   src/modeling/floating_base_id.cpp
-  src/modeling/footstep.cpp
+  src/modeling/floating_base_step.cpp
+  src/modeling/foot_step.cpp
   src/modeling/foothold_database.cpp
   src/modeling/foothold_id.cpp
   src/modeling/planning_state.cpp
