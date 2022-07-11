@@ -29,7 +29,7 @@
 #ifndef L3_FOOTSTEP_PLANNING_PLUGINS_POLYGONAL_STATE_GENERATOR_H__
 #define L3_FOOTSTEP_PLANNING_PLUGINS_POLYGONAL_STATE_GENERATOR_H__
 
-#include <l3_footstep_planning_libs/modeling/footstep.h>
+#include <l3_footstep_planning_libs/modeling/foot_step.h>
 
 #include <l3_footstep_planning_plugins/base/state_generator_plugin.h>
 
@@ -43,8 +43,8 @@ namespace l3_footstep_planning
 class PolygonalStateGenerator : public StateGeneratorPlugin
 {
 protected:
-  typedef std::pair<const FootIndex, std::vector<Footstep>> FootstepSetPair;
-  typedef std::map<FootIndex, std::vector<Footstep>> FootstepSetMap;
+  typedef std::pair<const FootIndex, std::vector<FootStep>> FootStepSetPair;
+  typedef std::map<FootIndex, std::vector<FootStep>> FootStepSetMap;
 
 public:
   PolygonalStateGenerator(const std::string& name = "polygonal_state_generator");
@@ -55,11 +55,11 @@ public:
   std::list<StateGenResult> generateSuccStateResults(const PlanningState& state, const State& start, const State& goal, const ExpandStatesIdx& state_expansion_idx) const override;
 
 protected:
-  std::list<StateGenResult> generatePredFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx, const FootstepSetMap& footsteps) const;
-  std::list<StateGenResult> generateSuccFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx, const FootstepSetMap& footsteps) const;
+  std::list<StateGenResult> generatePredFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx, const FootStepSetMap& footsteps) const;
+  std::list<StateGenResult> generateSuccFootholds(const PlanningState& state, const ExpandStatesIdx& state_expansion_idx, const FootStepSetMap& footsteps) const;
 
   // The set of footsteps used.
-  FootstepSetMap footstep_sets_;
+  FootStepSetMap foot_step_sets_;
 };
 }  // namespace l3_footstep_planning
 

@@ -31,7 +31,7 @@
 
 #include <ros/ros.h>
 
-#include <l3_footstep_planning_libs/modeling/footstep.h>
+#include <l3_footstep_planning_libs/modeling/foot_step.h>
 #include <l3_footstep_planning_libs/modeling/planning_state.h>
 
 namespace l3_footstep_planning
