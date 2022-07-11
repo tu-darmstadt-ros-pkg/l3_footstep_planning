@@ -29,7 +29,7 @@
 #ifndef L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
 #define L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
 
-#include <l3_footstep_planning_libs/modeling/footstep.h>
+#include <l3_footstep_planning_libs/modeling/foot_step.h>
 
 #include <l3_footstep_planning_plugins/base/state_generator_plugin.h>
 
