@@ -123,7 +123,7 @@ public:
     else if constexpr (std::is_same<Type, FloatingBase>::value)
     {
       ROS_ASSERT(current.hasFloatingBases());
-      return getPredecessor(current.getFloatingBase(BaseInfo::MAIN_BODY_IDX)->pose());
+      return getPredecessor(current.getFloatingBase(link_idx_)->pose());
     }
     else
       return l3::SharedPtr<Type>();
@@ -160,7 +160,7 @@ public:
     else if constexpr (std::is_same<Type, FloatingBase>::value)
     {
       ROS_ASSERT(current.hasFloatingBases());
-      return getSuccessor(current.getFloatingBase(BaseInfo::MAIN_BODY_IDX)->pose());
+      return getSuccessor(current.getFloatingBase(link_idx_)->pose());
     }
     else
       return l3::SharedPtr<Type>();
