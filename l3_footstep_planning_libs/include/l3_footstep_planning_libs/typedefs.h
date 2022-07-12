@@ -80,7 +80,7 @@ public:
   {}
 
   /**
-   * @brief Constructor for PlanningResolution
+   * @brief Constructor for DiscreteResolution
    * @param x cell size in x
    * @param y cell size in y
    * @param z cell size in z
@@ -93,7 +93,7 @@ public:
   {}
 
   /**
-   * @brief Constructor for PlanningResolution
+   * @brief Constructor for DiscreteResolution
    * @param x cell size in x
    * @param y cell size in y
    * @param z cell size in z
@@ -106,6 +106,12 @@ public:
   {}
   DiscreteResolution(double x, double y, double z, int num_angle_bins)
     : DiscreteResolution(x, y, z, static_cast<unsigned int>(num_angle_bins))
+  {}
+
+  DiscreteResolution(const Resolution& res)
+    : num_angle_bins_(static_cast<unsigned int>(round(2.0 * M_PI / res.angle)))
+    , to_cont_(res)
+    , to_disc_(to_cont_.invert())
   {}
 
   DiscreteResolution(const XmlRpc::XmlRpcValue& p)
@@ -139,6 +145,8 @@ public:
   }
 
   inline const unsigned int numAngleBins() const { return num_angle_bins_; }
+
+  inline const Resolution& resolution() const { return to_cont_; }
 
   inline const Resolution& toCont() const { return to_cont_; }
 
