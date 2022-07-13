@@ -28,16 +28,16 @@ bool DiagonalStepCostEstimator::getCost(const PlanningState& state, double& cost
   risk = 0.0;
   risk_multiplier = 1.0;
 
-  FootholdMap map = l3::footholdArrayToMap<FootholdMap>(RobotModel::getNeutralStance(state.getState()->getFeetCenter()));
+  FootholdPtrMap map = l3::footholdArrayToMap<FootholdPtrMap>(RobotModel::getNeutralStance(state.getState()->getFeetCenter()));
 
   for (Foothold::ConstPtr f : state.getState()->getFootholds())
   {
-    FootholdMap::const_iterator itr = map.find(f->idx);
+    FootholdPtrMap::const_iterator itr = map.find(f->idx);
     if (itr == map.end())
       continue;
 
-    const Foothold& neutral = itr->second;
-    Transform delta = Foothold::getDelta2D(neutral, *f);
+    Foothold::ConstPtr neutral = itr->second;
+    Transform delta = Foothold::getDelta2D(*neutral, *f);
 
     if (std::abs(delta.x()) > res_x_)
       cost += std::abs(delta.y());

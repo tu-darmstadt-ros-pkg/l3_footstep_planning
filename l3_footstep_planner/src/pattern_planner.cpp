@@ -278,7 +278,7 @@ msgs::ErrorStatus PatternPlanner::generateNeutralStancePattern(const l3_footstep
   msgs::ErrorStatus status;
 
   // determine feet which are not in final position
-  FootholdArray neutral_stance;
+  FootholdPtrArray neutral_stance;
   if (pstate_->getStep()->hasStepData())
     neutral_stance = RobotModel::description()->getNeutralStance(*pstate_->getStep()->getStepDataMap().begin()->second->target);
   else
@@ -286,10 +286,10 @@ msgs::ErrorStatus PatternPlanner::generateNeutralStancePattern(const l3_footstep
 
   std::map<FootIndex, Foothold> open_footholds;
 
-  for (const Foothold& f : neutral_stance)
+  for (Foothold::ConstPtr f : neutral_stance)
   {
-    if (force_all || f != *pstate_->getState()->getFoothold(f.idx))
-      open_footholds[f.idx] = f;
+    if (force_all || *f != *pstate_->getState()->getFoothold(f->idx))
+      open_footholds[f->idx] = *f;
   }
 
   while (!open_footholds.empty())
@@ -392,10 +392,10 @@ std::map<FootIndex, FootStep> PatternPlanner::generateFootsteps(double dx, doubl
   std::map<FootIndex, FootStep> result;
 
   RobotDescription::ConstPtr description = RobotModel::instance().description();
-  for (const Foothold& f : description->getNeutralStance(Pose(dx, dy, 0.0, 0.0, 0.0, dyaw)))
+  for (Foothold::ConstPtr f : description->getNeutralStance(Pose(dx, dy, 0.0, 0.0, 0.0, dyaw)))
   {
-    const Pose& n = description->getFootInfo(f.idx).neutral_stance;
-    result.emplace(f.idx, FootStep(n, f.idx, f.x() - n.x(), f.y() - n.y(), f.yaw() - n.yaw(), 0.0, res_));
+    const Pose& n = description->getFootInfo(f->idx).neutral_stance;
+    result.emplace(f->idx, FootStep(n, f->idx, f->x() - n.x(), f->y() - n.y(), f->yaw() - n.yaw(), 0.0, res_));
   }
 
   return result;
@@ -406,10 +406,10 @@ Foothold PatternPlanner::getFootPose(const Pose& robot, const FootIndex& foot_id
   RobotDescription::ConstPtr description = RobotModel::instance().description();
 
   Pose pose(robot.x() + dx, robot.y() + dy, robot.z(), robot.roll(), robot.pitch(), robot.yaw() + dyaw);
-  for (const Foothold& f : description->getNeutralStance(pose))
+  for (Foothold::ConstPtr f : description->getNeutralStance(pose))
   {
-    if (f.idx == foot_idx)
-      return f;
+    if (f->idx == foot_idx)
+      return *f;
   }
 
   return Foothold();

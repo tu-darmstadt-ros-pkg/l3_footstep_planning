@@ -39,6 +39,7 @@ namespace l3_footstep_planning
 {
 using namespace vigir_generic_params;
 
+/// @todo extend to multiple bases planning
 struct StateGenResult
 {
   StateGenResult()
