@@ -128,10 +128,10 @@ bool IKReachability::initialize(const ParameterSet& params)
   }
 
   FootholdArray footholds;
-  for (Foothold& f : RobotModel::description()->getNeutralStance())
+  for (Foothold::ConstPtr f : RobotModel::description()->getNeutralStance())
   {
-    if (f.idx != foot_idx_)
-      footholds.push_back(f);
+    if (f->idx != foot_idx_)
+      footholds.push_back(*f);
   }
 
   Transform center_to_base = RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description());
