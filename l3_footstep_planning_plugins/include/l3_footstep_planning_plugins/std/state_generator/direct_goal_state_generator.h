@@ -40,7 +40,15 @@ class DirectGoalStateGenerator : public StateGeneratorPlugin
 public:
   DirectGoalStateGenerator();
 
+  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+
   std::list<StateGenResult> generateNearStateResults(const PlanningState& current, const PlanningState& target, const ExpandStatesIdx& state_expansion_idx) const override;
+
+protected:
+  static bool hasEqualFootholdElement(StateHashed::ConstPtr current, StateHashed::ConstPtr target);
+  static bool hasEqualFloatingBaseElement(StateHashed::ConstPtr current, StateHashed::ConstPtr target);
+
+  bool strict_mode_;
 };
 }  // namespace l3_footstep_planning
 
