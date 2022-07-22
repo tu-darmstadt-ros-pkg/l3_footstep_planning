@@ -1,4 +1,4 @@
-<library path="lib/libl3_footstep_planning_libs">
+<library path="lib/libl3_footstep_planning_plugins">
   <class name="step_plan_msg_plugin" type="l3_footstep_planning::StepPlanMsgPlugin" base_class_type="l3_footstep_planning::StepPlanMsgPlugin">
     <description>
       StepPlanMsgPlugin: Plugin for (un-)packing robot specific messages
@@ -26,7 +26,7 @@
   </class>
   <class name="polygonal_state_generator" type="l3_footstep_planning::PolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
     <description>
-      StateGeneratorPlugin: Generates states based on reachability polygon
+      PolygonalStateGenerator: Generates states based on reachability polygon
     </description>
   </class>
   <class name="ik_polygonal_state_generator" type="l3_footstep_planning::IKPolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
