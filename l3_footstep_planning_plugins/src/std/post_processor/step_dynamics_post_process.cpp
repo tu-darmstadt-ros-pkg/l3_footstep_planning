@@ -11,8 +11,8 @@ bool StepDynamicsPostProcess::loadParams(const vigir_generic_params::ParameterSe
   if (!PostProcessPlugin::loadParams(params))
     return false;
 
-  default_swing_height_ = param("swing_height", 0.1);
-  default_sway_duration_ = param("sway_duration", 0.0);
+  default_swing_height_ = param("swing_height", 0.1, true);
+  default_sway_duration_ = param("sway_duration", 0.0, true);
   default_step_duration_ = param("step_duration", 1.0);
 
   calc_body_vel_ = param("calc_body_vel", false, true);
@@ -24,6 +24,7 @@ bool StepDynamicsPostProcess::postProcess(PlanningState& state) const
 {
   if (calc_body_vel_)
   {
+    /// @todo Use floating base here if available
     const Pose& cur = state.getState()->getFeetCenter();
     const Pose& adj = state.getAdjacentState()->getFeetCenter();
 
