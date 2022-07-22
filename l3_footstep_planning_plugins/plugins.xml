@@ -1,4 +1,4 @@
-<library path="lib/libl3_footstep_planning_libs">
+<library path="lib/libl3_footstep_planning_plugins">
   <class name="step_plan_msg_plugin" type="l3_footstep_planning::StepPlanMsgPlugin" base_class_type="l3_footstep_planning::StepPlanMsgPlugin">
     <description>
       StepPlanMsgPlugin: Plugin for (un-)packing robot specific messages
@@ -27,6 +27,11 @@
   <class name="lattice_state_generator" type="l3_footstep_planning::LatticeStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
     <description>
       LatticeStateGenerator: Generates kinodynamic-constrained states
+    </description>
+  </class>
+  <class name="lattice_goal_state_generator" type="l3_footstep_planning::LatticeGoalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
+    <description>
+      LatticeGoalStateGenerator: Generates kinodynamic-constrained goal states
     </description>
   </class>
   <class name="polygonal_state_generator" type="l3_footstep_planning::PolygonalStateGenerator" base_class_type="l3_footstep_planning::StateGeneratorPlugin">
