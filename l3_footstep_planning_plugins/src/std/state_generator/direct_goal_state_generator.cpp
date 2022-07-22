@@ -2,8 +2,6 @@
 
 #include <l3_libs/robot_description/base_info.h>
 
-#include <l3_footstep_planning_libs/modeling/state_space_manager.h>
-
 namespace l3_footstep_planning
 {
 DirectGoalStateGenerator::DirectGoalStateGenerator()

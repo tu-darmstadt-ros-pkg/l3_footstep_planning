@@ -117,7 +117,7 @@ public:
   {
     if constexpr (std::is_same<Type, Foothold>::value)
     {
-      ROS_ASSERT(current.getFoothold(foot_idx_));
+      ROS_ASSERT(current.getFoothold(link_idx_));
       return getPredecessor(current.getFeetCenter());
     }
     else if constexpr (std::is_same<Type, FloatingBase>::value)
@@ -154,7 +154,7 @@ public:
   {
     if constexpr (std::is_same<Type, Foothold>::value)
     {
-      ROS_ASSERT(current.getFoothold(foot_idx_));
+      ROS_ASSERT(current.getFoothold(link_idx_));
       return getSuccessor(current.getFeetCenter());
     }
     else if constexpr (std::is_same<Type, FloatingBase>::value)

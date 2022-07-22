@@ -22,34 +22,34 @@ bool PolygonalStateGenerator::loadParams(const vigir_generic_params::ParameterSe
   // read resolution
   if (hasParam("resolution"))
     res = DiscreteResolution(getSubset("resolution"));
-  // use planner resolution
+  // otherwise use planner resolution
   else
     res = DiscreteResolution(params.getSubset("resolution"));
 
   // check parameter format
-  XmlRpc::XmlRpcValue p;
-  getParam("reachability_polygons/feet", p, XmlRpc::XmlRpcValue());
+  XmlRpc::XmlRpcValue feet_params;
+  getParam("reachability_polygons/feet", feet_params, XmlRpc::XmlRpcValue());
 
-  if (p.getType() != XmlRpc::XmlRpcValue::TypeArray)
+  if (feet_params.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
     ROS_ERROR_NAMED("PolygonalStateGenerator", "[PolygonalStateGenerator] Parameter 'reachability_polygons/feet' must be given as array (currently '%s')!",
-                    l3::toString(p.getType()).c_str());
+                    l3::toString(feet_params.getType()).c_str());
     return false;
   }
 
   foot_step_sets_.clear();
 
-  // iterate all feet
-  for (size_t i = 0; i < p.size(); i++)
+  // iterate over all feet
+  for (size_t i = 0; i < feet_params.size(); i++)
   {
     FootIndex foot_idx;
-    if (!l3::getYamlValue(p[i], "idx", foot_idx))
+    if (!l3::getYamlValue(feet_params[i], "idx", foot_idx))
       return false;
 
     const Pose& neutral_stance = RobotModel::description()->getFootInfo(foot_idx).neutral_stance;
 
     StepRangePolygon polygon;
-    if (!polygon.fromYaml(p[i], res))
+    if (!polygon.fromYaml(feet_params[i], res))
       return false;
 
     for (int y = polygon.min_y; y <= polygon.max_y; y++)
