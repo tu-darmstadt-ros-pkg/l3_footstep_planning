@@ -7,7 +7,7 @@ robot_model:
         shape: "SPHERICAL" # CUBOID, SPHERICAL
         size: {x: 0.7, y: 1.1, z: 1.95} # [m]
         link: "pelvis"
-        link_to_center_offset: {x: -0.1, y: 0.00, z: 0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad], transformation from body center to tf frame
+        link_to_feet_center_offset: {x: -0.1, y: 0.00, z: 0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad], transformation from geometric feet center to tf frame
     
     ### foot settings ##############################################################
     base_foot: &base_foot
@@ -21,7 +21,8 @@ robot_model:
         link: "l_foot"
         # position (offset) of planner foot frame (center of sole) given in robot's "foot" link frame
         link_to_sole_offset: {x:  0.00, y:  0.0155, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad]
-        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+
+        # the neutral stance describes the pose of each foot (center of sole) relative to the geometric feet center
         neutral_stance: {x:  0.00, y:  0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
         vis:
           color: {r: 0.0, g: 1.0, b: 0.0, a: 0.6}
@@ -32,10 +33,12 @@ robot_model:
         link: "r_foot"
         # position (offset) of planner foot frame (center of sole) given in robot's "foot" link frame
         link_to_sole_offset: {x:  0.00, y: -0.0155, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00} # 3x[m] 3x[rad]
-        # the neutral stance describes the pose of each foot (center of sole) relative to the (implicitly defined) robot center
+        # the neutral stance describes the pose of each foot (center of sole) relative to the geometric feet center
         neutral_stance: {x:  0.00, y: -0.1085, z:  0.00, roll:  0.00, pitch:  0.00, yaw:  0.00}
         vis:
           color: {r: 1.0, g: 0.0, b: 0.0, a: 0.6}
+
+    ### plugins ####################################################################
   plugins:
     gait_generator:
       name: bipedal_gait_generator
