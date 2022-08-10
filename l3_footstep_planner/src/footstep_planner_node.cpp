@@ -87,99 +87,7 @@ void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
   // clang-format on
 }
 
-void FootstepPlannerNode::postProcessRequestVis(msgs::StepPlanRequest& req) const
-{
-  /// post process start state
-
-  FootPoseTransformer::transformToPlannerFrame(req.start_footholds);
-  FootholdArray footholds;
-  footholdArrayMsgToL3(req.start_footholds, footholds);
-
-  // post process footholds
-  State s;
-  for (Foothold& f : footholds)
-  {
-    PostProcessor::instance().postProcess(f);
-    s.updateFoothold(StateSpaceManager::addFoothold(f));
-  }
-
-  ///@todo Implement FloatingBasePostTransformer
-  // post process floating bases
-  if (s.hasFloatingBases())
-  {
-    for (const FloatingBase::ConstPtr& fb : s.getFloatingBases())
-    {
-      FloatingBase base(*fb);
-      PostProcessor::instance().postProcess(base);
-      s.updateFloatingBase(StateSpaceManager::addFloatingBase(base));
-    }
-  }
-  else
-  {
-    FloatingBaseArray floating_bases;
-    floatingBaseArrayMsgToL3(req.start_floating_bases, floating_bases);
-    for (FloatingBase& fb : floating_bases)
-    {
-      PostProcessor::instance().postProcess(fb);
-      s.updateFloatingBase(StateSpaceManager::addFloatingBase(fb));
-    }
-  }
-
-  // post process state
-  PostProcessor::instance().postProcess(s);
-
-  // save result in request
-  footholdArrayL3ToMsg(s.getFootholds(), req.start_footholds);
-  FootPoseTransformer::transformToRobotFrame(req.start_footholds);
-
-  floatingBaseArrayL3ToMsg(s.getFloatingBases(), req.start_floating_bases);
-
-  /// post process goal state
-
-  FootPoseTransformer::transformToPlannerFrame(req.goal_footholds);
-  footholdArrayMsgToL3(req.goal_footholds, footholds);
-
-  // post process footholds
-  s = State();
-  for (Foothold& f : footholds)
-  {
-    PostProcessor::instance().postProcess(f);
-    s.updateFoothold(StateSpaceManager::addFoothold(f));
-  }
-
-  ///@todo Implement FloatingBasePostTransformer
-  // post process floating bases
-  if (s.hasFloatingBases())
-  {
-    for (const FloatingBase::ConstPtr& fb : s.getFloatingBases())
-    {
-      FloatingBase base(*fb);
-      PostProcessor::instance().postProcess(base);
-      s.updateFloatingBase(StateSpaceManager::addFloatingBase(base));
-    }
-  }
-  else
-  {
-    FloatingBaseArray floating_bases;
-    floatingBaseArrayMsgToL3(req.goal_floating_bases, floating_bases);
-    for (FloatingBase& fb : floating_bases)
-    {
-      PostProcessor::instance().postProcess(fb);
-      s.updateFloatingBase(StateSpaceManager::addFloatingBase(fb));
-    }
-  }
-
-  // post process state
-  PostProcessor::instance().postProcess(s);
-
-  // save result in request
-  footholdArrayL3ToMsg(s.getFootholds(), req.goal_footholds);
-  FootPoseTransformer::transformToRobotFrame(req.goal_footholds);
-
-  floatingBaseArrayL3ToMsg(s.getFloatingBases(), req.goal_floating_bases);
-}
-
-// --- Callbacks ---
+/// --- Callbacks ---
 
 void FootstepPlannerNode::planningResultCallback(const msgs::StepPlanRequestService::Response& resp)
 {
@@ -246,7 +154,7 @@ void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<ms
     as->setPreempted();
 }
 
-// --- Subscriber calls ---
+/// --- Subscriber calls ---
 
 void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 {
@@ -290,9 +198,7 @@ void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr& p
   // clang-format on
 
   // visualize request
-  msgs::StepPlanRequest req_vis = step_plan_request.plan_request;
-  postProcessRequestVis(req_vis);
-  step_plan_request_vis_pub.publish(req_vis);
+  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] stepPlanRequest:\n%s", toString(status).c_str());
@@ -312,6 +218,15 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   else if (hasWarning(status))
     ROS_WARN("[FootstepPlannerNode] Warning occured while obtaining start feet pose:\n%s", toString(status).c_str());
 
+  // get start floating bases
+  msgs::FloatingBaseArray start_floating_bases;
+
+  if (RobotModel::kinematics())
+  {
+    /// @todo Implement as optional feature
+    // start_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
+  }
+
   // get goal feet pose
   msgs::FootholdArray goal_footholds;
   status = determineGoalFootholds(goal_footholds, generate_feet_pose_client, *goal_pose);
@@ -326,11 +241,30 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   footstep_planner->updateFeet(goal_footholds, msgs::UpdateMode::UPDATE_MODE_MOVE_TO_VALID);
 
+  // get start floating bases
+  msgs::FloatingBaseArray goal_floating_bases;
+
+  if (RobotModel::kinematics())
+  {
+    Pose pose;
+    poseMsgToL3(goal_pose->pose, pose);
+
+    FootholdArray footholds;
+    footholdArrayMsgToL3(goal_footholds, footholds);
+
+    Transform t = RobotModel::kinematics()->calcFeetCenterToBase(*RobotModel::description(), pose, footholds);
+    pose = pose * t;
+    /// @todo Implement as optional feature
+    // goal_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
+  }
+
   // request step plan
   msgs::StepPlanRequestService::Request step_plan_request;
   step_plan_request.plan_request.header = goal_pose->header;
   step_plan_request.plan_request.start_footholds = start_footholds;
   step_plan_request.plan_request.goal_footholds = goal_footholds;
+  step_plan_request.plan_request.start_floating_bases = start_floating_bases;
+  step_plan_request.plan_request.goal_floating_bases = goal_floating_bases;
   step_plan_request.plan_request.start_foot_idx = msgs::StepPlanRequest::AUTO_START_FOOT_IDX;
   step_plan_request.plan_request.start_step_idx = 0;
   step_plan_request.plan_request.planning_mode = WorldModel::instance().isTerrainModelAvailable() ? static_cast<uint8_t>(msgs::StepPlanRequest::PLANNING_MODE_3D) :
@@ -343,15 +277,13 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
                                              boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
 
   // visualize request
-  msgs::StepPlanRequest req_vis = step_plan_request.plan_request;
-  postProcessRequestVis(req_vis);
-  step_plan_request_vis_pub.publish(req_vis);
+  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] goalPoseCallback:\n%s", toString(status).c_str());
 }
 
-// --- service calls ---
+/// --- service calls ---
 
 bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp)
 {
@@ -368,9 +300,7 @@ bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::R
     resp.status += ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "stepPlanRequestService: Can't call footstep planner service!");
 
   // visualize request
-  msgs::StepPlanRequest req_vis = req.plan_request;
-  postProcessRequestVis(req_vis);
-  step_plan_request_vis_pub.publish(req_vis);
+  step_plan_request_vis_pub.publish(req.plan_request);
 
   temp_step_plan_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
   step_plan_vis_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
@@ -401,7 +331,7 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
   return true;  // return always true so the message is returned
 }
 
-//--- action server calls ---
+///--- action server calls ---
 
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
@@ -441,9 +371,7 @@ void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPla
   // clang-format on
 
   // visualize request
-  msgs::StepPlanRequest req_vis = step_plan_request.plan_request;
-  postProcessRequestVis(req_vis);
-  step_plan_request_vis_pub.publish(req_vis);
+  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] stepPlanRequest:\n%s", toString(status).c_str());

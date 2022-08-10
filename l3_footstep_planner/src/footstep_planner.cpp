@@ -138,6 +138,7 @@ bool FootstepPlanner::plan(ReplanParams& params)
 
   ROS_INFO("Expanded states: %i total / %i new", planner_environment_->getNumExpandedStates(), planner_->get_n_expands());
   ROS_INFO("Generated footholds: %lu", StateSpaceManager::getNumFootholds());
+  ROS_INFO("Generated floating bases: %lu", StateSpaceManager::getNumFloatingBases());
   ROS_INFO("Generated states: %lu", StateSpaceManager::getNumStates());
   ROS_INFO("Generated planning states: %lu", StateSpaceManager::getNumPlanningStates());
   // ROS_INFO("Generated transitions: %lu", StateSpaceManager::getNumTransitions());
@@ -566,14 +567,6 @@ void FootstepPlanner::resetTotally()
 
 msgs::ErrorStatus FootstepPlanner::planSteps(msgs::StepPlanRequestService::Request& req)
 {
-  // set start foot poses
-  if (!setStart(req.plan_request, true))  /// @TODO: Hack to disable collision check for start pose
-    return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_START, "FootstepPlanner", "planSteps: Could not set start pose! Please check if poses are set!");
-
-  // set goal foot poses
-  if (!setGoal(req.plan_request))
-    return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "planSteps: Could not set goal pose! Please check if poses are set!");
-
   ReplanParams params(req.plan_request.max_planning_time > 0 ? req.plan_request.max_planning_time : env_params_->max_planning_time);
   params.initial_eps = req.plan_request.initial_eps > 0.0 ? req.plan_request.initial_eps : env_params_->initial_eps;
   params.final_eps = 1.0;
@@ -775,22 +768,20 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   return true;
 }
 
-msgs::ErrorStatus FootstepPlanner::stepPlanRequest(const msgs::StepPlanRequestService::Request& req, ResultCB result_cb, FeedbackCB feedback_cb, PreemptCB preempt_cb)
+msgs::ErrorStatus FootstepPlanner::stepPlanRequest(msgs::StepPlanRequestService::Request& req, ResultCB result_cb, FeedbackCB feedback_cb, PreemptCB preempt_cb)
 {
   // preempt any planning
   preemptPlanning();
-
-  msgs::StepPlanRequestService::Request request = req;
 
   result_cb_ = result_cb;
   preempt_cb_ = preempt_cb;
 
   // load parameter set, if given
-  if (!request.plan_request.parameter_set_name.data.empty())
+  if (!req.plan_request.parameter_set_name.data.empty())
   {
-    if (!ParameterManager::setActive(request.plan_request.parameter_set_name.data))
+    if (!ParameterManager::setActive(req.plan_request.parameter_set_name.data))
       return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_PARAMETERS, "FootstepPlanner",
-                              "stepPlanRequest: Can't find parameter set named '" + request.plan_request.parameter_set_name.data + "'!");
+                              "stepPlanRequest: Can't find parameter set named '" + req.plan_request.parameter_set_name.data + "'!");
 
     setParams(ParameterManager::getActive());
   }
@@ -801,12 +792,12 @@ msgs::ErrorStatus FootstepPlanner::stepPlanRequest(const msgs::StepPlanRequestSe
   }
 
   // transform feet poses
-  FootPoseTransformer::transformToPlannerFrame(request.plan_request.start_footholds);
-  FootPoseTransformer::transformToPlannerFrame(request.plan_request.goal_footholds);
+  FootPoseTransformer::transformToPlannerFrame(req.plan_request.start_footholds);
+  FootPoseTransformer::transformToPlannerFrame(req.plan_request.goal_footholds);
 
   // set request specific parameters
-  start_foot_idx_ = request.plan_request.start_foot_idx;
-  feedback_handler_.setFrameId(request.plan_request.header.frame_id);
+  start_foot_idx_ = req.plan_request.start_foot_idx;
+  feedback_handler_.setFrameId(req.plan_request.header.frame_id);
   feedback_handler_.setFeedbackCB(feedback_cb);
 
   // check if gait generator is available
@@ -814,9 +805,13 @@ msgs::ErrorStatus FootstepPlanner::stepPlanRequest(const msgs::StepPlanRequestSe
     return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "stepPlanRequest: No gait generator available!");
 
   // start planning
-  startPlanning(request);
+  msgs::ErrorStatus status = preparePlanning(req);
 
-  return msgs::ErrorStatus();
+  // transform feet poses back
+  FootPoseTransformer::transformToRobotFrame(req.plan_request.start_footholds);
+  FootPoseTransformer::transformToRobotFrame(req.plan_request.goal_footholds);
+
+  return status;
 }
 
 bool FootstepPlanner::stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp)
@@ -836,10 +831,23 @@ bool FootstepPlanner::stepPlanRequestService(msgs::StepPlanRequestService::Reque
   return true;  // return always true so the message is returned
 }
 
-void FootstepPlanner::startPlanning(msgs::StepPlanRequestService::Request& req)
+msgs::ErrorStatus FootstepPlanner::preparePlanning(msgs::StepPlanRequestService::Request& req)
 {
+  if (req.plan_request.planning_mode != msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
+  {
+    // set start foot poses
+    if (!setStart(req.plan_request, true))  /// @TODO: Hack to disable collision check for start pose
+      return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_START, "FootstepPlanner", "preparePlanning: Could not set start pose! Please check if poses are set!");
+
+    // set goal foot poses
+    if (!setGoal(req.plan_request))
+      return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "preparePlanning: Could not set goal pose! Please check if poses are set!");
+  }
+
   // start planning in seperate thread
   planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);
+
+  return msgs::ErrorStatus();
 }
 
 void FootstepPlanner::doPlanning(msgs::StepPlanRequestService::Request& req)
@@ -994,18 +1002,21 @@ bool FootstepPlanner::setStart(const State& state, bool ignore_collision)
   return true;
 }
 
-bool FootstepPlanner::setStart(const msgs::StepPlanRequest& req, bool ignore_collision)
+bool FootstepPlanner::setStart(msgs::StepPlanRequest& req, bool ignore_collision)
 {
   FootholdArray footholds;
   footholdArrayMsgToL3(req.start_footholds, footholds);
 
-  if (footholds.empty())
+  FloatingBaseArray floating_bases;
+  floatingBaseArrayMsgToL3(req.start_floating_bases, floating_bases);
+
+  if (footholds.empty() && floating_bases.empty())
   {
     ROS_ERROR("[FootstepPlanner] Start state was empty!");
     return false;
   }
 
-  // generate state
+  // post process footholds
   for (Foothold& f : footholds)
   {
     if (!PostProcessor::instance().postProcess(f))
@@ -1015,22 +1026,20 @@ bool FootstepPlanner::setStart(const msgs::StepPlanRequest& req, bool ignore_col
     }
   }
 
-  State s(StateSpaceManager::addFootholds(footholds), FloatingBaseHashedConstPtrArray());
+  // generate state
+  State s(StateSpaceManager::addFootholds(footholds), FloatingBaseHashedConstPtrArray(StateSpaceManager::addFloatingBases(floating_bases)));
   s.setIsStart(true);
 
-  // add footholds
   if (!PostProcessor::instance().postProcess(s))
   {
     ROS_ERROR("[FootstepPlanner] Start state post processing failed!");
     return false;
   }
 
+  // if state post processing did not generate any floating bases, then use the given from request
   if (!s.hasFloatingBases())
   {
-    FloatingBaseArray floating_bases;
-    floatingBaseArrayMsgToL3(req.start_floating_bases, floating_bases);
-
-    // add floating base
+    // post process floating base
     for (FloatingBase& fb : floating_bases)
     {
       if (!PostProcessor::instance().postProcess(fb))
@@ -1041,6 +1050,10 @@ bool FootstepPlanner::setStart(const msgs::StepPlanRequest& req, bool ignore_col
       s.updateFloatingBase(StateSpaceManager::addFloatingBase(fb));
     }
   }
+
+  // return actually used state
+  footholdArrayL3ToMsg(s.getFootholds(), req.start_footholds);
+  floatingBaseArrayL3ToMsg(s.getFloatingBases(), req.start_floating_bases);
 
   return setStart(s, ignore_collision);
 }
@@ -1075,18 +1088,21 @@ bool FootstepPlanner::setGoal(const State& state, bool ignore_collision)
   return true;
 }
 
-bool FootstepPlanner::setGoal(const msgs::StepPlanRequest& req, bool ignore_collision)
+bool FootstepPlanner::setGoal(msgs::StepPlanRequest& req, bool ignore_collision)
 {
   FootholdArray footholds;
   footholdArrayMsgToL3(req.goal_footholds, footholds);
 
-  if (footholds.empty())
+  FloatingBaseArray floating_bases;
+  floatingBaseArrayMsgToL3(req.goal_floating_bases, floating_bases);
+
+  if (footholds.empty() && floating_bases.empty())
   {
     ROS_ERROR("[FootstepPlanner] Goal state was empty!");
     return false;
   }
 
-  // generate state
+  // post process footholds
   for (Foothold& f : footholds)
   {
     if (!PostProcessor::instance().postProcess(f))
@@ -1096,22 +1112,20 @@ bool FootstepPlanner::setGoal(const msgs::StepPlanRequest& req, bool ignore_coll
     }
   }
 
-  State s(StateSpaceManager::addFootholds(footholds), FloatingBaseHashedConstPtrArray());
+  // generate state
+  State s(StateSpaceManager::addFootholds(footholds), StateSpaceManager::addFloatingBases(floating_bases));
   s.setIsGoal(true);
 
-  // add footholds
   if (!PostProcessor::instance().postProcess(s))
   {
     ROS_ERROR("[FootstepPlanner] Goal state post processing failed!");
     return false;
   }
 
+  // if state post processing did not generate any floating bases, then use the given from request
   if (!s.hasFloatingBases())
   {
-    FloatingBaseArray floating_bases;
-    floatingBaseArrayMsgToL3(req.start_floating_bases, floating_bases);
-
-    // add floating base
+    // post process floating base
     for (FloatingBase& fb : floating_bases)
     {
       if (!PostProcessor::instance().postProcess(fb))
@@ -1122,6 +1136,10 @@ bool FootstepPlanner::setGoal(const msgs::StepPlanRequest& req, bool ignore_coll
       s.updateFloatingBase(StateSpaceManager::addFloatingBase(fb));
     }
   }
+
+  // return actually used state
+  footholdArrayL3ToMsg(s.getFootholds(), req.goal_footholds);
+  floatingBaseArrayL3ToMsg(s.getFloatingBases(), req.goal_floating_bases);
 
   return setGoal(s, ignore_collision);
 }

@@ -56,9 +56,6 @@ public:
   virtual void initialize(ros::NodeHandle& nh);
 
 protected:
-  // helper
-  void postProcessRequestVis(msgs::StepPlanRequest& req) const;
-
   // callbacks
   void planningResultCallback(const msgs::StepPlanRequestService::Response& resp);
   void planningResultActionCallback(const msgs::StepPlanRequestService::Response& resp, SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as);
