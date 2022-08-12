@@ -122,6 +122,7 @@ void ExpandStateJob::run()
   // post process newly generated state if state space manager has not returned a cached state
   if (!new_hashed_state)
   {
+    /// @todo updated ids should be expanded ids
     bool success = PostProcessor::instance().postProcess(new_state, updated_ids);
     new_state.setValid(success);
 

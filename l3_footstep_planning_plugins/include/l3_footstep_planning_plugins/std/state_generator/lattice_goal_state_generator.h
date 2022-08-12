@@ -26,50 +26,33 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
-#define L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
+#ifndef L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_GOAL_STATE_GENERATOR_H__
+#define L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_GOAL_STATE_GENERATOR_H__
 
-#include <l3_footstep_planning_libs/modeling/floating_base_step.h>
+#include <ros/ros.h>
 
 #include <l3_footstep_planning_plugins/base/state_generator_plugin.h>
 
 namespace l3_footstep_planning
 {
-/**
- * @brief The LatticeStateGenerator expands floating bases based on pre-defined
- * kinodynamic constraints.
- *
- * Params
- *  base_idx                  [int] (optional)
- *  expand_neutral_stance     [boolean] (default: false)
- *  turn_in_place             [boolean] (default: true)
- *  turn_in_place:            [dict]
- *    num_of_bins             [int]
- *    max_dyaw                [float]
- */
-class LatticeStateGenerator : public StateGeneratorPlugin
+class LatticeGoalStateGenerator : public StateGeneratorPlugin
 {
 public:
-  LatticeStateGenerator(const std::string& name = "lattice_state_generator");
+  LatticeGoalStateGenerator();
 
   bool loadParams(const vigir_generic_params::ParameterSet& params) override;
 
-  std::list<StateGenResult> generatePredStateResults(const PlanningState& state, const State& start, const State& goal, const ExpandStatesIdx& state_expansion_idx) const override;
-  std::list<StateGenResult> generateSuccStateResults(const PlanningState& state, const State& start, const State& goal, const ExpandStatesIdx& state_expansion_idx) const override;
+  std::list<StateGenResult> generateNearStateResults(const PlanningState& current, const PlanningState& target, const ExpandStatesIdx& state_expansion_idx) const override;
 
 protected:
-  bool generateMotionPrimitives(const DiscreteResolution& lattice_res);
-
   // params
   BaseIndex base_idx_;
 
   bool expand_neutral_stance_;
 
-  // Resolution of planner
-  DiscreteResolution planner_res_;
-
-  // The set of floating base steps used.
-  std::vector<FloatingBaseStep> motion_primitives_;
+  double max_dist_;
+  double max_dist_sq_;
+  double min_curve_radius_;
 };
 }  // namespace l3_footstep_planning
 

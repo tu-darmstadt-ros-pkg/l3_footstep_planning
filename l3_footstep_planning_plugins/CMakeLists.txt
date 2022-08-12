@@ -134,6 +134,7 @@ set(HEADERS
   include/${PROJECT_NAME}/std/state_generator/direct_goal_state_generator.h
   include/${PROJECT_NAME}/std/state_generator/expand_state_job.h
   include/${PROJECT_NAME}/std/state_generator/ik_polygonal_state_generator.h
+  include/${PROJECT_NAME}/std/state_generator/lattice_goal_state_generator.h
   include/${PROJECT_NAME}/std/state_generator/lattice_state_generator.h
   include/${PROJECT_NAME}/std/state_generator/polygonal_state_generator.h
   include/${PROJECT_NAME}/std/step_cost_estimator/boundary_step_cost_estimator.h
@@ -188,6 +189,7 @@ set(SOURCES
   src/std/state_generator/direct_goal_state_generator.cpp
   src/std/state_generator/expand_state_job.cpp
   src/std/state_generator/ik_polygonal_state_generator.cpp
+  src/std/state_generator/lattice_goal_state_generator.cpp
   src/std/state_generator/lattice_state_generator.cpp
   src/std/state_generator/polygonal_state_generator.cpp
   src/std/step_cost_estimator/boundary_step_cost_estimator.cpp
