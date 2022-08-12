@@ -47,18 +47,18 @@ struct StateGenResult
     , floating_base()
   {}
 
-  StateGenResult(const FootholdPtrArray& footholds, FloatingBase::ConstPtr floating_base = FloatingBase::ConstPtr())
+  StateGenResult(const FootholdPtrArray& footholds, FloatingBase::Ptr floating_base = FloatingBase::Ptr())
     : footholds(footholds)
     , floating_base(floating_base)
   {}
 
-  StateGenResult(FootholdPtrArray&& footholds, FloatingBase::ConstPtr&& floating_base = FloatingBase::ConstPtr())
+  StateGenResult(FootholdPtrArray&& footholds, FloatingBase::Ptr&& floating_base = FloatingBase::Ptr())
     : footholds(std::move(footholds))
     , floating_base(std::move(floating_base))
   {}
 
   FootholdPtrArray footholds;
-  FloatingBase::ConstPtr floating_base;
+  FloatingBase::Ptr floating_base;
 };
 
 class StateGeneratorPlugin : public virtual FootstepPlanningPlugin

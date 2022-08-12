@@ -46,6 +46,8 @@
 
 #include <l3_footstep_planning_msgs/footstep_planning_msgs.h>
 
+#include <l3_footstep_planning_libs/typedefs.h>
+
 namespace l3_footstep_planning
 {
 using namespace l3;
@@ -110,6 +112,8 @@ FootholdArray applyFootIdxWhitelist(const FootholdArray& footholds, const FootIn
 FootholdPtrArray applyFootIdxWhitelist(const FootholdPtrArray& footholds, const FootIndexSet& foot_idx_whitelist);
 FootholdConstPtrArray applyFootIdxWhitelist(const FootholdConstPtrArray& footholds, const FootIndexSet& foot_idx_whitelist);
 
+FootholdPtrArray getNeutralStance(const FloatingBase& floating_base);
+FootholdPtrArray getNeutralStance(const FloatingBase& floating_base, const DiscreteResolution& resolution);
 }  // namespace l3_footstep_planning
 
 #endif

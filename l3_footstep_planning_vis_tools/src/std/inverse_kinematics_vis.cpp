@@ -57,7 +57,7 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   const std::string& base_link = base_info.link;
   const std::string& root_link = RobotModel::kinematics()->getRootLink();
   if (!RobotModel::kinematics()->calcStaticTransformForChain(base_link, root_link, base_to_root_))
-    ROS_WARN("[%s] calcFeetCenterToBase: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(),
+    ROS_WARN("[%s] initialize: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(),
              root_link.c_str());
 
   // get other parameters
@@ -79,7 +79,7 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   std::vector<double> joint_values = param("joint_values", std::vector<double>(), true);
 
   if (joint_names.size() != joint_values.size())
-    ROS_ERROR("[InverseKinematicsVis] initialize: 'joint_names' does not have same length as 'joint_values'!");
+    ROS_ERROR("[%s] initialize: 'joint_names' does not have same length as 'joint_values'!", getName().c_str());
   else
   {
     for (size_t i = 0; i < joint_names.size(); i++)
@@ -87,7 +87,7 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   }
 
   if (!calcNeutralStanceIK(def_leg_joint_states_))
-    ROS_WARN("[InverseKinematicsVis] initialize: Calcuation of neutral stance joint states failed.");
+    ROS_WARN("[%s] initialize: Calcuation of neutral stance joint states failed.", getName().c_str());
 
   // subscribe topics
   joint_state_sub_ = nh_.subscribe<sensor_msgs::JointState>(param("joint_states_topic", std::string("joint_states"), true), 1, &InverseKinematicsVis::jointStateCB, this);

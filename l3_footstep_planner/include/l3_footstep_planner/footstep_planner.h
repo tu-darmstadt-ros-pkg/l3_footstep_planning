@@ -77,8 +77,18 @@ public:
   msgs::ErrorStatus updateFeet(msgs::FootholdArray& footholds, uint8_t mode, bool transform = true) const;
   msgs::ErrorStatus updateStepPlan(msgs::StepPlan& result, uint8_t mode, const std::string& param_set_name = std::string(), bool transform = true) const;
 
-  msgs::ErrorStatus stepPlanRequest(const l3_footstep_planning_msgs::StepPlanRequestService::Request& req, ResultCB result_cb = ResultCB(), FeedbackCB feedback_cb = FeedbackCB(), PreemptCB preempt_cb = PreemptCB());
-  /// @brief Service handle to plan footsteps.
+  /**
+   * @brief Non-blocking call to plan footsteps.
+   * @param req The acutal planning request. The input arguments may be updated
+   * according to the real used value by the planner (e.g. discretization, post processing)
+   */
+  msgs::ErrorStatus stepPlanRequest(l3_footstep_planning_msgs::StepPlanRequestService::Request& req, ResultCB result_cb = ResultCB(), FeedbackCB feedback_cb = FeedbackCB(), PreemptCB preempt_cb = PreemptCB());
+
+  /**
+   * @brief Blocking call to plan footsteps.
+   * @param req The acutal planning request. The input arguments may be updated
+   * according to the real used value by the planner (e.g. discretization, post processing)
+   */
   bool stepPlanRequestService(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp);
 
   /// @brief stops thread running planning
@@ -105,7 +115,8 @@ protected:
   bool finalizeStepPlan(msgs::StepPlanRequestService::Request& req, msgs::StepPlanRequestService::Response& resp, bool post_process);
 
   /// @brief: starts planning in a new thread
-  void startPlanning(msgs::StepPlanRequestService::Request& req);
+  msgs::ErrorStatus preparePlanning(msgs::StepPlanRequestService::Request& req);
+
   /// @brief: method used in seperate thread
   void doPlanning(msgs::StepPlanRequestService::Request& req);
 
@@ -121,9 +132,11 @@ protected:
   /**
    * @brief Sets the start pose
    *
+   * @param req The acutal planning request. The input arguments may be updated
+   * according to the real used value by the planner (e.g. discretization, post processing)
    * @return True if the two foot poses have been set successfully.
    */
-  bool setStart(const msgs::StepPlanRequest& req, bool ignore_collision = false);
+  bool setStart(msgs::StepPlanRequest& req, bool ignore_collision = false);
 
   /**
    * @brief Sets the goal pose as position of left and right footsteps.
@@ -135,9 +148,11 @@ protected:
   /**
    * @brief Sets the goal pose
    *
+   * @param req The acutal planning request. The input arguments may be updated
+   * according to the real used value by the planner (e.g. discretization, post processing)
    * @return True if the two foot poses have been set successfully.
    */
-  bool setGoal(const msgs::StepPlanRequest& req, bool ignore_collision = false);
+  bool setGoal(msgs::StepPlanRequest& req, bool ignore_collision = false);
 
   /// @return Costs of the planned footstep path.
   inline double getPathCosts() const { return path_cost_; }

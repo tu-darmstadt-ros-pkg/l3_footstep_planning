@@ -1,5 +1,9 @@
 #include <l3_footstep_planning_libs/helper.h>
 
+#include <l3_plugins/robot_model.h>
+
+#include <l3_footstep_planning_libs/modeling/floating_base_id.h>
+
 namespace l3_footstep_planning
 {
 bool getXYZ(ros::NodeHandle& nh, const std::string name, geometry_msgs::Vector3& val)
@@ -131,5 +135,19 @@ FootholdConstPtrArray applyFootIdxWhitelist(const FootholdConstPtrArray& foothol
     }
     return result;
   }
+}
+
+FootholdPtrArray getNeutralStance(const FloatingBase& floating_base)
+{
+  ROS_ASSERT(l3::RobotModel::kinematics());
+
+  l3::Pose feet_center = l3::RobotModel::kinematics()->calcStaticFeetCenterToBase(*l3::RobotModel::description()).inverse() * floating_base.pose();
+  return RobotModel::getNeutralStance(feet_center);
+}
+
+FootholdPtrArray getNeutralStance(const FloatingBase& floating_base, const DiscreteResolution& resolution)
+{
+  FloatingBaseID id(floating_base, resolution);
+  return getNeutralStance(id.getDiscreteFloatingBase(resolution));
 }
 }  // namespace l3_footstep_planning
