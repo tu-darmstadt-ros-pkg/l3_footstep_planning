@@ -26,7 +26,7 @@ bool SimpleFloatingBasePostProcess::postProcess(State& state, const FootIndexArr
 {
   // if updated_ids is empty, it's not called from the planning process
   /// @todo only adding floating base to the goal state but not to intermediate steps will not let the A* converge
-  if (post_process_state_ /*|| (updated_ids.empty() && !state.hasFloatingBase())*/)
+  if (post_process_state_ && !state.hasFloatingBases()/*|| (updated_ids.empty() && !state.hasFloatingBase())*/)
     state.updateFloatingBase(StateSpaceManager::addFloatingBase(determineFloatingBase(state.getFootholds(), state.getFeetCenter())));
 
   return true;
