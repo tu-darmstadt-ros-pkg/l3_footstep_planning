@@ -268,6 +268,9 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
   else
     ROS_WARN("[FootstepPlanner] setParams: No plugin set was given by parameter set '%s'", params.getName().c_str());
 
+  // reinitialize StateManager
+  StateSpaceManager::initialize(params);
+
   /// @todo: Notify vis node of new plugin set
 
   // hold already loaded plugins, as the configured plugins could be overwritten/removed by the plugin set
@@ -310,9 +313,6 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
   // reinitialize hfs heuristics
   HFSHeuristic::mutableInstance().loadPlugins(false);
   HFSHeuristic::mutableInstance().loadParams(params);
-
-  // reinitialize StateManager
-  StateSpaceManager::initialize(params);
 
   // print use mask summary
   std::vector<FootstepPlanningPlugin::ConstPtr> plugins;
