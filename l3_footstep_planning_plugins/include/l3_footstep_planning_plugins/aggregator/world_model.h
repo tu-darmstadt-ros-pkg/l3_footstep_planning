@@ -54,6 +54,7 @@ public:
 
   // evaluation will be done in alphabetical order of plugin names
   bool isAccessible(const Foothold& foothold) const;
+  bool isAccessible(const FloatingBase& floating_base) const;
   bool isAccessible(const State& state) const;
   bool isAccessible(const PlanningState& state) const;
 

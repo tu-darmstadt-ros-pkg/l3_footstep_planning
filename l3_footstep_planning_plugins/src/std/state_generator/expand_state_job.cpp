@@ -97,6 +97,9 @@ void ExpandStateJob::run()
     if (!PostProcessor::instance().postProcess(floating_base))
       return;
 
+    if (!WorldModel::instance().isAccessible(floating_base))
+      return;
+
     new_floating_base_hashed_ = StateSpaceManager::addFloatingBase(floating_base);
   }
 

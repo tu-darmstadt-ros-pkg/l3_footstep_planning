@@ -57,7 +57,8 @@ public:
 
   virtual bool isCollisionCheckAvailable() const;
 
-  virtual bool isAccessible(const Foothold& foothold) const = 0;
+  virtual bool isAccessible(const Foothold& foothold) const { return true; };
+  virtual bool isAccessible(const FloatingBase& foothold) const { return true; };
   virtual bool isAccessible(const State& state) const;
   virtual bool isAccessible(const PlanningState& state) const;
 

@@ -63,6 +63,16 @@ bool WorldModel::isAccessible(const Foothold& foothold) const
   return true;
 }
 
+bool WorldModel::isAccessible(const FloatingBase& floating_base) const
+{
+  for (WorldModelPlugin::Ptr plugin : getPlugins())
+  {
+    if (plugin && plugin->isCollisionCheckAvailable() && !plugin->isAccessible(floating_base))
+      return false;
+  }
+  return true;
+}
+
 bool WorldModel::isAccessible(const State& state) const
 {
   for (WorldModelPlugin::Ptr plugin : getPlugins())
