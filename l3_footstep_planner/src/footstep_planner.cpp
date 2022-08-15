@@ -546,11 +546,13 @@ void FootstepPlanner::resetTotally()
   boost::recursive_mutex::scoped_lock lock(planner_mutex_);
 
   // reset plugins
+  UseMaskGenerator::mutableInstance().resetPlugins();
   StateGenerator::mutableInstance().resetPlugins();
   Reachability::mutableInstance().resetPlugins();
   PostProcessor::mutableInstance().resetPlugins();
   StepCostEstimator::mutableInstance().resetPlugins();
   Heuristic::mutableInstance().resetPlugins();
+  HFSHeuristic::mutableInstance().resetPlugins();
 
   // reset state manager
   StateSpaceManager::clear();
