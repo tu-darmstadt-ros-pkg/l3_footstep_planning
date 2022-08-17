@@ -56,14 +56,14 @@ public:
    * @param state PlanningState to be validated
    * @return true, when next state is reachable
    */
-  virtual bool isReachable(const PlanningState& state) const = 0;
+  virtual bool isReachable(const PlanningState& state) const { return true; }
 
   /**
    * @brief Determines if current state is (kinematically) feasible.
    * @param state State to be validated
    * @return true, when current state reachable
    */
-  virtual bool isReachable(const State& state) const = 0;
+  virtual bool isReachable(const State& state) const { return true; }
 };
 }  // namespace l3_footstep_planning
 
