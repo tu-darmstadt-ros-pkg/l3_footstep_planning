@@ -39,7 +39,7 @@ bool EuclideanStepCostEstimator::getCost(const PlanningState& state, double& cos
     return false;
 }
 
-bool EuclideanStepCostEstimator::getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
+bool EuclideanStepCostEstimator::getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   cost = norm(step_data.dx, step_data.dy);
   cost_multiplier = 1.0;

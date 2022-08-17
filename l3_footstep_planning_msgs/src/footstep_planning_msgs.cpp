@@ -43,7 +43,7 @@ msgs::ErrorStatus isConsistent(const msgs::StepPlan& step_plan)
 
   for (const msgs::Step& step : step_plan.plan.steps)
   {
-    if (step.step_data.empty() && step.support.empty())
+    if (step.foot_steps.empty() && step.support_feet.empty())
     {
       status += ErrorStatusWarning(msgs::ErrorStatus::ERR_INCONSISTENT_STEP_PLAN, "isConsistent", "Step plan contains empty steps!");
       continue;
@@ -52,15 +52,15 @@ msgs::ErrorStatus isConsistent(const msgs::StepPlan& step_plan)
     if (step_idx == -1)
       step_idx = step.idx;
 
-    for (const msgs::StepData& step_data : step.step_data)
+    for (const msgs::FootStepData& foot_step : step.foot_steps)
     {
-      if (step_data.origin.header.frame_id != step_plan.header.frame_id)
+      if (foot_step.origin.header.frame_id != step_plan.header.frame_id)
         status += ErrorStatusError(msgs::ErrorStatus::ERR_INCONSISTENT_STEP_PLAN, "isConsistent",
-                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step origin: '" + step_data.origin.header.frame_id + "'");
+                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step origin: '" + foot_step.origin.header.frame_id + "'");
 
-      if (step_data.target.header.frame_id != step_plan.header.frame_id)
+      if (foot_step.target.header.frame_id != step_plan.header.frame_id)
         status += ErrorStatusError(msgs::ErrorStatus::ERR_INCONSISTENT_STEP_PLAN, "isConsistent",
-                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step target: '" + step_data.target.header.frame_id + "'");
+                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step target: '" + foot_step.target.header.frame_id + "'");
     }
 
     if (step.idx != step_idx)

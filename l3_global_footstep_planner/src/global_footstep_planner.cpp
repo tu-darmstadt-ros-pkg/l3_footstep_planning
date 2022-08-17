@@ -94,8 +94,8 @@ msgs::ErrorStatus GlobalFootstepPlanner::editStep(const msgs::EditStep& edit_ste
     msgs::Step step = edit_step.step;
     if (update_mode.mode)
     {
-      for (msgs::StepData& step_data : step.step_data)
-        status += footstep_planner->updateFoot(step_data.target, update_mode.mode);
+      for (msgs::FootStepData& foot_step : step.foot_steps)
+        status += footstep_planner->updateFoot(foot_step.target, update_mode.mode);
     }
 
     // update plan

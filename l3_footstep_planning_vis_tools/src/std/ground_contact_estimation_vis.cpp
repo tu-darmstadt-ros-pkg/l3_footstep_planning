@@ -14,7 +14,7 @@ GroundContactEstimationVis::GroundContactEstimationVis()
 
 void GroundContactEstimationVis::visualize(const msgs::PlanningFeedback& planning_feedback)
 {
-  if (!planning_feedback.last_visited_step.step_data.empty())
+  if (!planning_feedback.last_visited_step.foot_steps.empty())
   {
     Step step;
     stepMsgToL3(planning_feedback.last_visited_step, step);

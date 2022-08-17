@@ -83,7 +83,7 @@ protected:
     }
   };
 
-  std::set<msgs::StepData, StepDataMsgVisCompare> visited_steps_;
+  std::set<msgs::FootStepData, StepDataMsgVisCompare> visited_footholds_;
   std::set<msgs::BaseStepData, StepDataMsgVisCompare> visited_bases_;
 };
 }  // namespace l3_footstep_planning

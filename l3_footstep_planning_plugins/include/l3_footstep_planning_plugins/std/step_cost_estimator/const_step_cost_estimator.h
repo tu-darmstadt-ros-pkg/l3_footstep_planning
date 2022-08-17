@@ -43,7 +43,7 @@ public:
   bool getCost(const PlanningState& state, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 
 protected:
-  bool getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
+  bool getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
   bool getCost(const BaseStepData& base_step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 
   double const_step_cost;

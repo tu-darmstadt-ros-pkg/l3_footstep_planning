@@ -153,7 +153,7 @@ std::string StepPlan::toString() const
 
     for (const Step::StepDataPair& p : step->getStepDataMap())
       s << "[" << step->getStepIndex() << "] " << *p.second << std::endl;
-    for (const FootholdConstPtrPair& p : step->getSupportMap())
+    for (const FootholdConstPtrPair& p : step->getSupportFootMap())
       s << "[" << step->getStepIndex() << "] " << *p.second << std::endl;
 
     s << "------------------" << std::endl;
@@ -390,12 +390,12 @@ msgs::ErrorStatus StepPlan::_insertStep(Step::Ptr step)
     if (step->hasStepData())
       header_ = step->getStepDataMap().begin()->second->origin->header;
     else
-      header_ = step->getSupportMap().begin()->second->header;
+      header_ = step->getSupportFootMap().begin()->second->header;
   }
 
   for (const Step::StepDataPair& p : step->getStepDataMap())
   {
-    StepData::ConstPtr step_data = p.second;
+    FootStepData::ConstPtr step_data = p.second;
 
     if (step_data->origin->header.frame_id != header_.frame_id)
       return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "insertStep",
@@ -442,20 +442,20 @@ msgs::ErrorStatus StepPlan::_appendStepPlan(const StepPlan& step_plan)
     if (last_step)
     {
       // perform only when not explicitly given
-      if (step->getSupportMap().empty())
+      if (step->getSupportFootMap().empty())
       {
         // gather data from stepdata
         for (Step::StepDataPair p : last_step->getStepDataMap())
         {
           if (!step->hasStepData(p.first))
-            step->updateSupport(p.second->target);
+            step->updateSupportFoot(p.second->target);
         }
 
         // gather alternatively data from support data
-        for (FootholdConstPtrPair p : last_step->getSupportMap())
+        for (FootholdConstPtrPair p : last_step->getSupportFootMap())
         {
           if (!step->hasStepData(p.first))
-            step->updateSupport(p.second);
+            step->updateSupportFoot(p.second);
         }
       }
 
@@ -485,15 +485,15 @@ msgs::ErrorStatus StepPlan::_updateStepPlan(const StepPlan& step_plan)
     Step::Ptr step(new Step(*e.second));
 
     // restore support legs from old step if missing in updated input step
-    if (step->getSupportMap().empty())
+    if (step->getSupportFootMap().empty())
     {
       Step::ConstPtr old_step = getStep(step->getStepIndex());
       if (old_step)
       {
-        for (FootholdConstPtrPair p : old_step->getSupportMap())
+        for (FootholdConstPtrPair p : old_step->getSupportFootMap())
         {
           if (!step->hasStepData(p.first))
-            step->updateSupport(p.second);
+            step->updateSupportFoot(p.second);
         }
       }
     }

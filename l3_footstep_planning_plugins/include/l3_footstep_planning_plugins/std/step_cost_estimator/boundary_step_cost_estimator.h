@@ -41,7 +41,7 @@ public:
   bool loadParams(const vigir_generic_params::ParameterSet& params) override;
 
 protected:
-  bool getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
+  bool getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const override;
 
   double max_diff_z;                      // maximum amount for step up/down
   double long_step_dist;                  // all larger distances are treated as long distance [m]

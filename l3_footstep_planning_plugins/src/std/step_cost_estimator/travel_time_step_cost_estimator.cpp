@@ -41,15 +41,15 @@ bool TravelTimeStepCostEstimator::getCost(const PlanningState& state, double& co
   {
     for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
     {
-      StepData::ConstPtr step_data = p.second;
+      FootStepData::ConstPtr foot_step = p.second;
       ROS_ASSERT(step_data);
 
       // do only consider specific foot ids when given
-      if (ignoreFootIdx(step_data->target->idx))
+      if (ignoreFootIdx(foot_step->target->idx))
         continue;
 
       double c, c_m, r, r_m;
-      if (!getCost(*step_data, c, c_m, r, r_m))
+      if (!getCost(*foot_step, c, c_m, r, r_m))
         return false;
 
       ROS_ASSERT(c_m >= 1.0);
@@ -69,7 +69,7 @@ bool TravelTimeStepCostEstimator::getCost(const PlanningState& state, double& co
   return true;
 }
 
-bool TravelTimeStepCostEstimator::getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
+bool TravelTimeStepCostEstimator::getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   double linear_cost = linear_vel_inv_ > 0.0 ? norm(step_data.dx, step_data.dy, step_data.dz) * linear_vel_inv_ : 0.0;
   double angular_cost = angular_vel_inv_ > 0.0 ? std::abs(step_data.dyaw) * angular_vel_inv_ : 0.0;

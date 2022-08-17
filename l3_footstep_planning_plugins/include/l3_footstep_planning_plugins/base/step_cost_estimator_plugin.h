@@ -71,7 +71,7 @@ protected:
    * @param risk_multiplier [out] Risk multiplication factor (must be >= 1.0; default: 1.0)
    * @return
    */
-  virtual bool getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const;
+  virtual bool getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const;
 
   /**
    * @brief Returns cost of transition represented by the floating base step data.

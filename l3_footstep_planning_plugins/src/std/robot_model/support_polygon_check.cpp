@@ -73,8 +73,8 @@ bool SupportPolygonCheck::isReachable(const PlanningState& state) const
   {
     for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
     {
-      StepData::ConstPtr step_data = p.second;
-      Foothold::ConstPtr foothold = forwardSearch() ? step_data->target : step_data->origin;
+      FootStepData::ConstPtr foot_step = p.second;
+      Foothold::ConstPtr foothold = forwardSearch() ? foot_step->target : foot_step->origin;
       if (!isReachable(*foothold))
         return false;
     }

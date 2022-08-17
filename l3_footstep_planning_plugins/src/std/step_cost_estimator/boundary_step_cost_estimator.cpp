@@ -25,7 +25,7 @@ bool BoundaryStepCostEstimator::loadParams(const vigir_generic_params::Parameter
   return true;
 }
 
-bool BoundaryStepCostEstimator::getCost(const StepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
+bool BoundaryStepCostEstimator::getCost(const FootStepData& step_data, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   risk = 0.0;
 

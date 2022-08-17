@@ -68,7 +68,7 @@ void isEqualTest(const msgs::FloatingBaseArray& exp, const msgs::FloatingBaseArr
     isEqualTest(exp[i], res[i], abs_error);
 }
 
-void isEqualTest(const msgs::StepData& exp, const msgs::StepData& res, double abs_error)
+void isEqualTest(const msgs::FootStepData& exp, const msgs::FootStepData& res, double abs_error)
 {
   isEqualTest(exp.origin, res.origin, abs_error);
   isEqualTest(exp.target, res.target, abs_error);
@@ -102,9 +102,9 @@ void isEqualTest(const msgs::Step& exp, const msgs::Step& res, double abs_error)
 {
   EXPECT_EQ(exp.idx, res.idx);
 
-  for (size_t i = 0; i < exp.step_data.size(); i++)
-    isEqualTest(exp.step_data[i], res.step_data[i], abs_error);
-  isEqualTest(exp.support, res.support, abs_error);
+  for (size_t i = 0; i < exp.foot_steps.size(); i++)
+    isEqualTest(exp.foot_steps[i], res.foot_steps[i], abs_error);
+  isEqualTest(exp.support_feet, res.support_feet, abs_error);
 
   for (size_t i = 0; i < exp.moving_bases.size(); i++)
     isEqualTest(exp.moving_bases[i], res.moving_bases[i], abs_error);

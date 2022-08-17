@@ -160,7 +160,7 @@ void InverseKinematicsVis::visualize(const Step& step, const std::string& frame_
   for (const Step::StepDataPair& p : step.getStepDataMap())
     footholds.push_back(*p.second->target);
 
-  for (const FootholdConstPtrPair& p : step.getSupportMap())
+  for (const FootholdConstPtrPair& p : step.getSupportFootMap())
     footholds.push_back(*p.second);
 
   FloatingBaseMap floating_bases;

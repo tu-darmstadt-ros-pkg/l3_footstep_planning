@@ -30,7 +30,6 @@
 #define L3_FOOTSTEP_PLANNING_HASH_H__
 
 #include <l3_libs/types/typedefs.h>
-#include <l3_libs/types/step_data.h>
 #include <l3_footstep_planning_libs/typedefs.h>
 
 namespace l3
@@ -128,6 +127,22 @@ Hash hash_value(const Foothold& foothold);
  * @return calculated hash value
  */
 Hash hash_value(const FootholdArray& array);
+
+/**
+ * @brief Extension of hashing based on boost library.
+ * Note: The components roll and pitch are ignored as they are constrained by terrain.
+ * @param floating_base Input FloatingBase
+ * @return calculated hash value
+ */
+Hash hash_value(const FloatingBase& floating_base);
+
+/**
+ * @brief Extension of hashing based on boost library.
+ * Note: The components roll and pitch are ignored as they are constrained by terrain.
+ * @param array Input FloatingBaseArray
+ * @return calculated hash value
+ */
+Hash hash_value(const FloatingBaseArray& array);
 }  // namespace l3
 
 #endif

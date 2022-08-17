@@ -61,17 +61,17 @@ bool PolygonalReachability::isReachable(const PlanningState& state) const
 
   for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
   {
-    StepData::ConstPtr step_data = p.second;
+    FootStepData::ConstPtr foot_step = p.second;
 
     // check if new (current) state is valid
-    Foothold::ConstPtr foothold = forwardSearch() ? step_data->target : step_data->origin;
+    Foothold::ConstPtr foothold = forwardSearch() ? foot_step->target : foot_step->origin;
     Transform delta = Foothold::getDelta2D(robot_pose, *foothold);
     if (!isReachable(foothold->idx, delta.x(), delta.y(), delta.yaw()))
       return false;
 
     // check if swing state (midstance pose) is valid
-    delta = Foothold::getDelta2D(swing_pose, *step_data->target);
-    if (!isReachable(step_data->target->idx, delta.x(), delta.y(), delta.yaw()))
+    delta = Foothold::getDelta2D(swing_pose, *foot_step->target);
+    if (!isReachable(foot_step->target->idx, delta.x(), delta.y(), delta.yaw()))
       return false;
   }
 

@@ -50,7 +50,7 @@ void isEqualTest(const geometry_msgs::Pose& exp, const geometry_msgs::Pose& res,
 void isEqualTest(const msgs::Foothold& exp, const msgs::Foothold& res, double abs_error = 0.0);
 void isEqualTest(const msgs::FootholdArray& exp, const msgs::FootholdArray& res, double abs_error = 0.0);
 void isEqualTest(const msgs::FloatingBase& exp, const msgs::FloatingBase& res, double abs_error = 0.0);
-void isEqualTest(const msgs::StepData& exp, const msgs::StepData& res, double abs_error = 0.0);
+void isEqualTest(const msgs::FootStepData& exp, const msgs::FootStepData& res, double abs_error = 0.0);
 void isEqualTest(const msgs::Step& exp, const msgs::Step& res, double abs_error = 0.0);
 void isEqualTest(const msgs::StepPlan& exp, const msgs::StepPlan& res, double abs_error = 0.0);
 

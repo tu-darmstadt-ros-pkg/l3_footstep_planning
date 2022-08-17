@@ -46,9 +46,9 @@ bool StepDynamicsPostProcess::postProcess(Step& step) const
   return true;
 }
 
-void StepDynamicsPostProcess::determineStepAttributes(StepData& step) const { step.swing_height = default_swing_height_; }
+void StepDynamicsPostProcess::determineStepAttributes(FootStepData& step) const { step.swing_height = default_swing_height_; }
 
-void StepDynamicsPostProcess::determineTimings(StepData& step) const
+void StepDynamicsPostProcess::determineTimings(FootStepData& step) const
 {
   step.sway_duration = default_sway_duration_;
   step.step_duration = default_step_duration_;

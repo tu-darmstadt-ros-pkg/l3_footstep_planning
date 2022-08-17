@@ -99,24 +99,24 @@ msgs::ErrorStatus FootPoseTransformer::transform(msgs::FootholdArray& feet, cons
   return status;
 }
 
-msgs::ErrorStatus FootPoseTransformer::transform(msgs::StepData& step_data, const std::string& target_frame)
+msgs::ErrorStatus FootPoseTransformer::transform(msgs::FootStepData& foot_step, const std::string& target_frame)
 {
-  return transform(step_data.origin, target_frame) + transform(step_data.target, target_frame);
+  return transform(foot_step.origin, target_frame) + transform(foot_step.target, target_frame);
 }
 
-msgs::ErrorStatus FootPoseTransformer::transform(msgs::StepDataArray& step_data_array, const std::string& target_frame)
+msgs::ErrorStatus FootPoseTransformer::transform(msgs::FootStepDataArray& foot_steps, const std::string& target_frame)
 {
   msgs::ErrorStatus status;
-  for (msgs::StepData& step_data : step_data_array)
-    status += transform(step_data, target_frame);
+  for (msgs::FootStepData& foot_step : foot_steps)
+    status += transform(foot_step, target_frame);
   return status;
 }
 
 msgs::ErrorStatus FootPoseTransformer::transform(msgs::Step& step, const std::string& target_frame)
 {
   msgs::ErrorStatus status;
-  status += transform(step.step_data, target_frame);
-  for (msgs::Foothold& foothold : step.support)
+  status += transform(step.foot_steps, target_frame);
+  for (msgs::Foothold& foothold : step.support_feet)
     status += transform(foothold, target_frame);
   return status;
 }
@@ -178,25 +178,25 @@ msgs::ErrorStatus transform(msgs::FootholdArray& feet, ros::ServiceClient& trans
   return transform_service.response.status;
 }
 
-msgs::ErrorStatus transform(msgs::StepData& step_data, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame)
+msgs::ErrorStatus transform(msgs::FootStepData& foot_step, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame)
 {
   msgs::ErrorStatus status;
-  status += transform(step_data.origin, transform_feet_poses_client, target_frame);
-  status += transform(step_data.target, transform_feet_poses_client, target_frame);
+  status += transform(foot_step.origin, transform_feet_poses_client, target_frame);
+  status += transform(foot_step.target, transform_feet_poses_client, target_frame);
   return status;
 }
 
-msgs::ErrorStatus transform(msgs::StepDataArray& step_data_array, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame)
+msgs::ErrorStatus transform(msgs::FootStepDataArray& foot_steps, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame)
 {
   msgs::ErrorStatus status;
 
   msgs::TransformFeetPosesService transform_service;
 
   // transform all footholds of each step
-  for (const msgs::StepData& step_data : step_data_array)
+  for (const msgs::FootStepData& foot_step : foot_steps)
   {
-    transform_service.request.feet.push_back(step_data.origin);
-    transform_service.request.feet.push_back(step_data.target);
+    transform_service.request.feet.push_back(foot_step.origin);
+    transform_service.request.feet.push_back(foot_step.target);
   }
 
   // call service
@@ -205,10 +205,10 @@ msgs::ErrorStatus transform(msgs::StepDataArray& step_data_array, ros::ServiceCl
     return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "transformToPlannerFrame", "Can't call 'FootPoseTransformer' for step data array transform!");
 
   // dispatch result
-  for (size_t i = 0; i < step_data_array.size(); i++)
+  for (size_t i = 0; i < foot_steps.size(); i++)
   {
-    step_data_array[i].origin = transform_service.response.feet[2 * i];
-    step_data_array[i].target = transform_service.response.feet[2 * i + 1];
+    foot_steps[i].origin = transform_service.response.feet[2 * i];
+    foot_steps[i].target = transform_service.response.feet[2 * i + 1];
   }
 
   return status;
@@ -217,8 +217,8 @@ msgs::ErrorStatus transform(msgs::StepDataArray& step_data_array, ros::ServiceCl
 msgs::ErrorStatus transform(msgs::Step& step, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame)
 {
   msgs::ErrorStatus status;
-  status += transform(step.step_data, transform_feet_poses_client, target_frame);
-  status += transform(step.support, transform_feet_poses_client, target_frame);
+  status += transform(step.foot_steps, transform_feet_poses_client, target_frame);
+  status += transform(step.support_feet, transform_feet_poses_client, target_frame);
   return status;
 }
 

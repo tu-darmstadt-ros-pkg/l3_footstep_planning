@@ -205,7 +205,7 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids, const UID& 
       // start state consists of all "non-moving step data" of all feet and all floating bases
       step = Step::make();
       for (Foothold::ConstPtr fh : pstate->getState()->getFootholds())
-        step->updateSupport(fh);
+        step->updateSupportFoot(fh);
       for (FloatingBase::ConstPtr fb : pstate->getState()->getFloatingBases())
         step->updateRestingFloatingBase(fb);
     }
@@ -465,11 +465,11 @@ msgs::ErrorStatus FootstepPlanner::updateStepPlan(msgs::StepPlan& step_plan, uin
       msgs::Step& cur_step = *itr;
       // State cur_state = State(StepData(cur_step));
 
-      for (msgs::StepData& cur_step_data : cur_step.step_data)
+      for (msgs::FootStepData& cur_foot_step : cur_step.foot_steps)
       {
         // update feet
-        status += updateFoot(cur_step_data.origin, mode, false);
-        status += updateFoot(cur_step_data.target, mode, false);
+        status += updateFoot(cur_foot_step.origin, mode, false);
+        status += updateFoot(cur_foot_step.target, mode, false);
 
         // check reachability
         if (mode & msgs::UpdateMode::UPDATE_MODE_CHECK_VALIDITY)
@@ -601,14 +601,14 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
   resp.step_plan.header.seq = step_plan_uid_++;
 
   // add footstep plan
-  msgs::StepData step_msg;
+  msgs::FootStepData foot_step_msg;
 
   footholdArrayL3ToMsg(start_state_->getFootholds(), resp.step_plan.start);
   if (goal_state_)
     footholdArrayL3ToMsg(goal_state_->getFootholds(), resp.step_plan.goal);
 
-  step_msg.origin.header = resp.step_plan.header;
-  step_msg.target.header = resp.step_plan.header;
+  foot_step_msg.origin.header = resp.step_plan.header;
+  foot_step_msg.target.header = resp.step_plan.header;
   //  step.valid = true;
   //  step.colliding = false;
 
@@ -633,25 +633,25 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     // get start and goal foothold config
     for (const Step::StepDataPair& p : step->getStepDataMap())
     {
-      StepData::Ptr step_data = p.second;
+      FootStepData::Ptr foot_step = p.second;
 
       // convert footstep
-      Foothold fh = *step_data->origin;
+      Foothold fh = *foot_step->origin;
       fh.header = resp.step_plan.header;
-      step_data->origin = makeShared<Foothold>(fh);
+      foot_step->origin = makeShared<Foothold>(fh);
 
-      fh = *step_data->target;
+      fh = *foot_step->target;
       fh.header = resp.step_plan.header;
-      step_data->target = makeShared<Foothold>(fh);
+      foot_step->target = makeShared<Foothold>(fh);
     }
 
     // get resting legs
-    for (const FootholdConstPtrPair& p : step->getSupportMap())
+    for (const FootholdConstPtrPair& p : step->getSupportFootMap())
     {
       // convert footstep
       Foothold::Ptr f(new Foothold(*p.second));
       f->header = resp.step_plan.header;
-      step->updateSupport(f);
+      step->updateSupportFoot(f);
     }
 
     // get start and goal floating base config
@@ -730,15 +730,15 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     for (const msgs::Step& step : resp.step_plan.plan.steps)
     {
       ROS_INFO("-------------------------------------");
-      for (const msgs::StepData& step_data : step.step_data)
+      for (const msgs::FootStepData& foot_step : step.foot_steps)
       {
         geometry_msgs::Vector3 n;
-        quaternionToNormal(step_data.target.pose.orientation, n);
-        ROS_INFO("[%i][%i] x/y/z - yaw: %.3f/%.3f/%.3f - %.3f", step.idx, step_data.target.idx, step_data.target.pose.position.x, step_data.target.pose.position.y,
-                 step_data.target.pose.position.z, tf::getYaw(step_data.target.pose.orientation));
-        ROS_INFO("[%i][%i] n: %.3f/%.3f/%.3f", step.idx, step_data.target.idx, n.x, n.y, n.z);
-        ROS_INFO("[%i][%i] swing height: %.3f, sway duration: %.3f, step duration: %.3f", step.idx, step_data.target.idx, step_data.swing_height, step_data.sway_duration,
-                 step_data.step_duration);
+        quaternionToNormal(foot_step.target.pose.orientation, n);
+        ROS_INFO("[%i][%i] x/y/z - yaw: %.3f/%.3f/%.3f - %.3f", step.idx, foot_step.target.idx, foot_step.target.pose.position.x, foot_step.target.pose.position.y,
+                 foot_step.target.pose.position.z, tf::getYaw(foot_step.target.pose.orientation));
+        ROS_INFO("[%i][%i] n: %.3f/%.3f/%.3f", step.idx, foot_step.target.idx, n.x, n.y, n.z);
+        ROS_INFO("[%i][%i] swing height: %.3f, sway duration: %.3f, step duration: %.3f", step.idx, foot_step.target.idx, foot_step.swing_height, foot_step.sway_duration,
+                 foot_step.step_duration);
         // ROS_INFO("[%i][%i] valid: %s, colliding: %s", step.idx, step_data.target.idx, step.valid ? "y" : "n", step.colliding ? "y" : "n");
         // ROS_INFO("[%i][%i] cost: %.3f risk: %.3f", step.idx, step_data.target.idx, step.cost, step.risk);
 
@@ -748,7 +748,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
         ROS_INFO("-------------------------------------");
       }
 
-      for (const msgs::Foothold& foothold : step.support)
+      for (const msgs::Foothold& foothold : step.support_feet)
       {
         geometry_msgs::Vector3 n;
         quaternionToNormal(foothold.pose.orientation, n);

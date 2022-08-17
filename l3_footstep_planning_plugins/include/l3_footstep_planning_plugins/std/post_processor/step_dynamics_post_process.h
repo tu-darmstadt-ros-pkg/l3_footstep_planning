@@ -47,8 +47,8 @@ public:
 
 protected:
   // following methods represents single processing steps which will be execute in the given order
-  virtual void determineStepAttributes(StepData& step) const;
-  virtual void determineTimings(StepData& step) const;
+  virtual void determineStepAttributes(FootStepData& step) const;
+  virtual void determineTimings(FootStepData& step) const;
 
   double default_swing_height_;
   double default_sway_duration_;

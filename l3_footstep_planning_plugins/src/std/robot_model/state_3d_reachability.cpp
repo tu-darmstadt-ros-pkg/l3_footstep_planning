@@ -28,8 +28,8 @@ bool State3DReachability::isReachable(const PlanningState& state) const
   {
     for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
     {
-      StepData::ConstPtr step_data = p.second;
-      if (std::abs(step_data->dz) > max_step_dz_)
+      FootStepData::ConstPtr foot_step = p.second;
+      if (std::abs(foot_step->dz) > max_step_dz_)
         return false;
     }
   }

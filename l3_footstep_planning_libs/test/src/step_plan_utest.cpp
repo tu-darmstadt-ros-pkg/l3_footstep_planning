@@ -41,16 +41,16 @@ msgs::StepPlan genStepPlan(geometry_msgs::Pose start_left, geometry_msgs::Pose s
   state.right.pose = start_right;
 
   // generate initial step
-  msgs::StepData step_data;
+  msgs::FootStepData foot_step;
   if (foot_idx == 0)
   {
-    step_data.origin.idx = step_data.target.idx = 1;
-    step_data.origin.pose = step_data.target.pose = start_right;
+    foot_step.origin.idx = foot_step.target.idx = 1;
+    foot_step.origin.pose = foot_step.target.pose = start_right;
   }
   else
   {
-    step_data.origin.idx = step_data.target.idx = 0;
-    step_data.origin.pose = step_data.target.pose = start_left;
+    foot_step.origin.idx = foot_step.target.idx = 0;
+    foot_step.origin.pose = foot_step.target.pose = start_left;
   }
 
   msgs::Step step;
@@ -58,8 +58,8 @@ msgs::StepPlan genStepPlan(geometry_msgs::Pose start_left, geometry_msgs::Pose s
 
   if (first_step)
   {
-    step.support.push_back(state.left);
-    step.support.push_back(state.right);
+    step.support_feet.push_back(state.left);
+    step.support_feet.push_back(state.right);
     step_plan.plan.steps.push_back(step);
     step.idx++;
 
@@ -75,49 +75,49 @@ msgs::StepPlan genStepPlan(geometry_msgs::Pose start_left, geometry_msgs::Pose s
     // closing step handling
     if (closing_step && i == steps - 1)
     {
-      if (step_data.origin.idx == 1)
+      if (foot_step.origin.idx == 1)
       {
-        step_data.origin = state.left;
+        foot_step.origin = state.left;
         state.left.pose.position.x = state.right.pose.position.x + 0.2 * -sin(yaw);
         state.left.pose.position.y = state.right.pose.position.y + 0.2 * cos(yaw);
-        step_data.target = state.left;
+        foot_step.target = state.left;
       }
       else
       {
-        step_data.origin = state.right;
+        foot_step.origin = state.right;
         state.right.pose.position.x = state.left.pose.position.x - 0.2 * -sin(yaw);
         state.right.pose.position.y = state.left.pose.position.y - 0.2 * cos(yaw);
-        step_data.target = state.right;
+        foot_step.target = state.right;
       }
     }
     // forward movement
     else
     {
       // alternate left and right foot pose
-      if (step_data.origin.idx == 1)
+      if (foot_step.origin.idx == 1)
       {
-        step_data.origin = state.left;
+        foot_step.origin = state.left;
         state.left.pose.position.x += step_distance * cos(yaw);
         state.left.pose.position.y += step_distance * sin(yaw);
-        step_data.target = state.left;
+        foot_step.target = state.left;
       }
       else
       {
-        step_data.origin = state.right;
+        foot_step.origin = state.right;
         state.right.pose.position.x += step_distance * cos(yaw);
         state.right.pose.position.y += step_distance * sin(yaw);
-        step_data.target = state.right;
+        foot_step.target = state.right;
       }
     }
 
-    step.support.clear();
-    if (step_data.origin.idx == 1)
-      step.support.push_back(state.left);
+    step.support_feet.clear();
+    if (foot_step.origin.idx == 1)
+      step.support_feet.push_back(state.left);
     else
-      step.support.push_back(state.right);
+      step.support_feet.push_back(state.right);
 
-    step.step_data.clear();
-    step.step_data.push_back(step_data);
+    step.foot_steps.clear();
+    step.foot_steps.push_back(foot_step);
 
     step_plan.plan.steps.push_back(step);
     step.idx++;
@@ -161,7 +161,7 @@ TEST(StepPlan, appendStepPlan)
   ASSERT_EQ(6, step_plan_1.plan.steps.size());
 
   // generate plan 2: 6 steps + closing step, starting from last step of step_plan_1
-  msgs::StepPlan step_plan_2 = genStepPlan(step_plan_1.plan.steps[5].step_data[0].target.pose, step_plan_1.plan.steps[4].step_data[0].target.pose, 6, 1, 6);
+  msgs::StepPlan step_plan_2 = genStepPlan(step_plan_1.plan.steps[5].foot_steps[0].target.pose, step_plan_1.plan.steps[4].foot_steps[0].target.pose, 6, 1, 6);
   ASSERT_EQ(7, step_plan_2.plan.steps.size());
 
   // append plan 1 and 2
@@ -190,7 +190,7 @@ TEST(StepPlan, updateStepPlan)
   msgs::StepPlan step_plan_1 = genStepPlan(start, 6, 0);
 
   // generate plan 2: 8 steps, starting from step #3 of step_plan_1
-  msgs::StepPlan step_plan_2 = genStepPlan(step_plan_1.plan.steps[3].step_data.front().target.pose, step_plan_1.plan.steps[4].step_data.front().target.pose, 6, 0, 5);
+  msgs::StepPlan step_plan_2 = genStepPlan(step_plan_1.plan.steps[3].foot_steps.front().target.pose, step_plan_1.plan.steps[4].foot_steps.front().target.pose, 6, 0, 5);
 
   // update plan 1 with 2
   StepPlan step_plan_result(step_plan_1);

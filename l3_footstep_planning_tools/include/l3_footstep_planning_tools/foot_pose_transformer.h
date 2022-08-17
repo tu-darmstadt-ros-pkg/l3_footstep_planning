@@ -97,18 +97,18 @@ protected:
   // interface for transformation of msg types
   static msgs::ErrorStatus transform(msgs::Foothold& foothold, const std::string& target_frame);
   static msgs::ErrorStatus transform(msgs::FootholdArray& feet, const std::string& target_frame);
-  static msgs::ErrorStatus transform(msgs::StepData& step_data, const std::string& target_frame);
-  static msgs::ErrorStatus transform(msgs::StepDataArray& step_data_array, const std::string& target_frame);
+  static msgs::ErrorStatus transform(msgs::FootStepData& foot_step, const std::string& target_frame);
+  static msgs::ErrorStatus transform(msgs::FootStepDataArray& foot_steps, const std::string& target_frame);
   static msgs::ErrorStatus transform(msgs::Step& step, const std::string& target_frame);
   static msgs::ErrorStatus transform(msgs::StepArray& step_array, const std::string& target_frame);
   static msgs::ErrorStatus transform(msgs::StepQueue& step_queue, const std::string& target_frame);
   static msgs::ErrorStatus transform(msgs::StepPlan& step_plan, const std::string& target_frame);
 
   template <template <typename...> class Container>
-  static msgs::ErrorStatus transform(Container<msgs::StepData>& container, const std::string& target_frame)
+  static msgs::ErrorStatus transform(Container<msgs::FootStepData>& container, const std::string& target_frame)
   {
     msgs::ErrorStatus status;
-    for (typename Container<msgs::StepData>::iterator itr = container.begin(); itr != container.end(); itr++)
+    for (typename Container<msgs::FootStepData>::iterator itr = container.begin(); itr != container.end(); itr++)
     {
       status += transform(itr->origin, target_frame);
       status += transform(itr->target, target_frame);
@@ -146,8 +146,8 @@ protected:
 
 msgs::ErrorStatus transform(msgs::Foothold& foot, ros::ServiceClient& transform_foot_pose_client, const std::string& target_frame);
 msgs::ErrorStatus transform(msgs::FootholdArray& feet, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
-msgs::ErrorStatus transform(msgs::StepData& step_data, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
-msgs::ErrorStatus transform(msgs::StepDataArray& step_data_array, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
+msgs::ErrorStatus transform(msgs::FootStepData& foot_step, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
+msgs::ErrorStatus transform(msgs::FootStepDataArray& foot_steps, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
 msgs::ErrorStatus transform(msgs::Step& step, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
 msgs::ErrorStatus transform(msgs::StepArray& step_array, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);
 msgs::ErrorStatus transform(msgs::StepQueue& step_queue, ros::ServiceClient& transform_feet_poses_client, const std::string& target_frame);

@@ -105,7 +105,7 @@ msgs::ErrorStatus PatternPlanner::planPattern(StepPtrArray& path, StateHashed::C
 
   // start state consists of all "non-moving step data" of all feet
   for (Foothold::ConstPtr f : start_state->getFootholds())
-    plan_.front()->getStep()->updateSupport(f);
+    plan_.front()->getStep()->updateSupportFoot(f);
 
   // finally extract path
   status += extractPath(path);

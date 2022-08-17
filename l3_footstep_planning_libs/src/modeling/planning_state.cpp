@@ -44,13 +44,13 @@ PlanningState::PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr 
       if (foothold->getUID() != adj_foothold->getUID())
       {
         if (pred_)
-          step_->updateStepData(StepData::make(adj_foothold, foothold));
+          step_->updateStepData(FootStepData::make(adj_foothold, foothold));
         if (succ_)
-          step_->updateStepData(StepData::make(foothold, adj_foothold));
+          step_->updateStepData(FootStepData::make(foothold, adj_foothold));
       }
       // otherwise foothold is a support foot
       else
-        step_->updateSupport(foothold);
+        step_->updateSupportFoot(foothold);
     }
 
     // generate floating base data
@@ -100,10 +100,10 @@ FootholdHashedConstPtrArray PlanningState::getChangedFootholds() const
 
 FootholdHashedConstPtrArray PlanningState::getUnchangedFootholds() const
 {
-  if (!step_->getSupportMap().empty())
+  if (!step_->getSupportFootMap().empty())
   {
     FootholdHashedConstPtrArray footholds;
-    for (const FootholdConstPtrPair& p : step_->getSupportMap())
+    for (const FootholdConstPtrPair& p : step_->getSupportFootMap())
     {
       ROS_ASSERT(state_->getFoothold(p.first));
       footholds.push_back(state_->getFoothold(p.first));

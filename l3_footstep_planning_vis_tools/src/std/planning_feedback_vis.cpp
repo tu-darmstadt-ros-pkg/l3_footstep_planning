@@ -12,7 +12,7 @@ PlanningFeedbackVis::PlanningFeedbackVis()
 
 void PlanningFeedbackVis::clear()
 {
-  visited_steps_.clear();
+  visited_footholds_.clear();
   visited_bases_.clear();
 
   markers_.markers.clear();
@@ -27,11 +27,11 @@ void PlanningFeedbackVis::clear()
 void PlanningFeedbackVis::visualize(const msgs::PlanningFeedback& planning_feedback)
 {
   // merge to total visited steps
-  for (msgs::StepDataArray::const_iterator itr = planning_feedback.visited_steps.begin(); itr != planning_feedback.visited_steps.end(); itr++)
+  for (msgs::FootStepDataArray::const_iterator itr = planning_feedback.visited_steps.begin(); itr != planning_feedback.visited_steps.end(); itr++)
   {
-    const msgs::StepData& step = *itr;
-    visited_steps_.erase(step);
-    visited_steps_.insert(step);
+    const msgs::FootStepData& foot_step = *itr;
+    visited_footholds_.erase(foot_step);
+    visited_footholds_.insert(foot_step);
   }
 
   for (msgs::BaseStepDataArray::const_iterator itr = planning_feedback.visited_bases.begin(); itr != planning_feedback.visited_bases.end(); itr++)
@@ -91,7 +91,7 @@ void PlanningFeedbackVis::visualizeRecentlyVisitedSteps(const msgs::PlanningFeed
 
 void PlanningFeedbackVis::visualizeTotalVisitedSteps(const msgs::PlanningFeedback& planning_feedback)
 {
-  if (!visited_steps_.empty())
+  if (!visited_footholds_.empty())
   {
     ros::Time current_time = ros::Time::now();
 
@@ -104,18 +104,18 @@ void PlanningFeedbackVis::visualizeTotalVisitedSteps(const msgs::PlanningFeedbac
     marker.scale.y = 0.01;
     marker.scale.z = 0.0;
 
-    for (const msgs::StepData& step_data : visited_steps_)
+    for (const msgs::FootStepData& foot_step : visited_footholds_)
     {
       if (planning_feedback.forward_search)
       {
-        marker.points.push_back(step_data.target.pose.position);
-        double age_scale = std::min(5.0, (current_time - step_data.target.header.stamp).toSec()) / 5.0;
+        marker.points.push_back(foot_step.target.pose.position);
+        double age_scale = std::min(5.0, (current_time - foot_step.target.header.stamp).toSec()) / 5.0;
         marker.colors.push_back(l3::getColorScale(l3::createColorMsg(1.0, 0.0, 0.0), l3::createColorMsg(0.0, 0.0, 1.0), age_scale));
       }
       else
       {
-        marker.points.push_back(step_data.origin.pose.position);
-        double age_scale = std::min(5.0, (current_time - step_data.origin.header.stamp).toSec()) / 5.0;
+        marker.points.push_back(foot_step.origin.pose.position);
+        double age_scale = std::min(5.0, (current_time - foot_step.origin.header.stamp).toSec()) / 5.0;
         marker.colors.push_back(l3::getColorScale(l3::createColorMsg(1.0, 0.0, 0.0), l3::createColorMsg(0.0, 0.0, 1.0), age_scale));
       }
     }

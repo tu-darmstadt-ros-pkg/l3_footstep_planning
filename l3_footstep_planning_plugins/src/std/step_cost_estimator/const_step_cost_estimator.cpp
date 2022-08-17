@@ -25,7 +25,7 @@ bool ConstStepCostEstimator::getCost(const PlanningState& /*state*/, double& cos
   return true;
 }
 
-bool ConstStepCostEstimator::getCost(const StepData& /*step_data*/, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
+bool ConstStepCostEstimator::getCost(const FootStepData& /*step_data*/, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   cost = const_step_cost;
   cost_multiplier = 1.0;

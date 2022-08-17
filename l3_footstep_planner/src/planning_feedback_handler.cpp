@@ -96,10 +96,10 @@ void PlanningFeedbackHandler::publishFeedback(const ros::TimerEvent& /*event*/)
   {
     for (Step::StepDataPair p : s->getStepDataMap())
     {
-      msgs::StepData step_msg = p.second->toMsg();
-      step_msg.origin.header = step_msg.target.header = header;
-      FootPoseTransformer::transformToRobotFrame(step_msg);
-      feedback.visited_steps.push_back(step_msg);
+      msgs::FootStepData foot_step_msg = p.second->toMsg();
+      foot_step_msg.origin.header = foot_step_msg.target.header = header;
+      FootPoseTransformer::transformToRobotFrame(foot_step_msg);
+      feedback.visited_steps.push_back(foot_step_msg);
     }
     for (Step::BaseStepDataPair p : s->getMovingFloatingBaseMap())
     {
@@ -121,7 +121,7 @@ void PlanningFeedbackHandler::publishFeedback(const ros::TimerEvent& /*event*/)
     if (last_visited_state_->getStep())
     {
       stepL3ToMsg(*last_visited_state_->getStep(), feedback.last_visited_step);
-      for (msgs::StepData& s : feedback.last_visited_step.step_data)
+      for (msgs::FootStepData& s : feedback.last_visited_step.foot_steps)
       {
         s.origin.header = header;
         s.target.header = header;

@@ -15,15 +15,15 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
 
   for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
   {
-    StepData::ConstPtr step_data = p.second;
+    FootStepData::ConstPtr foot_step = p.second;
     ROS_ASSERT(step_data);
 
     // do only consider specific foot ids when given
-    if (ignoreFootIdx(step_data->target->idx))
+    if (ignoreFootIdx(foot_step->target->idx))
       continue;
 
     double c, c_m, r, r_m;
-    if (!getCost(*step_data, c, c_m, r, r_m))
+    if (!getCost(*foot_step, c, c_m, r, r_m))
       return false;
 
     ROS_ASSERT(c_m >= 1.0);
@@ -37,11 +37,11 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
 
   for (const Step::BaseStepDataPair& p : state.getStep()->getMovingFloatingBaseMap())
   {
-    BaseStepData::ConstPtr base_step_data = p.second;
+    BaseStepData::ConstPtr base_step = p.second;
     ROS_ASSERT(base_step_data);
 
     double c, c_m, r, r_m;
-    if (!getCost(*base_step_data, c, c_m, r, r_m))
+    if (!getCost(*base_step, c, c_m, r, r_m))
       return false;
 
     ROS_ASSERT(c_m >= 1.0);
@@ -56,7 +56,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
   return true;
 }
 
-bool StepCostEstimatorPlugin::getCost(const StepData& /*step_data*/, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
+bool StepCostEstimatorPlugin::getCost(const FootStepData& /*step_data*/, double& cost, double& cost_multiplier, double& risk, double& risk_multiplier) const
 {
   // nothing to do here
   cost = 0.0;
