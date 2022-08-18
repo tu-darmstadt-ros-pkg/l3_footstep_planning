@@ -17,10 +17,9 @@ bool GroundContactStepCostEstimator::getCost(const PlanningState& state, double&
 
   double min_support = 1.0;
 
-  for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
+  for (const Step::FootStep::MovingDataPair& p : state.getStep()->footStep().getMovingLinks())
   {
     FootStepData::ConstPtr foot_step = p.second;
-
     Foothold::ConstPtr foothold = forwardSearch() ? foot_step->target : foot_step->origin;
 
     // do only consider specific foot ids when given

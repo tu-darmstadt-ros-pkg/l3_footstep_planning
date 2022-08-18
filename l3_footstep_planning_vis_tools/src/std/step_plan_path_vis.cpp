@@ -54,14 +54,14 @@ void StepPlanPathVis::stepPlanToPath(StepConstPtrArray steps, nav_msgs::Path& pa
   {
     FootholdConstPtrArray footholds;
 
-    if (step->hasStepData())
+    if (step->footStep().hasMovingLinks())
     {
-      for (FootStepData::ConstPtr foot_step : valuesAsArray<FootStepDataConstPtrArray>(step->getStepDataMap()))
+      for (FootStepData::ConstPtr foot_step : valuesAsArray<FootStepDataConstPtrArray>(step->footStep().getMovingLinks()))
         footholds.push_back(foot_step->target);
     }
     else
     {
-      footholds = valuesAsArray<FootholdConstPtrArray>(step->getSupportFootMap());
+      footholds = valuesAsArray<FootholdConstPtrArray>(step->footStep().getNonMovingLinks());
     }
 
     for (Foothold::ConstPtr f : footholds)

@@ -13,7 +13,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
   risk = 0.0;
   risk_multiplier = 1.0;
 
-  for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
+  for (const Step::FootStep::MovingDataPair& p : state.getStep()->footStep().getMovingLinks())
   {
     FootStepData::ConstPtr foot_step = p.second;
     ROS_ASSERT(step_data);
@@ -35,7 +35,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
     risk_multiplier *= r_m;
   }
 
-  for (const Step::BaseStepDataPair& p : state.getStep()->getMovingFloatingBaseMap())
+  for (const Step::BaseStep::MovingDataPair& p : state.getStep()->baseStep().getMovingLinks())
   {
     BaseStepData::ConstPtr base_step = p.second;
     ROS_ASSERT(base_step_data);

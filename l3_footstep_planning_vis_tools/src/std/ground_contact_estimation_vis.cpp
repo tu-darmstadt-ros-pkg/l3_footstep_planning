@@ -24,11 +24,11 @@ void GroundContactEstimationVis::visualize(const msgs::PlanningFeedback& plannin
 
 void GroundContactEstimationVis::visualize(const Step& step)
 {
-  if (!step.hasStepData())
+  if (!step.footStep().hasMovingLinks())
     return;
 
   visualization_msgs::Marker marker;
-  marker.header = step.begin()->second->target->header;
+  marker.header = step.footStep().getMovingLinks().begin()->second->target->header;
   marker.ns = marker_ns_;
   marker.id = markers_.markers.size();
   marker.type = visualization_msgs::Marker::POINTS;
@@ -37,7 +37,7 @@ void GroundContactEstimationVis::visualize(const Step& step)
   marker.scale.y = 0.01;
   marker.scale.z = 0.0;
 
-  for (const Step::StepDataPair& p : step.getStepDataMap())
+  for (const Step::FootStep::MovingDataPair& p : step.footStep().getMovingLinks())
   {
     Foothold::ConstPtr foothold = p.second->target;
 

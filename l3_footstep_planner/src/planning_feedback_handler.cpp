@@ -94,14 +94,14 @@ void PlanningFeedbackHandler::publishFeedback(const ros::TimerEvent& /*event*/)
   // add visited steps
   for (Step::ConstPtr s : visited_steps_)
   {
-    for (Step::StepDataPair p : s->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : s->footStep().getMovingLinks())
     {
       msgs::FootStepData foot_step_msg = p.second->toMsg();
       foot_step_msg.origin.header = foot_step_msg.target.header = header;
       FootPoseTransformer::transformToRobotFrame(foot_step_msg);
       feedback.visited_steps.push_back(foot_step_msg);
     }
-    for (Step::BaseStepDataPair p : s->getMovingFloatingBaseMap())
+    for (const Step::BaseStep::MovingDataPair& p : s->baseStep().getMovingLinks())
     {
       ///@todo Implement BasePoseTransformer
       msgs::BaseStepData base_step_msg = p.second->toMsg();

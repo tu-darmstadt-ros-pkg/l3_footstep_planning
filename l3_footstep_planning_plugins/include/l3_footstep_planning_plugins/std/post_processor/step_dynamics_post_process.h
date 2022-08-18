@@ -50,6 +50,9 @@ protected:
   virtual void determineStepAttributes(FootStepData& step) const;
   virtual void determineTimings(FootStepData& step) const;
 
+  virtual void determineStepAttributes(BaseStepData& step) const;
+  virtual void determineTimings(BaseStepData& step) const;
+
   double default_swing_height_;
   double default_sway_duration_;
   double default_step_duration_;

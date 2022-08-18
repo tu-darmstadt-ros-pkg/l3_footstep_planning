@@ -235,7 +235,7 @@ bool IKReachability::initialize(const ParameterSet& params)
 
 bool IKReachability::isReachable(const PlanningState& state) const
 {
-  FootStepData::ConstPtr foot_step = state.getStep()->getStepData(foot_idx_);
+  FootStepData::ConstPtr foot_step = state.getStep()->footStep().getMovingLink(foot_idx_);
   if (foot_step)
     return isReachable(state.getState()->getFeetCenter(), *foot_step->target);
 

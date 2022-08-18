@@ -40,12 +40,12 @@ bool SimpleFloatingBasePostProcess::postProcess(StepPlan& step_plan) const
     for (StepQueue::Entry& e : step_plan.getSteps())
     {
       Step::Ptr step = e.second;
-      FootholdConstPtrArray footholds = step->getFootholds();
+      FootholdConstPtrArray footholds = step->getAllFootholds();
 
       FloatingBase::Ptr floating_base = determineFloatingBase(footholds, RobotModel::calcFeetCenter(footholds));
 
       if (floating_base)
-        step->updateMovingFloatingBase(BaseStepData::make(floating_base, floating_base)); /// @todo determine origin floating base
+        step->baseStep().updateMovingLink(floating_base->idx, BaseStepData::make(floating_base, floating_base)); /// @todo determine origin floating base
     }
   }
 

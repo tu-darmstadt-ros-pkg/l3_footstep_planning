@@ -151,9 +151,9 @@ std::string StepPlan::toString() const
   {
     Step::ConstPtr step = e.second;
 
-    for (const Step::StepDataPair& p : step->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : step->footStep().getMovingLinks())
       s << "[" << step->getStepIndex() << "] " << *p.second << std::endl;
-    for (const FootholdConstPtrPair& p : step->getSupportFootMap())
+    for (const Step::FootStep::NonMovingDataPair& p : step->footStep().getNonMovingLinks())
       s << "[" << step->getStepIndex() << "] " << *p.second << std::endl;
 
     s << "------------------" << std::endl;
@@ -387,19 +387,41 @@ msgs::ErrorStatus StepPlan::_insertStep(Step::Ptr step)
 
   if (steps_.empty())
   {
-    if (step->hasStepData())
-      header_ = step->getStepDataMap().begin()->second->origin->header;
+    if (step->footStep().hasMovingLinks())
+      header_ = step->footStep().getMovingLinks().begin()->second->origin->header;
+    else if (step->footStep().hasNonMovingLinks())
+      header_ = step->footStep().getNonMovingLinks().begin()->second->header;
+    else if (step->baseStep().hasMovingLinks())
+      header_ = step->baseStep().getMovingLinks().begin()->second->origin->header;
+    else if (step->baseStep().hasNonMovingLinks())
+      header_ = step->baseStep().getNonMovingLinks().begin()->second->header;
     else
-      header_ = step->getSupportFootMap().begin()->second->header;
+      return ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "insertStep", "Could not determine header!");
   }
 
-  for (const Step::StepDataPair& p : step->getStepDataMap())
+  // check header consistency for footholds
+  for (const Step::FootStep::MovingDataPair& p : step->footStep().getMovingLinks())
   {
     FootStepData::ConstPtr step_data = p.second;
 
     if (step_data->origin->header.frame_id != header_.frame_id)
       return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "insertStep",
                               "Frame id mismatch! Plan: " + header_.frame_id + " vs. step origin: " + step_data->origin->header.frame_id);
+
+    if (step_data->target->header.frame_id != header_.frame_id)
+      return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "insertStep",
+                              "Frame id mismatch! Plan: " + header_.frame_id + " vs. step target: " + step_data->target->header.frame_id);
+  }
+
+  // check header consistency for flaoting bases
+  for (const Step::BaseStep::MovingDataPair& p : step->baseStep().getMovingLinks())
+  {
+    BaseStepData::ConstPtr step_data = p.second;
+
+    if (step_data->origin->header.frame_id != header_.frame_id)
+      return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "insertStep",
+                              "Frame id mismatch! Plan: " + header_.frame_id + " vs. step origin: " + step_data->origin->header.frame_id);
+
     if (step_data->target->header.frame_id != header_.frame_id)
       return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "insertStep",
                               "Frame id mismatch! Plan: " + header_.frame_id + " vs. step target: " + step_data->target->header.frame_id);
@@ -441,21 +463,39 @@ msgs::ErrorStatus StepPlan::_appendStepPlan(const StepPlan& step_plan)
     // fill support data of first appended step with data from last step of the exisiting step plan
     if (last_step)
     {
-      // perform only when not explicitly given
-      if (step->getSupportFootMap().empty())
+      /// footholds: perform only when not explicitly given
+      if (!step->footStep().hasNonMovingLinks())
       {
-        // gather data from stepdata
-        for (Step::StepDataPair p : last_step->getStepDataMap())
+        // gather data from step data
+        for (const Step::FootStep::MovingDataPair& p : last_step->footStep().getMovingLinks())
         {
-          if (!step->hasStepData(p.first))
-            step->updateSupportFoot(p.second->target);
+          if (!step->footStep().hasMovingLink(p.first))
+            step->footStep().updateNonMovingLink(p.first, p.second->target);
         }
 
         // gather alternatively data from support data
-        for (FootholdConstPtrPair p : last_step->getSupportFootMap())
+        for (const Step::FootStep::NonMovingDataPair& p : last_step->footStep().getNonMovingLinks())
         {
-          if (!step->hasStepData(p.first))
-            step->updateSupportFoot(p.second);
+          if (!step->footStep().hasMovingLink(p.first))
+            step->footStep().updateNonMovingLink(p.first, p.second);
+        }
+      }
+
+      /// floating bases: perform only when not explicitly given
+      if (!step->baseStep().hasNonMovingLinks())
+      {
+        // gather data from step data
+        for (const Step::BaseStep::MovingDataPair& p : last_step->baseStep().getMovingLinks())
+        {
+          if (!step->baseStep().hasMovingLink(p.first))
+            step->baseStep().updateNonMovingLink(p.first, p.second->target);
+        }
+
+        // gather alternatively data from support data
+        for (const Step::BaseStep::NonMovingDataPair& p : last_step->baseStep().getNonMovingLinks())
+        {
+          if (!step->baseStep().hasMovingLink(p.first))
+            step->baseStep().updateNonMovingLink(p.first, p.second);
         }
       }
 
@@ -484,16 +524,30 @@ msgs::ErrorStatus StepPlan::_updateStepPlan(const StepPlan& step_plan)
   {
     Step::Ptr step(new Step(*e.second));
 
-    // restore support legs from old step if missing in updated input step
-    if (step->getSupportFootMap().empty())
+    /// restore non-moving legs from old step if missing in updated input step
+    if (!step->footStep().hasNonMovingLinks())
     {
       Step::ConstPtr old_step = getStep(step->getStepIndex());
       if (old_step)
       {
-        for (FootholdConstPtrPair p : old_step->getSupportFootMap())
+        for (const Step::FootStep::NonMovingDataPair& p : old_step->footStep().getNonMovingLinks())
         {
-          if (!step->hasStepData(p.first))
-            step->updateSupportFoot(p.second);
+          if (!step->footStep().hasMovingLink(p.first))
+            step->footStep().updateNonMovingLink(p.first, p.second);
+        }
+      }
+    }
+
+    /// restore non-moving floating bases from old step if missing in updated input step
+    if (!step->baseStep().hasNonMovingLinks())
+    {
+      Step::ConstPtr old_step = getStep(step->getStepIndex());
+      if (old_step)
+      {
+        for (const Step::BaseStep::NonMovingDataPair& p : old_step->baseStep().getNonMovingLinks())
+        {
+          if (!step->baseStep().hasMovingLink(p.first))
+            step->baseStep().updateNonMovingLink(p.first, p.second);
         }
       }
     }
@@ -544,7 +598,7 @@ msgs::ErrorStatus StepPlan::_stitchStepPlan(const StepPlan& step_plan, StepIndex
   /// @todo: Check if ALL footholds of both ends are equal?
 
   // determine pivot footholds
-  Foothold::ConstPtr last_current_foothold = last_current_step->getFootholds().front();
+  Foothold::ConstPtr last_current_foothold = last_current_step->getAllFootholds().front();
   Foothold::ConstPtr first_new_foothold = first_new_step->getFoothold(last_current_foothold->idx);
 
   if (!first_new_foothold)

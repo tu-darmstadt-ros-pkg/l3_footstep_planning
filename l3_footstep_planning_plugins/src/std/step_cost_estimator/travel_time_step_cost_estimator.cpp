@@ -39,7 +39,7 @@ bool TravelTimeStepCostEstimator::getCost(const PlanningState& state, double& co
   }
   else
   {
-    for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : state.getStep()->footStep().getMovingLinks())
     {
       FootStepData::ConstPtr foot_step = p.second;
       ROS_ASSERT(step_data);

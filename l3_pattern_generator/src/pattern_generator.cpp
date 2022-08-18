@@ -203,19 +203,19 @@ void PatternGenerator::updateFeetStartPose(const FootholdArray& feet)
 
 void PatternGenerator::updateFeetStartPose(const Step& step)
 {
-  if (!step.hasStepData())
+  if (!step.footStep().hasMovingLinks())
   {
     ROS_ERROR("[PatternGenerator] updateFeetStartPose: Got empty step!. Abort.");
     return;
   }
 
-  updateFeetStartPose(*step.getStepDataMap().begin()->second->target);
+  updateFeetStartPose(*step.footStep().getMovingLinks().begin()->second->target);
 
   /// @TODO: Use RobotModelPlugin
 
-  if (step.begin()->second->target->idx == 0)
+  if (step.footStep().getMovingLinks().begin()->second->target->idx == 0)
     foot_start_step_index_left_ = step.getStepIndex();
-  if (step.begin()->second->target->idx == 1)
+  if (step.footStep().getMovingLinks().begin()->second->target->idx == 1)
     foot_start_step_index_right_ = step.getStepIndex();
 }
 

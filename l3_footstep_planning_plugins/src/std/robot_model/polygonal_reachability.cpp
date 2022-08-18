@@ -42,7 +42,7 @@ bool PolygonalReachability::loadParams(const ParameterSet& params)
 
 bool PolygonalReachability::isReachable(const PlanningState& state) const
 {
-  if (!state.getStep()->hasStepData() && !state.getStep()->hasMovingFloatingBase())
+  if (!state.getStep()->footStep().hasMovingLinks() && !state.getStep()->baseStep().hasMovingLinks())
     return isReachable(*state.getState());
 
   /// Note: We assume that any adjacent state was verified in past and is valid.
@@ -59,7 +59,7 @@ bool PolygonalReachability::isReachable(const PlanningState& state) const
   swing_pose.setY(0.5 * (adj.y() + cur.y()));
   swing_pose.setYaw(0.5 * (adj.yaw() + cur.yaw()));
 
-  for (const Step::StepDataPair& p : state.getStep()->getStepDataMap())
+  for (const Step::FootStep::MovingDataPair& p : state.getStep()->footStep().getMovingLinks())
   {
     FootStepData::ConstPtr foot_step = p.second;
 
@@ -75,7 +75,7 @@ bool PolygonalReachability::isReachable(const PlanningState& state) const
       return false;
   }
 
-  for (const Step::BaseStepDataPair& p : state.getStep()->getMovingFloatingBaseMap())
+  for (const Step::BaseStep::MovingDataPair& p : state.getStep()->baseStep().getMovingLinks())
   {
     BaseStepData::ConstPtr base_step_data = p.second;
 

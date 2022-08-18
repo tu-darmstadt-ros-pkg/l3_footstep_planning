@@ -105,7 +105,7 @@ msgs::ErrorStatus PatternPlanner::planPattern(StepPtrArray& path, StateHashed::C
 
   // start state consists of all "non-moving step data" of all feet
   for (Foothold::ConstPtr f : start_state->getFootholds())
-    plan_.front()->getStep()->updateSupportFoot(f);
+    plan_.front()->getStep()->footStep().updateNonMovingLink(f->idx, f);
 
   // finally extract path
   status += extractPath(path);
@@ -279,8 +279,8 @@ msgs::ErrorStatus PatternPlanner::generateNeutralStancePattern(const l3_footstep
 
   // determine feet which are not in final position
   FootholdPtrArray neutral_stance;
-  if (pstate_->getStep()->hasStepData())
-    neutral_stance = RobotModel::description()->getNeutralStance(*pstate_->getStep()->getStepDataMap().begin()->second->target);
+  if (pstate_->getStep()->footStep().hasMovingLinks())
+    neutral_stance = RobotModel::description()->getNeutralStance(*pstate_->getStep()->footStep().getMovingLinks().begin()->second->target);
   else
     neutral_stance = RobotModel::description()->getNeutralStance(pstate_->getFeetCenter());
 

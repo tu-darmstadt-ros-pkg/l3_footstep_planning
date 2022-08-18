@@ -205,9 +205,9 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids, const UID& 
       // start state consists of all "non-moving step data" of all feet and all floating bases
       step = Step::make();
       for (Foothold::ConstPtr fh : pstate->getState()->getFootholds())
-        step->updateSupportFoot(fh);
+        step->footStep().updateNonMovingLink(fh->idx, fh);
       for (FloatingBase::ConstPtr fb : pstate->getState()->getFloatingBases())
-        step->updateRestingFloatingBase(fb);
+        step->baseStep().updateNonMovingLink(fb->idx, fb);
     }
     else if (uid == goal_uid)
     {
@@ -631,7 +631,7 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     //      }
 
     // get start and goal foothold config
-    for (const Step::StepDataPair& p : step->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : step->footStep().getMovingLinks())
     {
       FootStepData::Ptr foot_step = p.second;
 
@@ -645,17 +645,17 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
       foot_step->target = makeShared<Foothold>(fh);
     }
 
-    // get resting legs
-    for (const FootholdConstPtrPair& p : step->getSupportFootMap())
+    // get non-moving legs
+    for (const Step::FootStep::NonMovingDataPair& p : step->footStep().getNonMovingLinks())
     {
       // convert footstep
-      Foothold::Ptr f(new Foothold(*p.second));
-      f->header = resp.step_plan.header;
-      step->updateSupportFoot(f);
+      Foothold::Ptr fh = makeShared<Foothold>(*p.second);
+      fh->header = resp.step_plan.header;
+      step->footStep().updateNonMovingLink(fh->idx, fh);
     }
 
     // get start and goal floating base config
-    for (const Step::BaseStepDataPair& p : step->getMovingFloatingBaseMap())
+    for (const Step::BaseStep::MovingDataPair& p : step->baseStep().getMovingLinks())
     {
       BaseStepData::Ptr base_step_data = p.second;
 
@@ -669,13 +669,13 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
       base_step_data->target = makeShared<FloatingBase>(fb);
     }
 
-    // get resting floating bases
-    for (const FloatingBaseConstPtrPair& p : step->getRestingFloatingBaseMap())
+    // get non-moving floating bases
+    for (const Step::BaseStep::NonMovingDataPair& p : step->baseStep().getNonMovingLinks())
     {
       // convert floating base
       FloatingBase::Ptr fb(new FloatingBase(*p.second));
       fb->header = resp.step_plan.header;
-      step->updateRestingFloatingBase(fb);
+      step->baseStep().updateNonMovingLink(fb->idx, fb);
     }
 
     step->setStepIndex(step->getStepIndex() + start_step_idx);

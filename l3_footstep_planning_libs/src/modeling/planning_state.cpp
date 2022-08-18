@@ -44,13 +44,13 @@ PlanningState::PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr 
       if (foothold->getUID() != adj_foothold->getUID())
       {
         if (pred_)
-          step_->updateStepData(FootStepData::make(adj_foothold, foothold));
+          step_->footStep().updateMovingLink(foothold->idx, FootStepData::make(adj_foothold, foothold));
         if (succ_)
-          step_->updateStepData(FootStepData::make(foothold, adj_foothold));
+          step_->footStep().updateMovingLink(foothold->idx, FootStepData::make(foothold, adj_foothold));
       }
       // otherwise foothold is a support foot
       else
-        step_->updateSupportFoot(foothold);
+        step_->footStep().updateNonMovingLink(foothold->idx, foothold);
     }
 
     // generate floating base data
@@ -67,23 +67,23 @@ PlanningState::PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr 
       {
         // check if base is moving
         if(pred_)
-          step_->updateMovingFloatingBase(BaseStepData::make(adj_floating_base, floating_base));
+          step_->baseStep().updateMovingLink(floating_base->idx, BaseStepData::make(adj_floating_base, floating_base));
         if(succ_)
-          step_->updateMovingFloatingBase(BaseStepData::make(floating_base, adj_floating_base));
+          step_->baseStep().updateMovingLink(floating_base->idx, BaseStepData::make(floating_base, adj_floating_base));
       }
       // otherwise floating base is a support base
       else
-        step_->updateRestingFloatingBase(floating_base);
+        step_->baseStep().updateNonMovingLink(floating_base->idx, floating_base);
     }
   }
 }
 
 FootholdHashedConstPtrArray PlanningState::getChangedFootholds() const
 {
-  if (!step_->getStepDataMap().empty())
+  if (step_->footStep().hasMovingLinks())
   {
     FootholdHashedConstPtrArray footholds;
-    for (const Step::StepDataPair& p : step_->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : step_->footStep().getMovingLinks())
     {
       ROS_ASSERT(state_->getFoothold(p.first));
       footholds.push_back(state_->getFoothold(p.first));
@@ -100,10 +100,10 @@ FootholdHashedConstPtrArray PlanningState::getChangedFootholds() const
 
 FootholdHashedConstPtrArray PlanningState::getUnchangedFootholds() const
 {
-  if (!step_->getSupportFootMap().empty())
+  if (step_->footStep().hasNonMovingLinks())
   {
     FootholdHashedConstPtrArray footholds;
-    for (const FootholdConstPtrPair& p : step_->getSupportFootMap())
+    for (const Step::FootStep::NonMovingDataPair& p : step_->footStep().getNonMovingLinks())
     {
       ROS_ASSERT(state_->getFoothold(p.first));
       footholds.push_back(state_->getFoothold(p.first));
@@ -120,10 +120,10 @@ FootholdHashedConstPtrArray PlanningState::getUnchangedFootholds() const
 
 FloatingBaseHashedConstPtrArray PlanningState::getChangedFloatingBases() const
 {
-  if (!step_->getMovingFloatingBaseMap().empty())
+  if (step_->baseStep().hasMovingLinks())
   {
     FloatingBaseHashedConstPtrArray floating_bases;
-    for (const Step::BaseStepDataPair& p : step_->getMovingFloatingBaseMap())
+    for (const Step::BaseStep::MovingDataPair& p : step_->baseStep().getMovingLinks())
     {
       ROS_ASSERT(state_->getFloatingBase(p.first));
       floating_bases.push_back(state_->getFloatingBase(p.first));
@@ -140,10 +140,10 @@ FloatingBaseHashedConstPtrArray PlanningState::getChangedFloatingBases() const
 
 FloatingBaseHashedConstPtrArray PlanningState::getUnchangedFloatingBases() const
 {
-  if (!step_->getRestingFloatingBaseMap().empty())
+  if (step_->baseStep().hasNonMovingLinks())
   {
     FloatingBaseHashedConstPtrArray floating_bases;
-    for (const FloatingBaseConstPtrPair& p : step_->getRestingFloatingBaseMap())
+    for (const Step::BaseStep::NonMovingDataPair& p : step_->baseStep().getNonMovingLinks())
     {
       ROS_ASSERT(state_->getFloatingBase(p.first));
       floating_bases.push_back(state_->getFloatingBase(p.first));
@@ -178,13 +178,13 @@ PlanningStateID::PlanningStateID(StateHashed::ConstPtr state, StateHashed::Const
 
   if (step)
   {
-    for (const Step::StepDataPair& p : step->getStepDataMap())
+    for (const Step::FootStep::MovingDataPair& p : step->footStep().getMovingLinks())
     {
       foot_idx_.insert(p.first);
       boost::hash_combine(hash_, p.first);
     }
 
-    for (const Step::BaseStepDataPair& p : step->getMovingFloatingBaseMap())
+    for (const Step::BaseStep::MovingDataPair& p : step->baseStep().getMovingLinks())
     {
       base_idx_.insert(p.first);
       boost::hash_combine(hash_, p.first);

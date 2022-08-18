@@ -157,17 +157,17 @@ void InverseKinematicsVis::visualize(const StepPlan& step_plan)
 void InverseKinematicsVis::visualize(const Step& step, const std::string& frame_id)
 {
   FootholdArray footholds;
-  for (const Step::StepDataPair& p : step.getStepDataMap())
+  for (const Step::FootStep::MovingDataPair& p : step.footStep().getMovingLinks())
     footholds.push_back(*p.second->target);
 
-  for (const FootholdConstPtrPair& p : step.getSupportFootMap())
+  for (const Step::FootStep::NonMovingDataPair& p : step.footStep().getNonMovingLinks())
     footholds.push_back(*p.second);
 
   FloatingBaseMap floating_bases;
-  for (const Step::BaseStepDataPair& p : step.getMovingFloatingBaseMap())
+  for (const Step::BaseStep::MovingDataPair& p : step.baseStep().getMovingLinks())
     floating_bases[p.first] = (*p.second->target);
 
-  for (const FloatingBaseConstPtrPair& p : step.getRestingFloatingBaseMap())
+  for (const Step::BaseStep::NonMovingDataPair& p : step.baseStep().getNonMovingLinks())
     floating_bases[p.first] = (*p.second);
 
   // in case of the planner does not use floating bases, generate one based on central body estimate

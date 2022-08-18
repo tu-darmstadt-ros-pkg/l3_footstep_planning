@@ -57,22 +57,22 @@ public:
   PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr pred = StateHashed::ConstPtr(), StateHashed::ConstPtr succ = StateHashed::ConstPtr(),
                 Step::ConstPtr step = Step::ConstPtr());
 
-  inline void addMovedFoot(FootStepData::Ptr foot_step_data) { step_->updateStepData(foot_step_data); }
-  inline void addSupportFoot(Foothold::ConstPtr foothold) { step_->updateSupportFoot(foothold); }
+  inline void addMovedFoot(FootStepData::Ptr foot_step_data) { step_->footStep().updateMovingLink(foot_step_data->origin->idx, foot_step_data); }
+  inline void addSupportFoot(Foothold::ConstPtr foothold) { step_->footStep().updateNonMovingLink(foothold->idx, foothold); }
 
-  inline void addMovedFloatingBase(BaseStepData::Ptr base_step_data) { step_->updateMovingFloatingBase(base_step_data); }
-  inline void addRestingFloatingBase(FloatingBase::ConstPtr floating_base) { step_->updateRestingFloatingBase(floating_base); }
+  inline void addMovedFloatingBase(BaseStepData::Ptr base_step_data) { step_->baseStep().updateMovingLink(base_step_data->origin->idx, base_step_data); }
+  inline void addRestingFloatingBase(FloatingBase::ConstPtr floating_base) { step_->baseStep().updateNonMovingLink(floating_base->idx, floating_base); }
 
   inline void clearStep() { step_->clear(); }
 
   inline Step::Ptr getStep() { return step_; }
   inline Step::ConstPtr getStep() const { return step_; }
 
-  inline FootIndexArray getMovedFootIndeces() const { return step_->getStepIndeces(); }
-  inline FootIndexArray getSupportFootIndeces() const { return step_->getSupportFootIndeces(); }
+  inline FootIndexArray getMovedFootIndeces() const { return step_->footStep().getMovingLinkIndeces(); }
+  inline FootIndexArray getSupportFootIndeces() const { return step_->footStep().getNonMovingLinkIndeces(); }
 
-  inline BaseIndexArray getMovedFloatingBaseIndeces() const { return step_->getMovingFloatingBaseIndeces(); }
-  inline BaseIndexArray getRestingFloatingBaseIndeces() const { return step_->getRestingFloatingBaseIndeces(); }
+  inline BaseIndexArray getMovedFloatingBaseIndeces() const { return step_->baseStep().getMovingLinkIndeces(); }
+  inline BaseIndexArray getRestingFloatingBaseIndeces() const { return step_->baseStep().getNonMovingLinkIndeces(); }
 
   inline StateHashed::ConstPtr getState() const { return state_; }
   inline StateHashed::ConstPtr getPredState() const { return pred_; }

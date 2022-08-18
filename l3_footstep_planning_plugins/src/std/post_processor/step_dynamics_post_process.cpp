@@ -36,7 +36,14 @@ bool StepDynamicsPostProcess::postProcess(PlanningState& state) const
 
 bool StepDynamicsPostProcess::postProcess(Step& step) const
 {
-  for (Step::StepDataPair& p : step.getStepDataMap())
+  for (Step::FootStep::MovingDataPair& p : step.footStep().getMovingLinks())
+  {
+    ROS_ASSERT(p.second);
+    determineStepAttributes(*p.second);
+    determineTimings(*p.second);
+  }
+
+  for (Step::BaseStep::MovingDataPair& p : step.baseStep().getMovingLinks())
   {
     ROS_ASSERT(p.second);
     determineStepAttributes(*p.second);
@@ -53,6 +60,10 @@ void StepDynamicsPostProcess::determineTimings(FootStepData& step) const
   step.sway_duration = default_sway_duration_;
   step.step_duration = default_step_duration_;
 }
+
+void StepDynamicsPostProcess::determineStepAttributes(BaseStepData& step) const {}
+
+void StepDynamicsPostProcess::determineTimings(BaseStepData& step) const { step.step_duration = default_step_duration_; }
 }  // namespace l3_footstep_planning
 
 #include <pluginlib/class_list_macros.h>
