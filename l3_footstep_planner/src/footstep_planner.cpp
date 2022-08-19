@@ -315,13 +315,12 @@ bool FootstepPlanner::setParams(const vigir_generic_params::ParameterSet& params
   HFSHeuristic::mutableInstance().loadParams(params);
 
   // print use mask summary
-  std::vector<FootstepPlanningPlugin::ConstPtr> plugins;
-  vigir_pluginlib::PluginManager::getPlugins(plugins);
-
   // clang-format off
   if (print_use_masks_)
   {
     ROS_INFO("Plugin UseMask:");
+    std::vector<FootstepPlanningPlugin::ConstPtr> plugins;
+    vigir_pluginlib::PluginManager::getPlugins(plugins);
     for (FootstepPlanningPlugin::ConstPtr p : plugins)
     {
       const UseMask& use_mask = p->getUseMask();
@@ -843,6 +842,7 @@ msgs::ErrorStatus FootstepPlanner::preparePlanning(msgs::StepPlanRequestService:
   else
     WorldModel::mutableInstance().useTerrainModel(false);
 
+  // set start and goal
   if (req.plan_request.planning_mode != msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
   {
     // set start foot poses
@@ -853,6 +853,12 @@ msgs::ErrorStatus FootstepPlanner::preparePlanning(msgs::StepPlanRequestService:
     if (!setGoal(req.plan_request))
       return ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_GOAL, "FootstepPlanner", "preparePlanning: Could not set goal pose! Please check if poses are set!");
   }
+
+  // call preparation step of plugins
+  std::vector<FootstepPlanningPlugin::Ptr> plugins;
+  vigir_pluginlib::PluginManager::getPlugins(plugins);
+  for (FootstepPlanningPlugin::Ptr p : plugins)
+    p->preparePlanning(req.plan_request);
 
   // start planning in seperate thread
   planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);

@@ -49,6 +49,8 @@ public:
 
   virtual void reset() {}
 
+  virtual void preparePlanning(const msgs::StepPlanRequest& req) {}
+
   inline const UseMask& getUseMask() const { return use_mask_; }
   inline bool canUse(const UseMask& use_mask) const { return static_cast<bool>(use_mask_ & use_mask); }
 
