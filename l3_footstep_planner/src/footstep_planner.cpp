@@ -835,6 +835,14 @@ bool FootstepPlanner::stepPlanRequestService(msgs::StepPlanRequestService::Reque
 
 msgs::ErrorStatus FootstepPlanner::preparePlanning(msgs::StepPlanRequestService::Request& req)
 {
+  // set world model mode
+  if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_3D)
+    WorldModel::mutableInstance().useTerrainModel(true);
+  else if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
+    WorldModel::mutableInstance().useTerrainModel(req.plan_request.pattern_parameters.use_terrain_model);
+  else
+    WorldModel::mutableInstance().useTerrainModel(false);
+
   if (req.plan_request.planning_mode != msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
   {
     // set start foot poses
@@ -860,14 +868,6 @@ void FootstepPlanner::doPlanning(msgs::StepPlanRequestService::Request& req)
   WorldModel::ModelLocks model_locks(WorldModel::instance().lockModel());
 
   msgs::StepPlanRequestService::Response resp;
-
-  // set world model mode
-  if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_3D)
-    WorldModel::mutableInstance().useTerrainModel(true);
-  else if (req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN)
-    WorldModel::mutableInstance().useTerrainModel(req.plan_request.pattern_parameters.use_terrain_model);
-  else
-    WorldModel::mutableInstance().useTerrainModel(false);
 
   // dispatch planning mode and plan
   switch (req.plan_request.planning_mode)
