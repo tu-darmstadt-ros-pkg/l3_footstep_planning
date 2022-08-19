@@ -35,7 +35,7 @@ double HeuristicPlugin::getHeuristicValue(const State& from, const State& to, co
       h_val += getHeuristicValue(*fh_from, *f_to, start, goal);
   }
 
-  for(FloatingBase::ConstPtr fb_from : from.getFloatingBases())
+  for (FloatingBase::ConstPtr fb_from : from.getFloatingBases())
   {
     ROS_ASSERT(fb_from);
 

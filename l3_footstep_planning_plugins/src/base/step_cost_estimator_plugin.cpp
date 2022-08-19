@@ -16,7 +16,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
   for (const Step::FootStep::MovingDataPair& p : state.getStep()->footStep().getMovingLinks())
   {
     FootStepData::ConstPtr foot_step = p.second;
-    ROS_ASSERT(step_data);
+    ROS_ASSERT(foot_step);
 
     // do only consider specific foot ids when given
     if (ignoreFootIdx(foot_step->target->idx))
@@ -38,7 +38,7 @@ bool StepCostEstimatorPlugin::getCost(const PlanningState& state, double& cost, 
   for (const Step::BaseStep::MovingDataPair& p : state.getStep()->baseStep().getMovingLinks())
   {
     BaseStepData::ConstPtr base_step = p.second;
-    ROS_ASSERT(base_step_data);
+    ROS_ASSERT(base_step);
 
     double c, c_m, r, r_m;
     if (!getCost(*base_step, c, c_m, r, r_m))
