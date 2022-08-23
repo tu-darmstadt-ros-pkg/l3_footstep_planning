@@ -60,12 +60,12 @@ void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
   goal_pose_sub_ = nh.subscribe("/goal", 1, &FootstepPlannerNode::goalPoseCallback, this);
 
   // publish topics
-  step_plan_pub_ = nh.advertise<msgs::StepPlan>("step_plan", 1);
-  step_plan_request_vis_pub_ = nh.advertise<msgs::StepPlanRequest>("vis/step_plan_request", 1);
-  step_plan_vis_pub_ = nh.advertise<msgs::StepPlan>("vis/step_plan", 1);
-  error_status_pub_ = nh.advertise<msgs::ErrorStatus>("error_status", 1);
-  temp_step_plan_pub_ = nh.advertise<msgs::StepPlan>("temp_step_plan", 1);
-  feedback_pub_ = nh.advertise<msgs::PlanningFeedback>("planning_feedback", 1);
+  step_plan_pub_ = nh.advertise<msgs::StepPlan>("step_plan", 1, true);
+  step_plan_request_vis_pub_ = nh.advertise<msgs::StepPlanRequest>("vis/step_plan_request", 1, true);
+  step_plan_vis_pub_ = nh.advertise<msgs::StepPlan>("vis/step_plan", 1, true);
+  error_status_pub_ = nh.advertise<msgs::ErrorStatus>("error_status", 1, true);
+  temp_step_plan_pub_ = nh.advertise<msgs::StepPlan>("temp_step_plan", 1, true);
+  feedback_pub_ = nh.advertise<msgs::PlanningFeedback>("planning_feedback", 1, true);
 
   // start service clients
   generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
