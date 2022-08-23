@@ -52,38 +52,38 @@ void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
   initPlugins(nh);
 
   // init planner
-  footstep_planner.reset(new FootstepPlanner(nh));
+  footstep_planner_.reset(new FootstepPlanner(nh));
 
   // subscribe topics
-  set_active_parameter_set_sub = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
-  step_plan_request_sub = nh.subscribe("step_plan_request", 1, &FootstepPlannerNode::stepPlanRequest, this);
-  goal_pose_sub = nh.subscribe("/goal", 1, &FootstepPlannerNode::goalPoseCallback, this);
+  set_active_parameter_set_sub_ = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
+  step_plan_request_sub_ = nh.subscribe("step_plan_request", 1, &FootstepPlannerNode::stepPlanRequest, this);
+  goal_pose_sub_ = nh.subscribe("/goal", 1, &FootstepPlannerNode::goalPoseCallback, this);
 
   // publish topics
-  step_plan_pub = nh.advertise<msgs::StepPlan>("step_plan", 1);
-  step_plan_request_vis_pub = nh.advertise<msgs::StepPlanRequest>("vis/step_plan_request", 1);
-  step_plan_vis_pub = nh.advertise<msgs::StepPlan>("vis/step_plan", 1);
-  error_status_pub = nh.advertise<msgs::ErrorStatus>("error_status", 1);
-  temp_step_plan_pub = nh.advertise<msgs::StepPlan>("temp_step_plan", 1);
-  feedback_pub = nh.advertise<msgs::PlanningFeedback>("planning_feedback", 1);
+  step_plan_pub_ = nh.advertise<msgs::StepPlan>("step_plan", 1);
+  step_plan_request_vis_pub_ = nh.advertise<msgs::StepPlanRequest>("vis/step_plan_request", 1);
+  step_plan_vis_pub_ = nh.advertise<msgs::StepPlan>("vis/step_plan", 1);
+  error_status_pub_ = nh.advertise<msgs::ErrorStatus>("error_status", 1);
+  temp_step_plan_pub_ = nh.advertise<msgs::StepPlan>("temp_step_plan", 1);
+  feedback_pub_ = nh.advertise<msgs::PlanningFeedback>("planning_feedback", 1);
 
   // start service clients
-  generate_feet_pose_client = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
+  generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
 
   // start own services
-  step_plan_request_srv = nh.advertiseService("step_plan_request", &FootstepPlannerNode::stepPlanRequestService, this);
-  update_foot_srv = nh.advertiseService("update_foot", &FootstepPlannerNode::updateFootService, this);
-  update_feet_srv = nh.advertiseService("update_feet", &FootstepPlannerNode::updateFeetService, this);
-  update_step_plan_srv = nh.advertiseService("update_step_plan", &FootstepPlannerNode::updateStepPlanService, this);
+  step_plan_request_srv_ = nh.advertiseService("step_plan_request", &FootstepPlannerNode::stepPlanRequestService, this);
+  update_foot_srv_ = nh.advertiseService("update_foot", &FootstepPlannerNode::updateFootService, this);
+  update_feet_srv_ = nh.advertiseService("update_feet", &FootstepPlannerNode::updateFeetService, this);
+  update_step_plan_srv_ = nh.advertiseService("update_step_plan", &FootstepPlannerNode::updateStepPlanService, this);
 
   // clang-format off
   // init action servers
-  step_plan_request_as = SimpleActionServer<msgs::StepPlanRequestAction>::create(nh, "step_plan_request", true,
-                                                                                 boost::bind(&FootstepPlannerNode::stepPlanRequestAction, this, boost::ref(step_plan_request_as)),
-                                                                                 boost::bind(&FootstepPlannerNode::stepPlanRequestPreempt, this, boost::ref(step_plan_request_as)));
-  update_foot_as = SimpleActionServer<msgs::UpdateFootAction>::create(nh, "update_foot", true, boost::bind(&FootstepPlannerNode::updateFootAction, this, boost::ref(update_foot_as)));
-  update_feet_as = SimpleActionServer<msgs::UpdateFeetAction>::create(nh, "update_feet", true, boost::bind(&FootstepPlannerNode::updateFeetAction, this, boost::ref(update_feet_as)));
-  update_step_plan_as = SimpleActionServer<msgs::UpdateStepPlanAction>::create(nh, "update_step_plan", true, boost::bind(&FootstepPlannerNode::updateStepPlanAction, this, boost::ref(update_step_plan_as)));
+  step_plan_request_as_ = SimpleActionServer<msgs::StepPlanRequestAction>::create(nh, "step_plan_request", true,
+                                                                                  boost::bind(&FootstepPlannerNode::stepPlanRequestAction, this, boost::ref(step_plan_request_as_)),
+                                                                                  boost::bind(&FootstepPlannerNode::stepPlanRequestPreempt, this, boost::ref(step_plan_request_as_)));
+  update_foot_as_ = SimpleActionServer<msgs::UpdateFootAction>::create(nh, "update_foot", true, boost::bind(&FootstepPlannerNode::updateFootAction, this, boost::ref(update_foot_as_)));
+  update_feet_as_ = SimpleActionServer<msgs::UpdateFeetAction>::create(nh, "update_feet", true, boost::bind(&FootstepPlannerNode::updateFeetAction, this, boost::ref(update_feet_as_)));
+  update_step_plan_as_ = SimpleActionServer<msgs::UpdateStepPlanAction>::create(nh, "update_step_plan", true, boost::bind(&FootstepPlannerNode::updateStepPlanAction, this, boost::ref(update_step_plan_as_)));
   // clang-format on
 }
 
@@ -101,15 +101,15 @@ void FootstepPlannerNode::planningResultCallback(const msgs::StepPlanRequestServ
     ROS_WARN("[FootstepPlannerNode] Warning occured:\n%s", toString(resp.status).c_str());
 
   // publish and visualize plan
-  step_plan_pub.publish(resp.step_plan);
-  temp_step_plan_pub.publish(resp.step_plan);
-  step_plan_vis_pub.publish(resp.step_plan);
-  error_status_pub.publish(resp.status);
+  step_plan_pub_.publish(resp.step_plan);
+  temp_step_plan_pub_.publish(resp.step_plan);
+  step_plan_vis_pub_.publish(resp.step_plan);
+  error_status_pub_.publish(resp.status);
 }
 
 void FootstepPlannerNode::planningResultActionCallback(const msgs::StepPlanRequestService::Response& resp, SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
-  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
+  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex_);
 
   // finish action server
   msgs::StepPlanRequestResult result;
@@ -130,12 +130,12 @@ void FootstepPlannerNode::planningResultActionCallback(const msgs::StepPlanReque
     ROS_WARN("[FootstepPlannerNode] Warning occured:\n%s", toString(resp.status).c_str());
 
   // publish and visualize plan
-  temp_step_plan_pub.publish(resp.step_plan);
-  step_plan_vis_pub.publish(resp.step_plan);
-  error_status_pub.publish(resp.status);
+  temp_step_plan_pub_.publish(resp.step_plan);
+  step_plan_vis_pub_.publish(resp.step_plan);
+  error_status_pub_.publish(resp.status);
 }
 
-void FootstepPlannerNode::planningFeedbackCallback(const msgs::PlanningFeedback& feedback) { feedback_pub.publish(feedback); }
+void FootstepPlannerNode::planningFeedbackCallback(const msgs::PlanningFeedback& feedback) { feedback_pub_.publish(feedback); }
 
 void FootstepPlannerNode::planningFeedbackActionCallback(const msgs::PlanningFeedback& feedback, SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
@@ -148,7 +148,7 @@ void FootstepPlannerNode::planningFeedbackActionCallback(const msgs::PlanningFee
 
 void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
-  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
+  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex_);
 
   if (as->isActive())
     as->setPreempted();
@@ -162,7 +162,7 @@ void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 
   if (!ParameterManager::getParameterSet(params_name->data, params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
-  else if (!footstep_planner->setParams(params))
+  else if (!footstep_planner_->setParams(params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Couldn't set parameter set '%s'!", params_name->data.c_str());
   else
     ParameterManager::setActive(params_name->data);
@@ -179,7 +179,7 @@ void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr& p
   {
     status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                  "stepPlanRequest: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client, step_plan_request.plan_request.header);
+    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client_, step_plan_request.plan_request.header);
 
     if (hasError(status))
     {
@@ -192,13 +192,13 @@ void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr& p
 
   // clang-format off
   // start planning
-  status = footstep_planner->stepPlanRequest(step_plan_request,
+  status = footstep_planner_->stepPlanRequest(step_plan_request,
                                              boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
                                              boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
   // clang-format on
 
   // visualize request
-  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
+  step_plan_request_vis_pub_.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] stepPlanRequest:\n%s", toString(status).c_str());
@@ -208,7 +208,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 {
   // get start feet pose
   msgs::FootholdArray start_footholds;
-  msgs::ErrorStatus status = determineStartFootholds(start_footholds, generate_feet_pose_client, goal_pose->header);
+  msgs::ErrorStatus status = determineStartFootholds(start_footholds, generate_feet_pose_client_, goal_pose->header);
 
   if (hasError(status))
   {
@@ -229,7 +229,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   // get goal feet pose
   msgs::FootholdArray goal_footholds;
-  status = determineGoalFootholds(goal_footholds, generate_feet_pose_client, *goal_pose);
+  status = determineGoalFootholds(goal_footholds, generate_feet_pose_client_, *goal_pose);
 
   if (hasError(status))
   {
@@ -239,7 +239,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   else if (hasWarning(status))
     ROS_WARN("[FootstepPlannerNode] Warning occured while obtaining goal feet pose:\n%s", toString(status).c_str());
 
-  footstep_planner->updateFeet(goal_footholds, msgs::UpdateMode::UPDATE_MODE_MOVE_TO_VALID);
+  footstep_planner_->updateFeet(goal_footholds, msgs::UpdateMode::UPDATE_MODE_MOVE_TO_VALID);
 
   // get start floating bases
   msgs::FloatingBaseArray goal_floating_bases;
@@ -273,11 +273,11 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   step_plan_request.plan_request.parameter_set_name.data = std::string();
 
   // start planning
-  status = footstep_planner->stepPlanRequest(step_plan_request, boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
+  status = footstep_planner_->stepPlanRequest(step_plan_request, boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
                                              boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
 
   // visualize request
-  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
+  step_plan_request_vis_pub_.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] goalPoseCallback:\n%s", toString(status).c_str());
@@ -292,19 +292,19 @@ bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::R
   {
     resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                       "stepPlanRequestService: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    resp.status += determineStartFootholds(req.plan_request.start_footholds, generate_feet_pose_client, req.plan_request.header);
+    resp.status += determineStartFootholds(req.plan_request.start_footholds, generate_feet_pose_client_, req.plan_request.header);
   }
 
   // start planning
-  if (!footstep_planner->stepPlanRequestService(req, resp))
+  if (!footstep_planner_->stepPlanRequestService(req, resp))
     resp.status += ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlannerNode", "stepPlanRequestService: Can't call footstep planner service!");
 
   // visualize request
-  step_plan_request_vis_pub.publish(req.plan_request);
+  step_plan_request_vis_pub_.publish(req.plan_request);
 
-  temp_step_plan_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
-  step_plan_vis_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
-  error_status_pub.publish(msgs::ErrorStatusConstPtr(new msgs::ErrorStatus(resp.status)));
+  temp_step_plan_pub_.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
+  step_plan_vis_pub_.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
+  error_status_pub_.publish(msgs::ErrorStatusConstPtr(new msgs::ErrorStatus(resp.status)));
 
   return true;  // return always true so the message is returned
 }
@@ -312,22 +312,22 @@ bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::R
 bool FootstepPlannerNode::updateFootService(msgs::UpdateFootService::Request& req, msgs::UpdateFootService::Response& resp)
 {
   resp.foot = req.foot;
-  resp.status = footstep_planner->updateFoot(resp.foot, req.update_mode.mode);
+  resp.status = footstep_planner_->updateFoot(resp.foot, req.update_mode.mode);
   return true;  // return always true so the message is returned
 }
 
 bool FootstepPlannerNode::updateFeetService(msgs::UpdateFeetService::Request& req, msgs::UpdateFeetService::Response& resp)
 {
   resp.feet = req.feet;
-  resp.status = footstep_planner->updateFeet(resp.feet, req.update_mode.mode);
+  resp.status = footstep_planner_->updateFeet(resp.feet, req.update_mode.mode);
   return true;  // return always true so the message is returned
 }
 
 bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Request& req, msgs::UpdateStepPlanService::Response& resp)
 {
   resp.step_plan = req.step_plan;
-  resp.status = footstep_planner->updateStepPlan(resp.step_plan, req.update_mode.mode, req.parameter_set_name.data);
-  step_plan_vis_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
+  resp.status = footstep_planner_->updateStepPlan(resp.step_plan, req.update_mode.mode, req.parameter_set_name.data);
+  step_plan_vis_pub_.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(resp.step_plan)));
   return true;  // return always true so the message is returned
 }
 
@@ -336,9 +336,9 @@ bool FootstepPlannerNode::updateStepPlanService(msgs::UpdateStepPlanService::Req
 void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
   // preempt any previous goal if active due to given callback
-  footstep_planner->preemptPlanning();
+  footstep_planner_->preemptPlanning();
 
-  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
+  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex_);
 
   // accept new goal
   const msgs::StepPlanRequestGoalConstPtr& goal(as->acceptNewGoal());
@@ -359,19 +359,19 @@ void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPla
   {
     status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                  "stepPlanRequestAction: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client, step_plan_request.plan_request.header);
+    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client_, step_plan_request.plan_request.header);
   }
 
   // clang-format off
   // start planning
-  status = footstep_planner->stepPlanRequest(step_plan_request,
+  status = footstep_planner_->stepPlanRequest(step_plan_request,
                                              boost::bind(&FootstepPlannerNode::planningResultActionCallback, this, _1, boost::ref(as)),
                                              boost::bind(&FootstepPlannerNode::planningFeedbackActionCallback, this, _1, boost::ref(as)),
                                              boost::bind(&FootstepPlannerNode::planningPreemptionActionCallback, this, boost::ref(as)));
   // clang-format on
 
   // visualize request
-  step_plan_request_vis_pub.publish(step_plan_request.plan_request);
+  step_plan_request_vis_pub_.publish(step_plan_request.plan_request);
 
   if (!isOk(status))
     ROS_INFO("[FootstepPlannerNode] stepPlanRequest:\n%s", toString(status).c_str());
@@ -379,11 +379,11 @@ void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPla
 
 void FootstepPlannerNode::stepPlanRequestPreempt(SimpleActionServer<msgs::StepPlanRequestAction>::Ptr& as)
 {
-  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex);
+  boost::recursive_mutex::scoped_lock lock(step_plan_request_as_mutex_);
 
   if (as->isActive())
   {
-    footstep_planner->preemptPlanning();
+    footstep_planner_->preemptPlanning();
     as->setPreempted();
   }
 }
@@ -401,7 +401,7 @@ void FootstepPlannerNode::updateFootAction(SimpleActionServer<msgs::UpdateFootAc
 
   msgs::UpdateFootResult result;
   result.foot = goal->foot;
-  result.status = footstep_planner->updateFoot(result.foot, goal->update_mode.mode);
+  result.status = footstep_planner_->updateFoot(result.foot, goal->update_mode.mode);
 
   actionServerFinished(*as, result);
 }
@@ -419,7 +419,7 @@ void FootstepPlannerNode::updateFeetAction(SimpleActionServer<msgs::UpdateFeetAc
 
   msgs::UpdateFeetResult result;
   result.feet = goal->feet;
-  result.status = footstep_planner->updateFeet(result.feet, goal->update_mode.mode);
+  result.status = footstep_planner_->updateFeet(result.feet, goal->update_mode.mode);
 
   actionServerFinished(*as, result);
 }
@@ -438,8 +438,8 @@ void FootstepPlannerNode::updateStepPlanAction(SimpleActionServer<msgs::UpdateSt
   msgs::UpdateStepPlanResult result;
 
   result.step_plan = goal->step_plan;
-  result.status = footstep_planner->updateStepPlan(result.step_plan, goal->update_mode.mode, goal->parameter_set_name.data);
-  step_plan_vis_pub.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(result.step_plan)));
+  result.status = footstep_planner_->updateStepPlan(result.step_plan, goal->update_mode.mode, goal->parameter_set_name.data);
+  step_plan_vis_pub_.publish(msgs::StepPlanConstPtr(new msgs::StepPlan(result.step_plan)));
 
   actionServerFinished(*as, result);
 }

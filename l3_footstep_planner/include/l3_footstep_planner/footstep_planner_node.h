@@ -84,36 +84,36 @@ protected:
   void updateStepPlanAction(SimpleActionServer<msgs::UpdateStepPlanAction>::Ptr& as);
 
   // subscribers
-  ros::Subscriber set_active_parameter_set_sub;
-  ros::Subscriber step_plan_request_sub;
-  ros::Subscriber goal_pose_sub;
+  ros::Subscriber set_active_parameter_set_sub_;
+  ros::Subscriber step_plan_request_sub_;
+  ros::Subscriber goal_pose_sub_;
 
   // publisher
-  ros::Publisher step_plan_pub;
-  ros::Publisher step_plan_request_vis_pub;
-  ros::Publisher step_plan_vis_pub;
-  ros::Publisher error_status_pub;
-  ros::Publisher temp_step_plan_pub;
-  ros::Publisher feedback_pub;
+  ros::Publisher step_plan_pub_;
+  ros::Publisher step_plan_request_vis_pub_;
+  ros::Publisher step_plan_vis_pub_;
+  ros::Publisher error_status_pub_;
+  ros::Publisher temp_step_plan_pub_;
+  ros::Publisher feedback_pub_;
 
   // service clients
-  ros::ServiceClient generate_feet_pose_client;
+  ros::ServiceClient generate_feet_pose_client_;
 
   // service servers
-  ros::ServiceServer step_plan_request_srv;
-  ros::ServiceServer update_foot_srv;
-  ros::ServiceServer update_feet_srv;
-  ros::ServiceServer update_step_plan_srv;
+  ros::ServiceServer step_plan_request_srv_;
+  ros::ServiceServer update_foot_srv_;
+  ros::ServiceServer update_feet_srv_;
+  ros::ServiceServer update_step_plan_srv_;
 
   // action servers
-  SimpleActionServer<msgs::StepPlanRequestAction>::Ptr step_plan_request_as;
-  SimpleActionServer<msgs::UpdateFootAction>::Ptr update_foot_as;
-  SimpleActionServer<msgs::UpdateFeetAction>::Ptr update_feet_as;
-  SimpleActionServer<msgs::UpdateStepPlanAction>::Ptr update_step_plan_as;
+  SimpleActionServer<msgs::StepPlanRequestAction>::Ptr step_plan_request_as_;
+  SimpleActionServer<msgs::UpdateFootAction>::Ptr update_foot_as_;
+  SimpleActionServer<msgs::UpdateFeetAction>::Ptr update_feet_as_;
+  SimpleActionServer<msgs::UpdateStepPlanAction>::Ptr update_step_plan_as_;
 
-  mutable boost::recursive_mutex step_plan_request_as_mutex;
+  mutable boost::recursive_mutex step_plan_request_as_mutex_;
 
-  FootstepPlanner::Ptr footstep_planner;
+  FootstepPlanner::Ptr footstep_planner_;
 };
 }  // namespace l3_footstep_planning
 #endif

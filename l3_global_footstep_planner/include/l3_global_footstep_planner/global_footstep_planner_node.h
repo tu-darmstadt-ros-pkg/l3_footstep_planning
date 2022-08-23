@@ -66,23 +66,23 @@ protected:
   void stitchStepPlanAction(SimpleActionServer<msgs::StitchStepPlanAction>::Ptr& as);
 
   // subscriber
-  ros::Subscriber edit_step_sub;
-  ros::Subscriber set_step_plan_sub;
-  ros::Subscriber stitch_step_plan_sub;
+  ros::Subscriber edit_step_sub_;
+  ros::Subscriber set_step_plan_sub_;
+  ros::Subscriber stitch_step_plan_sub_;
 
   // service servers
-  ros::ServiceServer edit_step_srv;
-  ros::ServiceServer set_step_plan_srv;
-  ros::ServiceServer get_step_plan_srv;
-  ros::ServiceServer stitch_step_plan_srv;
+  ros::ServiceServer edit_step_srv_;
+  ros::ServiceServer set_step_plan_srv_;
+  ros::ServiceServer get_step_plan_srv_;
+  ros::ServiceServer stitch_step_plan_srv_;
 
   // action servers
-  SimpleActionServer<msgs::EditStepAction>::Ptr edit_step_as;
-  SimpleActionServer<msgs::SetStepPlanAction>::Ptr set_step_plan_as;
-  SimpleActionServer<msgs::GetStepPlanAction>::Ptr get_step_plan_as;
-  SimpleActionServer<msgs::StitchStepPlanAction>::Ptr stitch_step_plan_as;
+  SimpleActionServer<msgs::EditStepAction>::Ptr edit_step_as_;
+  SimpleActionServer<msgs::SetStepPlanAction>::Ptr set_step_plan_as_;
+  SimpleActionServer<msgs::GetStepPlanAction>::Ptr get_step_plan_as_;
+  SimpleActionServer<msgs::StitchStepPlanAction>::Ptr stitch_step_plan_as_;
 
-  GlobalFootstepPlanner::Ptr global_footstep_planner;
+  GlobalFootstepPlanner::Ptr global_footstep_planner_;
 };
 }  // namespace l3_footstep_planning
 
