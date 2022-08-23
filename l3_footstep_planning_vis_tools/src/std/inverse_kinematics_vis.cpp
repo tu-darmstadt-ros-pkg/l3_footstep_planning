@@ -300,6 +300,10 @@ void InverseKinematicsVis::publishTF(const ros::TimerEvent& /*event*/)
   {
     ros::Time current_time = ros::Time().now();
 
+    // prevent duplicate time stamps
+    if (world_to_root_.header.stamp == current_time)
+      return;
+
     world_to_root_.header.stamp = current_time;
     tf_broadcaster_.sendTransform(world_to_root_);
 
