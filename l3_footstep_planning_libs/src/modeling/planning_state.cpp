@@ -54,21 +54,21 @@ PlanningState::PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr 
     }
 
     // generate floating base data
-    for(FloatingBaseHashed::ConstPtr adj_floating_base : adj_->getFloatingBasesHashed())
+    for (FloatingBaseHashed::ConstPtr adj_floating_base : adj_->getFloatingBasesHashed())
     {
       ROS_ASSERT(adj_floating_base);
 
       FloatingBaseHashed::ConstPtr floating_base = state_->getFloatingBase(adj_floating_base->idx);
 
-      if(!floating_base)
+      if (!floating_base)
         continue;
 
-      if(adj_floating_base->getUID() != floating_base->getUID())
+      if (adj_floating_base->getUID() != floating_base->getUID())
       {
         // check if base is moving
-        if(pred_)
+        if (pred_)
           step_->baseStep().updateMovingLink(floating_base->idx, BaseStepData::make(adj_floating_base, floating_base));
-        if(succ_)
+        if (succ_)
           step_->baseStep().updateMovingLink(floating_base->idx, BaseStepData::make(floating_base, adj_floating_base));
       }
       // otherwise floating base is a support base
