@@ -107,7 +107,7 @@ bool GroundContactPostProcess::getFootContactSupport(const Foothold& foothold, d
       Point trans_pos = foothold.pose() * orig_pos;
 
       double height = 0.0;
-      if (WorldModel::instance().getHeight(trans_pos.x(), trans_pos.y(), height) != TerrainResult::OK)
+      if (WorldModel::instance().getHeight(trans_pos.x(), trans_pos.y(), height) == TerrainResult::NO_HEIGHT)
       {
         // ROS_WARN_THROTTLE(1.0, "getFootSupportArea: No height data found at %f/%f", p.getOrigin().getX(), p.getOrigin().getY());
         unknown++;

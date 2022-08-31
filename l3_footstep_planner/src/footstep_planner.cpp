@@ -362,17 +362,25 @@ msgs::ErrorStatus FootstepPlanner::updateFoot(msgs::Foothold& foot, uint8_t mode
   }
   else if (mode & msgs::UpdateMode::UPDATE_MODE_3D)
   {
+    TerrainResult result;
+
     Foothold f(foot);
-    if (!WorldModel::instance().isTerrainModelAvailable() || WorldModel::instance().getTerrainModel()->update3DData(f) != TerrainResult::OK)
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "updateFoot: Couldn't update 3D data.", false);
+    if (WorldModel::instance().isTerrainModelAvailable())
+    {
+      result = WorldModel::instance().getTerrainModel()->update3DData(f);
+      if ((result & TerrainResult::NO_DATA) == TerrainResult::NO_DATA)
+        status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update 3D data.", false);
+      else
+        f.toMsg(foot);
+    }
     else
-      f.toMsg(foot);
+      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update 3D data. No terrain data available.", false);
   }
   else if (mode & msgs::UpdateMode::UPDATE_MODE_Z)
   {
     if (!WorldModel::instance().isTerrainModelAvailable() ||
         WorldModel::instance().getTerrainModel()->getHeight(foot.pose.position.x, foot.pose.position.y, foot.pose.position.z) != TerrainResult::OK)
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlanner", "updateFoot: Couldn't update z.", false);
+      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update z.", false);
   }
 
   // transform back to robot frame

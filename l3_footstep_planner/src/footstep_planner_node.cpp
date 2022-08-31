@@ -240,7 +240,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   {
     ROS_WARN("[FootstepPlannerNode] Warning occured while obtaining goal feet pose:\n%s", toString(status).c_str());
 
-    if (status.warning & msgs::ErrorStatus::ERR_INVALID_TERRAIN_MODEL)
+    if (status.warning & msgs::ErrorStatus::WARN_NO_TERRAIN_DATA)
     {
       ROS_WARN("[FootstepPlannerNode] Snapping goal heights according to the start state.");
 

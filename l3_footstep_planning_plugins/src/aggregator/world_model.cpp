@@ -102,7 +102,7 @@ TerrainModelPlugin::ConstPtr WorldModel::getTerrainModel() const { return terrai
 TerrainResult WorldModel::getHeight(double x, double y, double& height) const
 {
   if (!use_terrain_model_ || !isTerrainModelAvailable())
-    return TerrainResult::OK;
+    return TerrainResult::NO_DATA;
 
   return terrain_model_plugin_->getHeight(x, y, height);
 }
@@ -110,7 +110,7 @@ TerrainResult WorldModel::getHeight(double x, double y, double& height) const
 TerrainResult WorldModel::update3DData(Foothold& foothold) const
 {
   if (!use_terrain_model_ || !isTerrainModelAvailable())
-    return TerrainResult::OK;
+    return TerrainResult::NO_DATA;
 
   return terrain_model_plugin_->update3DData(foothold);
 }

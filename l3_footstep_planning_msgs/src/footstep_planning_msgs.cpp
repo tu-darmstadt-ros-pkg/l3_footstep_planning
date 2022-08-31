@@ -56,17 +56,19 @@ msgs::ErrorStatus isConsistent(const msgs::StepPlan& step_plan)
     {
       if (foot_step.origin.header.frame_id != step_plan.header.frame_id)
         status += ErrorStatusError(msgs::ErrorStatus::ERR_INCONSISTENT_STEP_PLAN, "isConsistent",
-                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step origin: '" + foot_step.origin.header.frame_id + "'");
+                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step origin: '" +
+                                       foot_step.origin.header.frame_id + "'");
 
       if (foot_step.target.header.frame_id != step_plan.header.frame_id)
         status += ErrorStatusError(msgs::ErrorStatus::ERR_INCONSISTENT_STEP_PLAN, "isConsistent",
-                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step target: '" + foot_step.target.header.frame_id + "'");
+                                   "Frame id mismatch of step " + boost::lexical_cast<std::string>(step.idx) + " Plan: '" + step_plan.header.frame_id + "' vs. step target: '" +
+                                       foot_step.target.header.frame_id + "'");
     }
 
     if (step.idx != step_idx)
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_INCOMPLETE_STEP_PLAN, "isConsistent",
-                                   "Wrong step index order: Expected " + boost::lexical_cast<std::string>(step_idx) + " but got " +
-                                       boost::lexical_cast<std::string>(step.idx) + "!");
+      status +=
+          ErrorStatusWarning(msgs::ErrorStatus::WARN_INCOMPLETE_STEP_PLAN, "isConsistent",
+                             "Wrong step index order: Expected " + boost::lexical_cast<std::string>(step_idx) + " but got " + boost::lexical_cast<std::string>(step.idx) + "!");
 
     step_idx++;
   }
@@ -119,6 +121,8 @@ std::string WarningStatusCodeToString(unsigned int warning)
       return "WARN_INCOMPLETE_STEP_PLAN";
     case msgs::ErrorStatus::WARN_INVALID_STEP_PLAN:
       return "WARN_INVALID_STEP_PLAN";
+    case msgs::ErrorStatus::WARN_NO_TERRAIN_DATA:
+      return "WARN_NO_TERRAIN_DATA";
     default:
       return "WARN_UNKNOWN";
   }
@@ -164,8 +168,10 @@ msgs::ErrorStatus ErrorStatusWarning(unsigned int warning, const std::string& co
 }
 
 bool hasError(const msgs::ErrorStatus& status) { return status.error != msgs::ErrorStatus::NO_ERROR; }
+bool hasError(const msgs::ErrorStatus& status, unsigned int code) { return (status.error & code) == code; }
 
 bool hasWarning(const msgs::ErrorStatus& status) { return status.warning != msgs::ErrorStatus::NO_WARNING; }
+bool hasWarning(const msgs::ErrorStatus& status, unsigned int code) { return (status.warning & code) == code; }
 
 bool isOk(const msgs::ErrorStatus& status) { return !hasError(status) && !hasWarning(status); }
 

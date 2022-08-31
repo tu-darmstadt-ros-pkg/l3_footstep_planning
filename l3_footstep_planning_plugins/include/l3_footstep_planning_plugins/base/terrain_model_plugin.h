@@ -41,11 +41,17 @@ namespace l3_footstep_planning
 {
 using namespace l3;
 
+// Range definition for enums:
+// error: < 0
+// ok: 0
+// warnings: > 0
 enum TerrainResult
 {
   ERROR = -1,
   OK = 0,
-  NO_DATA = 1
+  NO_HEIGHT = 1,
+  NO_NORMAL = 2,
+  NO_DATA = NO_HEIGHT + NO_NORMAL,
 };
 
 class TerrainModelPlugin : public virtual vigir_pluginlib::Plugin
@@ -76,10 +82,10 @@ public:
    */
   virtual double getResolution() const = 0;
 
-  virtual TerrainResult getHeight(double x, double y, double& height) const { return NO_DATA; }
+  virtual TerrainResult getHeight(double x, double y, double& height) const { return NO_HEIGHT; }
   virtual TerrainResult getHeight(const Foothold& foothold, double& height) const { return getHeight(foothold.x(), foothold.y(), height); }
 
-  virtual TerrainResult getNormal(const Pose& pose, Vector3& normal) const { return NO_DATA; }
+  virtual TerrainResult getNormal(const Pose& pose, Vector3& normal) const { return NO_NORMAL; }
   virtual TerrainResult getNormal(const Foothold& foothold, Vector3& normal) const { return getNormal(foothold.pose(), normal); }
   virtual TerrainResult getNormal(const FloatingBase& floating_base, Vector3& normal) const { return getNormal(floating_base.pose(), normal); }
 
@@ -96,7 +102,7 @@ public:
     if (getHeight(pose.x(), pose.y(), z) == OK)
       pose.setZ(z);
     else
-      result = NO_DATA;
+      result = NO_HEIGHT;
 
     // get roll and pitch
     l3::Vector3 normal;
@@ -109,7 +115,7 @@ public:
       pose.setRPY(roll, pitch, yaw);
     }
     else
-      result = NO_DATA;
+      result = static_cast<TerrainResult>(result | NO_NORMAL);
 
     return result;
   }

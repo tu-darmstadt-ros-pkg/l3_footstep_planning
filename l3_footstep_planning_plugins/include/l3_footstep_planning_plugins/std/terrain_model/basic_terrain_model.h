@@ -56,10 +56,10 @@ public:
 
   inline double getResolution() const override { return terrain_model_->getResolution(); }
 
-  inline TerrainResult getHeight(double x, double y, double& height) const override { return terrain_model_->getHeight(x, y, height) ? OK : NO_DATA; }
+  inline TerrainResult getHeight(double x, double y, double& height) const override { return terrain_model_->getHeight(x, y, height) ? OK : NO_HEIGHT; }
 
-  inline TerrainResult getNormal(const Pose& pose, Vector3& normal) const override { return terrain_model_->getNormal(pose, normal) ? OK : NO_DATA; }
-  inline TerrainResult getNormal(const Foothold& foothold, Vector3& normal) const override { return terrain_model_->getNormal(foothold, normal) ? OK : NO_DATA; }
+  inline TerrainResult getNormal(const Pose& pose, Vector3& normal) const override { return terrain_model_->getNormal(pose, normal) ? OK : NO_NORMAL; }
+  inline TerrainResult getNormal(const Foothold& foothold, Vector3& normal) const override { return terrain_model_->getNormal(foothold, normal) ? OK : NO_NORMAL; }
 
 protected:
   virtual void notifyTerrainModelUpdate() {}

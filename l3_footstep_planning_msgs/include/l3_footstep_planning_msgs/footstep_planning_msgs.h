@@ -97,7 +97,9 @@ msgs::ErrorStatus ErrorStatusError(unsigned int error, const std::string& contex
 msgs::ErrorStatus ErrorStatusWarning(unsigned int warning, const std::string& context, const std::string& warning_msg, bool output = true, double throttle_rate = 0.0);
 
 bool hasError(const msgs::ErrorStatus& status);
+bool hasError(const msgs::ErrorStatus& status, unsigned int code);
 bool hasWarning(const msgs::ErrorStatus& status);
+bool hasWarning(const msgs::ErrorStatus& status, unsigned int code);
 bool isOk(const msgs::ErrorStatus& status);
 
 std::string toString(const msgs::ErrorStatus& error_status);
