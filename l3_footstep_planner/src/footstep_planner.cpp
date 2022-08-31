@@ -378,9 +378,13 @@ msgs::ErrorStatus FootstepPlanner::updateFoot(msgs::Foothold& foot, uint8_t mode
   }
   else if (mode & msgs::UpdateMode::UPDATE_MODE_Z)
   {
-    if (!WorldModel::instance().isTerrainModelAvailable() ||
-        WorldModel::instance().getTerrainModel()->getHeight(foot.pose.position.x, foot.pose.position.y, foot.pose.position.z) != TerrainResult::OK)
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update z.", false);
+    if (WorldModel::instance().isTerrainModelAvailable())
+    {
+      if (WorldModel::instance().getTerrainModel()->getHeight(foot.pose.position.x, foot.pose.position.y, foot.pose.position.z) != TerrainResult::OK)
+        status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update foot height.", false);
+    }
+    else
+      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_NO_TERRAIN_DATA, "FootstepPlanner", "updateFoot: Couldn't update foot height. No terrain data available.", false);
   }
 
   // transform back to robot frame
@@ -628,7 +632,8 @@ bool FootstepPlanner::finalizeStepPlan(msgs::StepPlanRequestService::Request& re
     /// @TODO: use RobotModelPlugin
 
     // post process step (needed for goal states and pattern mode)
-    //      if ((goal_state_ && !goal_state_->getFootholds().empty() && (swing_foot == State(*goal_state_->getFoothold(0)) || swing_foot == State(*goal_state_->getFoothold(1)))) ||
+    //      if ((goal_state_ && !goal_state_->getFootholds().empty() && (swing_foot == State(*goal_state_->getFoothold(0)) || swing_foot == State(*goal_state_->getFoothold(1))))
+    //      ||
     //          (path_iter != getPathBegin() && req.plan_request.planning_mode == msgs::StepPlanRequest::PLANNING_MODE_PATTERN))
     //      {
     //        if (env_params->forward_search)
