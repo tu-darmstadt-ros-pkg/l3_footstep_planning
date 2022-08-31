@@ -91,7 +91,7 @@ msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseReques
 
     temp_status = updateFeetPose(temp_feet);
     if (hasError(temp_status))
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FeetPoseGenerator", "generateFeetPose: Couldn't determine neither 3D nor height of feet!", false);
+      status += ErrorStatusWarning(msgs::ErrorStatus::ERR_INVALID_TERRAIN_MODEL, "FeetPoseGenerator", "generateFeetPose: Couldn't determine neither 3D nor height of feet!", false);
     else
     {
       status += temp_status;
@@ -103,7 +103,7 @@ msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseReques
   {
     msgs::FootholdArray current_feet;
     if (!getCurrentFeetPose(current_feet, request_frame_id))
-      status += ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FeetPoseGenerator", "generateFeetPose: Couldn't determine height of current feet!");
+      status += ErrorStatusError(msgs::ErrorStatus::ERR_INVALID_TERRAIN_MODEL, "FeetPoseGenerator", "generateFeetPose: Couldn't determine height of current feet!");
   }
 
   return status;
@@ -121,7 +121,7 @@ msgs::ErrorStatus FeetPoseGenerator::updateFeetPose(msgs::FootholdArray& feet)
   for (msgs::Foothold& foothold : feet)
   {
     if (!terrain_model_->update3DData(foothold.pose) && !terrain_model_->getHeight(foothold.pose.position.x, foothold.pose.position.y, foothold.pose.position.z))
-      status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FeetPoseGenerator",
+      status += ErrorStatusWarning(msgs::ErrorStatus::ERR_INVALID_TERRAIN_MODEL, "FeetPoseGenerator",
                                    "updateFeetPose: Couldn't determine neither 3D nor height of foot_idx " + std::to_string(foothold.idx) + "!", false);
   }
 

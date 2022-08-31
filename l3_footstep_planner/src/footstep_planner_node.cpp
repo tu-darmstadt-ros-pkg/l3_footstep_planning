@@ -237,7 +237,26 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
     return;
   }
   else if (hasWarning(status))
+  {
     ROS_WARN("[FootstepPlannerNode] Warning occured while obtaining goal feet pose:\n%s", toString(status).c_str());
+
+    if (status.warning & msgs::ErrorStatus::ERR_INVALID_TERRAIN_MODEL)
+    {
+      ROS_WARN("[FootstepPlannerNode] Snapping goal heights according to the start state.");
+
+      for (msgs::Foothold& f_goal : goal_footholds)
+      {
+        for (msgs::Foothold& f_start : start_footholds)
+        {
+          if (f_goal.idx == f_start.idx)
+          {
+            f_goal.pose.position.z = f_start.pose.position.z;
+            continue;
+          }
+        }
+      }
+    }
+  }
 
   footstep_planner_->updateFeet(goal_footholds, msgs::UpdateMode::UPDATE_MODE_MOVE_TO_VALID);
 
@@ -274,7 +293,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   // start planning
   status = footstep_planner_->stepPlanRequest(step_plan_request, boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
-                                             boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
+                                              boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
 
   // visualize request
   step_plan_request_vis_pub_.publish(step_plan_request.plan_request);
