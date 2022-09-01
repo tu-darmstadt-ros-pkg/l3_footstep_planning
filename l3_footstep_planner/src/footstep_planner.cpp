@@ -818,8 +818,11 @@ msgs::ErrorStatus FootstepPlanner::stepPlanRequest(msgs::StepPlanRequestService:
   if (!RobotModel::gaitGenerator())
     return ErrorStatusError(msgs::ErrorStatus::ERR_UNKNOWN, "FootstepPlanner", "stepPlanRequest: No gait generator available!");
 
-  // start planning
+  // prepare planning
   msgs::ErrorStatus status = preparePlanning(req);
+
+  // start planning in seperate thread
+  planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);
 
   // transform feet poses back
   FootPoseTransformer::transformToRobotFrame(req.plan_request.start_footholds);
@@ -872,9 +875,6 @@ msgs::ErrorStatus FootstepPlanner::preparePlanning(msgs::StepPlanRequestService:
   vigir_pluginlib::PluginManager::getPlugins(plugins);
   for (FootstepPlanningPlugin::Ptr p : plugins)
     p->preparePlanning(req.plan_request);
-
-  // start planning in seperate thread
-  planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);
 
   return msgs::ErrorStatus();
 }
