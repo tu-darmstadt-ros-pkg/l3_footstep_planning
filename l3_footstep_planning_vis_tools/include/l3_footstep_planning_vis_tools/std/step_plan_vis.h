@@ -39,7 +39,12 @@ class StepPlanVis : public PlanningMarkersVisPlugin
 public:
   StepPlanVis();
 
+  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+
   void visualize(const StepPlan& step_plan) override;
+
+protected:
+  bool add_step_index_;
 };
 }  // namespace l3_footstep_planning
 

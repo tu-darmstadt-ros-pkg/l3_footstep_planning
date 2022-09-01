@@ -12,11 +12,22 @@ StepPlanVis::StepPlanVis()
   marker_ns_ = "step_plan";
 }
 
+bool StepPlanVis::loadParams(const vigir_generic_params::ParameterSet& params)
+{
+  if (!PlanningMarkersVisPlugin::loadParams(params))
+    return false;
+
+  // get parameters
+  add_step_index_ = param("add_step_index", true, true);
+
+  return true;
+}
+
 void StepPlanVis::visualize(const StepPlan& step_plan)
 {
   msgs::StepArray steps;
   stepArrayL3ToMsg(step_plan.getSteps().asArray(), steps);
-  markers_ = stepPlanToFootMarkerArray(steps, *RobotModel::description(), true, marker_ns_);
+  markers_ = stepPlanToFootMarkerArray(steps, *RobotModel::description(), add_step_index_, marker_ns_);
 }
 }  // namespace l3_footstep_planning
 

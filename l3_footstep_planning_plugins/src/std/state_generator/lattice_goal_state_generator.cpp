@@ -14,13 +14,16 @@ LatticeGoalStateGenerator::LatticeGoalStateGenerator()
 
 bool LatticeGoalStateGenerator::loadParams(const ParameterSet& params)
 {
-  // get parameters
-  getParam("base_idx", base_idx_, BaseInfo::MAIN_BODY_IDX, true);
-  getParam("expand_neutral_stance", expand_neutral_stance_, false, true);
+  if (!StateGeneratorPlugin::loadParams(params))
+    return false;
 
-  getParam("max_dist", max_dist_, 0.5, true);
+  // get parameters
+  base_idx_ = param("base_idx", BaseInfo::MAIN_BODY_IDX, true);
+  expand_neutral_stance_ = param("expand_neutral_stance", false, true);
+
+  max_dist_ = param("max_dist", 0.5, true);
   max_dist_sq_ = max_dist_ * max_dist_;
-  getParam("min_curve_radius", min_curve_radius_, 0.5, true);
+  min_curve_radius_ = param("min_curve_radius", 0.5, true);
 
   return true;
 }
