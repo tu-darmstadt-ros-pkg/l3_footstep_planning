@@ -68,6 +68,8 @@ public:
    */
   virtual void reset() {}
 
+  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
+
   bool isUnique() const final { return true; }
 
   inline SharedLock sharedLockModel() const { return SharedLock(model_lock_); }
@@ -90,7 +92,7 @@ public:
   virtual TerrainResult getNormal(const FloatingBase& floating_base, Vector3& normal) const { return getNormal(floating_base.pose(), normal); }
 
   virtual TerrainResult update3DData(Pose& pose) const { return update3DDataImpl(pose); }
-  virtual TerrainResult update3DData(Foothold& foothold) const { return update3DDataImpl(foothold); }
+  virtual TerrainResult update3DData(Foothold& foothold) const;
 
   template <typename T>
   TerrainResult update3DDataImpl(T& pose) const
@@ -119,6 +121,15 @@ public:
 
     return result;
   }
+
+protected:
+  TerrainResult getMaxHeightUnderFoot(const Foothold& foothold, double& height) const;
+
+  std::map<FootIndex, Vector3> foot_size_map_;
+
+  bool sample_max_height_under_foot_;
+  unsigned int sampling_steps_x_;    // number of sampling steps in y
+  unsigned int sampling_steps_y_;    // number of sampling steps in y
 
 private:
   mutable Mutex model_lock_;
