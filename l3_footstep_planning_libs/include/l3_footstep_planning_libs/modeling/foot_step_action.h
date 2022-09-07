@@ -26,10 +26,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef L3_FOOTSTEP_PLANNING_LIBS_FOOTSTEP_H__
-#define L3_FOOTSTEP_PLANNING_LIBS_FOOTSTEP_H__
+#ifndef L3_FOOTSTEP_PLANNING_LIBS_FOOT_STEP_ACTION_H__
+#define L3_FOOTSTEP_PLANNING_LIBS_FOOT_STEP_ACTION_H__
 
-#include <l3_footstep_planning_libs/modeling/discrete_step.h>
+#include <l3_footstep_planning_libs/modeling/discrete_action.h>
 
 namespace l3_footstep_planning
 {
@@ -40,17 +40,17 @@ namespace l3_footstep_planning
  * final Footstep already considers the neutral stance pose of the foot relative to
  * the robot's body.
  */
-class FootStep : public DiscreteStep<Foothold>
+class FootStepAction : public DiscreteAction<Foothold>
 {
 public:
   // typedefs
-  typedef l3::SharedPtr<FootStep> Ptr;
-  typedef l3::SharedPtr<const FootStep> ConstPtr;
+  typedef l3::SharedPtr<FootStepAction> Ptr;
+  typedef l3::SharedPtr<const FootStepAction> ConstPtr;
 
-  FootStep(const Pose& neutral_stance, const FootIndex& foot_idx, double dx, double dy, double dyaw, double step_cost, const DiscreteResolution& res);
+  FootStepAction(const Pose& neutral_stance, const FootIndex& foot_idx, double dx, double dy, double dyaw, double step_cost, const DiscreteResolution& res);
 };
 
-L3_STATIC_ASSERT_MOVEABLE(FootStep)
+L3_STATIC_ASSERT_MOVEABLE(FootStepAction)
 }  // namespace l3_footstep_planning
 
 #endif

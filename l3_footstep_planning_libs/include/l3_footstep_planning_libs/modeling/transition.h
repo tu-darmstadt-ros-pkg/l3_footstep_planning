@@ -32,7 +32,7 @@
 #include <list>
 
 #include <l3_footstep_planning_libs/modeling/state.h>
-#include <l3_footstep_planning_libs/modeling/foot_step.h>
+#include <l3_footstep_planning_libs/modeling/foot_step_action.h>
 
 #include <l3_footstep_planning_libs/modeling/state_id.h>
 
@@ -45,7 +45,7 @@ public:
   typedef l3::SharedPtr<Transition> Ptr;
   typedef l3::SharedPtr<const Transition> ConstPtr;
 
-  Transition(FootStep::ConstPtr footstep, StateHashed::ConstPtr predecessor, StateHashed::ConstPtr successor, double cost, double risk)
+  Transition(FootStepAction::ConstPtr footstep, StateHashed::ConstPtr predecessor, StateHashed::ConstPtr successor, double cost, double risk)
     : footstep_(footstep)
     , predecessor_(predecessor)
     , successor_(successor)
@@ -53,7 +53,7 @@ public:
     , risk_(risk)
   {}
 
-  inline FootStep::ConstPtr getFootstep() const { return footstep_; }
+  inline FootStepAction::ConstPtr getFootstep() const { return footstep_; }
 
   inline StateHashed::ConstPtr getPredecessor() const { return predecessor_; }
   inline StateHashed::ConstPtr getSuccessor() const { return successor_; }
@@ -62,7 +62,7 @@ public:
   inline double getRisk() const { return risk_; }
 
 protected:
-  FootStep::ConstPtr footstep_;
+  FootStepAction::ConstPtr footstep_;
 
   StateHashed::ConstPtr predecessor_;
   StateHashed::ConstPtr successor_;

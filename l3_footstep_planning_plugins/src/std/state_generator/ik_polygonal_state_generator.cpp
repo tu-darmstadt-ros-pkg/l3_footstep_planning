@@ -73,7 +73,7 @@ bool IKPolygonalStateGenerator::loadParams(const vigir_generic_params::Parameter
 
           /// @todo Check Jacobian and define limits next to singularities
 
-          foot_step_sets_[foot_idx].push_back(FootStep(neutral_stance, foot_idx, res.toContX(x), res.toContY(y), res.toContAngle(yaw), 0.0, res));
+          foot_step_actions_[foot_idx].push_back(FootStepAction(neutral_stance, foot_idx, res.toContX(x), res.toContY(y), res.toContAngle(yaw), 0.0, res));
         }
       }
     }

@@ -29,7 +29,7 @@
 #ifndef L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
 #define L3_FOOTSTEP_PLANNING_PLUGINS_LATTICE_STATE_GENERATOR_H__
 
-#include <l3_footstep_planning_libs/modeling/floating_base_step.h>
+#include <l3_footstep_planning_libs/modeling/floating_base_step_action.h>
 
 #include <l3_footstep_planning_plugins/base/state_generator_plugin.h>
 
@@ -69,7 +69,7 @@ protected:
   DiscreteResolution planner_res_;
 
   // The set of floating base steps used.
-  std::vector<FloatingBaseStep> motion_primitives_;
+  std::vector<FloatingBaseStepAction> motion_primitives_;
 };
 }  // namespace l3_footstep_planning
 

@@ -26,8 +26,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef L3_FOOTSTEP_PLANNING_LIBS_DISCRETE_STEP_H__
-#define L3_FOOTSTEP_PLANNING_LIBS_DISCRETE_STEP_H__
+#ifndef L3_FOOTSTEP_PLANNING_LIBS_DISCRETE_ACTION_H__
+#define L3_FOOTSTEP_PLANNING_LIBS_DISCRETE_ACTION_H__
 
 #include <l3_libs/robot_description/base_info.h>
 
@@ -46,15 +46,15 @@ namespace l3_footstep_planning
  * the robot's body.
  */
 template <class Type>
-class DiscreteStep
+class DiscreteAction
 {
   /// Typedef representing the (discretized) translation of the step.
   typedef std::pair<double, double> DiscreteStepXY;
 
 public:
   // typedefs
-  typedef l3::SharedPtr<DiscreteStep> Ptr;
-  typedef l3::SharedPtr<const DiscreteStep> ConstPtr;
+  typedef l3::SharedPtr<DiscreteAction> Ptr;
+  typedef l3::SharedPtr<const DiscreteAction> ConstPtr;
 
   /**
    * @brief The constructor takes the continuous translation and rotation
@@ -69,7 +69,7 @@ public:
    * @param dyaw The (continuous) yaw rotation.
    * @param res Planning resolution
    */
-  DiscreteStep(const Pose& neutral_stance, const LinkIndex& link_idx, double dx, double dy, double droll, double dpitch, double dyaw, double step_cost,
+  DiscreteAction(const Pose& neutral_stance, const LinkIndex& link_idx, double dx, double dy, double droll, double dpitch, double dyaw, double step_cost,
                const DiscreteResolution& res)
     : res_(res)
     , link_idx_(link_idx)

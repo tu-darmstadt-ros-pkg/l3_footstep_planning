@@ -59,7 +59,7 @@ std::list<StateGenResult> LatticeStateGenerator::generatePredStateResults(const 
     return result;
 
   // perform state expansion
-  for (const FloatingBaseStep& step : motion_primitives_)
+  for (const FloatingBaseStepAction& step : motion_primitives_)
   {
     StateGenResult gen_state;
     FloatingBase::Ptr floating_base = step.getPredecessor(state.getState());
@@ -106,7 +106,7 @@ std::list<StateGenResult> LatticeStateGenerator::generateSuccStateResults(const 
     return result;
 
   // perform state expansion
-  for (const FloatingBaseStep& step : motion_primitives_)
+  for (const FloatingBaseStepAction& step : motion_primitives_)
   {
     StateGenResult gen_state;
     FloatingBase::Ptr floating_base = step.getSuccessor(state.getState());
@@ -162,7 +162,7 @@ bool LatticeStateGenerator::generateMotionPrimitives(const DiscreteResolution& l
 
       // add omnidirectional primitive
       if (omni_directional && dy != 0.0)
-        motion_primitives_.push_back(FloatingBaseStep(Pose(), base_idx_, dx, dy, 0.0, 0.0, 0.0, lattice_res));
+        motion_primitives_.push_back(FloatingBaseStepAction(Pose(), base_idx_, dx, dy, 0.0, 0.0, 0.0, lattice_res));
 
       // check if radius is too sharp
       bool is_circle = computeCircle(dx, dy, dyaw, radius);
@@ -170,7 +170,7 @@ bool LatticeStateGenerator::generateMotionPrimitives(const DiscreteResolution& l
         continue;
 
       // add straight or curve primitive
-      motion_primitives_.push_back(FloatingBaseStep(Pose(), base_idx_, dx, dy, 0.0, dyaw, 0.0, lattice_res));
+      motion_primitives_.push_back(FloatingBaseStepAction(Pose(), base_idx_, dx, dy, 0.0, dyaw, 0.0, lattice_res));
     }
   }
 
@@ -178,7 +178,7 @@ bool LatticeStateGenerator::generateMotionPrimitives(const DiscreteResolution& l
   if (turn_in_place)
   {
     for (int yaw = lattice_res.toDiscAngle(-max_dyaw); yaw <= lattice_res.toDiscAngle(max_dyaw); yaw++)
-      motion_primitives_.push_back(FloatingBaseStep(Pose(), base_idx_, 0.0, 0.0, 0.0, lattice_res.toContAngle(yaw), 0.0, lattice_res));
+      motion_primitives_.push_back(FloatingBaseStepAction(Pose(), base_idx_, 0.0, 0.0, 0.0, lattice_res.toContAngle(yaw), 0.0, lattice_res));
   }
 
   return true;

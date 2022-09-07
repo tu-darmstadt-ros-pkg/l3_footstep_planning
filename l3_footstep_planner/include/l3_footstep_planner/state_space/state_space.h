@@ -40,7 +40,7 @@
 #include <sbpl/headers.h>
 
 #include <l3_footstep_planning_libs/modeling/state_space_manager.h>
-#include <l3_footstep_planning_libs/modeling/foot_step.h>
+#include <l3_footstep_planning_libs/modeling/foot_step_action.h>
 #include <l3_footstep_planning_libs/modeling/planning_state.h>
 
 #include <l3_footstep_planner/environment_parameters.h>
