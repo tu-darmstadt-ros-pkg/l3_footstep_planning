@@ -40,7 +40,7 @@ double HeadingHeuristic::getHeuristicValue(const State& from, const State& /*to*
       double goal_dist_sq = (current.getPosition() - goal_pose.getPosition()).squaredNorm();
       if (goal_dist_sq < max_goal_dist_sq_)
       {
-        yaw = lerpAngle(yaw, current.yaw(), 1.0, goal_dist_sq / max_goal_dist_sq_);
+        yaw = slerp(yaw, current.yaw(), 1.0, goal_dist_sq / max_goal_dist_sq_);
         return std::abs(shortestAngularDistance(current.yaw(), yaw)) * goal_dyaw_cost_scale_;
       }
     }
@@ -59,7 +59,7 @@ double HeadingHeuristic::getHeuristicValue(const State& from, const State& /*to*
       double start_dist_sq = (current.getPosition() - start_pose.getPosition()).squaredNorm();
       if (start_dist_sq < max_start_dist_sq_)
       {
-        yaw = lerpAngle(yaw, current.yaw(), 1.0, start_dist_sq / max_goal_dist_sq_);
+        yaw = slerp(yaw, current.yaw(), 1.0, start_dist_sq / max_goal_dist_sq_);
         return std::abs(shortestAngularDistance(current.yaw(), yaw)) * start_dyaw_cost_scale_;
       }
     }

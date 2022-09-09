@@ -11,9 +11,9 @@ PlanningState::PlanningState(StateHashed::ConstPtr state, StateHashed::ConstPtr 
   ROS_ASSERT(state_);
 
   if (step)
-    step_.reset(new Step(*step));
+    step_ = makeShared<Step>(*step);
   else
-    step_.reset(new Step());
+    step_ = makeShared<Step>();
 
   if (pred_)
     adj_ = pred_;
