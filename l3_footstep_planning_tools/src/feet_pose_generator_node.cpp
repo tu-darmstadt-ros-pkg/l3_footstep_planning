@@ -1,11 +1,22 @@
 #include <l3_footstep_planning_tools/feet_pose_generator_node.h>
 
+#include <vigir_generic_params/parameter_manager.h>
+
+#include <l3_plugins/robot_model.h>
+
 namespace l3_footstep_planning
 {
 FeetPoseGeneratorNode::FeetPoseGeneratorNode(ros::NodeHandle& nh)
   : feet_pose_generator_(nh)
-{
+{  
+  // initalize parameter manager
+  vigir_generic_params::ParameterManager::initialize(nh);
+
+  // initialize robot model
+  RobotModel::initialize(nh);
+
   // subscribe topics
+  set_params_sub_ = nh.subscribe("set_active_parameter_set", 1, &FeetPoseGeneratorNode::setParams, this);
   robot_pose_sub_ = nh.subscribe("/robot_pose", 1, &FeetPoseGenerator::setRobotPose, &feet_pose_generator_);
   robot_pose_with_cov_sub_ = nh.subscribe("/initialpose", 1, &FeetPoseGenerator::setRobotPoseWithCovariance, &feet_pose_generator_);
   terrain_model_sub_ = nh.subscribe("/terrain_model", 1, &FeetPoseGenerator::setTerrainModel, &feet_pose_generator_);
@@ -21,7 +32,19 @@ FeetPoseGeneratorNode::FeetPoseGeneratorNode(ros::NodeHandle& nh)
 
 FeetPoseGeneratorNode::~FeetPoseGeneratorNode() {}
 
-// --- service calls ---
+/// --- subscriber calls ---
+
+void FeetPoseGeneratorNode::setParams(const std_msgs::StringConstPtr& params_name)
+{
+  vigir_generic_params::ParameterSet params;
+
+  if (!vigir_generic_params::ParameterManager::getParameterSet(params_name->data, params))
+    ROS_ERROR("[FeetPoseGeneratorNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
+  else
+    vigir_generic_params::ParameterManager::setActive(params_name->data);
+}
+
+/// --- service calls ---
 
 bool FeetPoseGeneratorNode::generateFeetPoseService(msgs::GenerateFeetPoseService::Request& req, msgs::GenerateFeetPoseService::Response& resp)
 {
@@ -29,7 +52,7 @@ bool FeetPoseGeneratorNode::generateFeetPoseService(msgs::GenerateFeetPoseServic
   return true;  // return always true so the message is returned
 }
 
-//--- action server calls ---
+///--- action server calls ---
 
 void FeetPoseGeneratorNode::generateFeetPoseAction(SimpleActionServer<msgs::GenerateFeetPoseAction>::Ptr& as)
 {

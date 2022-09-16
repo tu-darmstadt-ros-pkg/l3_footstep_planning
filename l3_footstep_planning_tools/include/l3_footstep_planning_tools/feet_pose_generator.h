@@ -36,8 +36,6 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-#include <l3_libs/robot_description/robot_description.h>
-
 #include <l3_footstep_planning_msgs/footstep_planning_msgs.h>
 
 #include <l3_terrain_model/terrain_model.h>
@@ -71,9 +69,6 @@ protected:
   msgs::FootholdArray generateFeetPose(const geometry_msgs::PoseStamped& pose);
 
   void pelvisToGroundTransform(msgs::FootholdArray& feet) const;
-
-  // service clients
-  l3::RobotDescription::ConstPtr robot_description_;
 
   l3_terrain_modeling::TerrainModel::Ptr terrain_model_;
 

@@ -1,17 +1,20 @@
 #include <l3_footstep_planning_tools/feet_pose_generator.h>
 
-#include <l3_footstep_planning_tools/foot_pose_transformer.h>
+#include <vigir_generic_params/parameter_manager.h>
 
 #include <l3_libs/conversions/l3_msg_conversions.h>
+
+#include <l3_plugins/robot_model.h>
+
+#include <l3_footstep_planning_libs/helper.h>
+
+#include <l3_footstep_planning_tools/foot_pose_transformer.h>
 
 namespace l3_footstep_planning
 {
 FeetPoseGenerator::FeetPoseGenerator(ros::NodeHandle& nh)
   : has_robot_pose_(false)
 {
-  // get robot description
-  robot_description_ = l3::RobotDescription::Ptr(new l3::RobotDescription(nh));
-
   // initialize foot pose transformer
   FootPoseTransformer::initialize(nh);
 }
@@ -143,7 +146,7 @@ bool FeetPoseGenerator::getCurrentFeetPose(msgs::FootholdArray& feet, const std:
 {
   feet.clear();
 
-  for (const FootInfoPair& p : robot_description_->getFootInfoMap())
+  for (const FootInfoPair& p : RobotModel::description()->getFootInfoMap())
   {
     const FootInfo& foot_info = p.second;
     if (tf_listener_.canTransform(request_frame, foot_info.link, ros::Time(0)))
@@ -166,10 +169,31 @@ bool FeetPoseGenerator::getCurrentFeetPose(msgs::FootholdArray& feet, const std:
 
 msgs::FootholdArray FeetPoseGenerator::generateFeetPose(const geometry_msgs::PoseStamped& pose)
 {
-  Pose pose_l3;
-  poseMsgToL3(pose.pose, pose_l3);
   msgs::FootholdArray feet;
-  footholdArrayL3ToMsg(robot_description_->getNeutralStance(pose_l3), feet);
+
+  // if kinematics are defined use it for more precise calculation
+  if (RobotModel::kinematics())
+  {
+    // read resolution
+    const vigir_generic_params::ParameterSet& params = vigir_generic_params::ParameterManager::getActive();
+    DiscreteResolution planner_res = DiscreteResolution(params.getSubset("resolution"));
+
+    // determine base pose
+    Pose base_pose;
+    poseMsgToL3(pose.pose, base_pose);
+
+    Transform t = RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description());
+    base_pose = base_pose * t;
+
+    footholdArrayL3ToMsg(getNeutralStance(FloatingBase(BaseInfo::MAIN_BODY_IDX, base_pose), planner_res), feet);
+  }
+  // otherwise use fallback to feet_center
+  else
+  {
+    Pose feet_center;
+    poseMsgToL3(pose.pose, feet_center);
+    footholdArrayL3ToMsg(RobotModel::description()->getNeutralStance(feet_center), feet);
+  }
 
   for (msgs::Foothold& foot : feet)
     foot.header = pose.header;

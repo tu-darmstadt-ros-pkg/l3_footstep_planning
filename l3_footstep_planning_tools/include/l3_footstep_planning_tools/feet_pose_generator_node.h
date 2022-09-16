@@ -46,6 +46,9 @@ public:
   virtual ~FeetPoseGeneratorNode();
 
 protected:
+  // subscriber
+  void setParams(const std_msgs::StringConstPtr& params_name);
+
   // service calls
   bool generateFeetPoseService(msgs::GenerateFeetPoseService::Request& req, msgs::GenerateFeetPoseService::Response& resp);
 
@@ -55,6 +58,7 @@ protected:
   FeetPoseGenerator feet_pose_generator_;
 
   // subscriber
+  ros::Subscriber set_params_sub_;
   ros::Subscriber robot_pose_sub_;
   ros::Subscriber robot_pose_with_cov_sub_;
   ros::Subscriber terrain_model_sub_;
