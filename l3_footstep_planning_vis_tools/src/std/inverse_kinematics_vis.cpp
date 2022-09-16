@@ -57,8 +57,7 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   const std::string& base_link = base_info.link;
   const std::string& root_link = RobotModel::kinematics()->getRootLink();
   if (!RobotModel::kinematics()->calcStaticTransformForChain(base_link, root_link, base_to_root_))
-    ROS_WARN("[%s] initialize: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(),
-             root_link.c_str());
+    ROS_WARN("[%s] initialize: Could not determine transform from base ('%s') to root ('%s'). Using identity transform.", getName().c_str(), base_link.c_str(), root_link.c_str());
 
   // get other parameters
   tf_prefix_ = param("tf_prefix", std::string("planning_vis"), true);
@@ -151,7 +150,10 @@ void InverseKinematicsVis::visualize(const StepPlan& step_plan)
   visualize(*step, current_step_plan_.getHeader().frame_id);
 
   // start animation
-  scheduleAnimationStep(static_cast<double>(step->getStepDuration()));
+  // take step duration for next step index to simulate movement timing to this next state
+  Step::ConstPtr next_step = current_step_plan_.getSteps().getNextStep(current_step_idx_);
+  if (next_step)
+    scheduleAnimationStep(next_step->getStepDuration());
 }
 
 void InverseKinematicsVis::visualize(const Step& step, const std::string& frame_id)
@@ -273,14 +275,7 @@ void InverseKinematicsVis::rvizVisualToolsGuiCB(const sensor_msgs::JoyConstPtr& 
       step = current_step_plan_.getSteps().getNextStep(current_step_idx_);
     else if (msg->buttons[3])  // "Break" -> First
     {
-      step = current_step_plan_.getfirstStep();
-
-      if (step)
-      {
-        current_step_idx_ = step->getStepIndex();
-        scheduleAnimationStep(step->getStepDuration());
-      }
-
+      visualize(current_step_plan_);
       return;
     }
     else if (msg->buttons[4])  // "Stop" -> Last
@@ -327,7 +322,10 @@ void InverseKinematicsVis::animate(const ros::TimerEvent& /*event*/)
   current_step_idx_ = step->getStepIndex();
   visualize(*step, current_step_plan_.getHeader().frame_id);
 
-  scheduleAnimationStep(step->getStepDuration());
+  // take step duration for next step index to simulate movement timing to this next state
+  Step::ConstPtr next_step = current_step_plan_.getSteps().getNextStep(current_step_idx_);
+  if (next_step)
+    scheduleAnimationStep(next_step->getStepDuration());
 }
 
 void InverseKinematicsVis::scheduleAnimationStep(double time_step)
