@@ -50,6 +50,28 @@
     EXPECT_ANGLE_EQ((expected).yaw(), (actual).yaw());                                                                                                                             \
   }
 
+#define EXPECT_FOOTHOLD_EQ(expected, actual)                                                                                                                                       \
+  {                                                                                                                                                                                \
+    EXPECT_EQ((expected).idx, (actual).idx);                                                                                                                                       \
+    EXPECT_VECTOR_EQ(expected, actual);                                                                                                                                            \
+    EXPECT_ANGLE_EQ((expected).roll(), (actual).roll());                                                                                                                           \
+    EXPECT_ANGLE_EQ((expected).pitch(), (actual).pitch());                                                                                                                         \
+    EXPECT_ANGLE_EQ((expected).yaw(), (actual).yaw());                                                                                                                             \
+    EXPECT_EQ((expected).header, (actual).header);                                                                                                                                 \
+    EXPECT_EQ((expected).data.size(), (actual).data.size());                                                                                                                       \
+  }
+
+#define EXPECT_FLOATING_BASE_EQ(expected, actual)                                                                                                                                  \
+  {                                                                                                                                                                                \
+    EXPECT_EQ((expected).idx, (actual).idx);                                                                                                                                       \
+    EXPECT_VECTOR_EQ(expected, actual);                                                                                                                                            \
+    EXPECT_ANGLE_EQ((expected).roll(), (actual).roll());                                                                                                                           \
+    EXPECT_ANGLE_EQ((expected).pitch(), (actual).pitch());                                                                                                                         \
+    EXPECT_ANGLE_EQ((expected).yaw(), (actual).yaw());                                                                                                                             \
+    EXPECT_EQ((expected).header, (actual).header);                                                                                                                                 \
+    EXPECT_EQ((expected).data.size(), (actual).data.size());                                                                                                                       \
+  }
+
 #define EXPECT_FOOTHOLD_KEY(_idx, _x, _y, _z, _yaw, actual)                                                                                                                        \
   {                                                                                                                                                                                \
     EXPECT_EQ(_idx, (actual).idx);                                                                                                                                                 \

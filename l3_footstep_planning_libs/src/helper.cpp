@@ -137,6 +137,18 @@ FootholdConstPtrArray applyFootIdxWhitelist(const FootholdConstPtrArray& foothol
   }
 }
 
+Pose discretize(const Pose& pose, const DiscreteResolution& resolution)
+{
+  // clang-format off
+  return Pose(resolution.toContX(resolution.toDiscX(pose.x())),
+              resolution.toContY(resolution.toDiscY(pose.y())),
+              resolution.toContZ(resolution.toDiscZ(pose.z())),
+              resolution.toContAngle(resolution.toDiscAngle(pose.roll())),
+              resolution.toContAngle(resolution.toDiscAngle(pose.pitch())),
+              resolution.toContAngle(resolution.toDiscAngle(pose.yaw())));
+  // clang-format on
+}
+
 FootholdPtrArray getNeutralStance(const FloatingBase& floating_base)
 {
   ROS_ASSERT(l3::RobotModel::kinematics());
@@ -148,8 +160,7 @@ FootholdPtrArray getNeutralStance(const FloatingBase& floating_base)
 
 FootholdPtrArray getNeutralStance(const FloatingBase& floating_base, const DiscreteResolution& resolution)
 {
-  FloatingBaseID id(floating_base, resolution);
-  return getNeutralStance(id.getDiscreteFloatingBase(resolution));
+  return getNeutralStance(discretize(floating_base, resolution));
 }
 
 FootholdPtrArray expandNeutralStance(FloatingBase::ConstPtr floating_base, State::ConstPtr ref_state, const DiscreteResolution& resolution)

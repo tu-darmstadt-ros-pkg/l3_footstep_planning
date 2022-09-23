@@ -197,6 +197,7 @@ set(TEST_SOURCES
   test/src/msgs_test_helper.cpp
   test/src/foothold_database_utest.cpp
   test/src/foothold_hashing_utest.cpp
+  test/src/helper_utest.cpp
   test/src/math_utest.cpp
   test/src/state_database_utest.cpp
   test/src/state_hashing_utest.cpp

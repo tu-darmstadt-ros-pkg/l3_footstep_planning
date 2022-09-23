@@ -113,6 +113,18 @@ FootholdArray applyFootIdxWhitelist(const FootholdArray& footholds, const FootIn
 FootholdPtrArray applyFootIdxWhitelist(const FootholdPtrArray& footholds, const FootIndexSet& foot_idx_whitelist);
 FootholdConstPtrArray applyFootIdxWhitelist(const FootholdConstPtrArray& footholds, const FootIndexSet& foot_idx_whitelist);
 
+Pose discretize(const Pose& pose, const DiscreteResolution& resolution);
+
+inline Foothold discretize(const Foothold& foothold, const DiscreteResolution& resolution)
+{
+  return Foothold(foothold.idx, discretize(foothold.pose(), resolution), foothold.header, foothold.data);
+}
+
+inline FloatingBase discretize(const FloatingBase& floating_base, const DiscreteResolution& resolution)
+{
+  return FloatingBase(floating_base.idx, discretize(floating_base.pose(), resolution), floating_base.header, floating_base.data);
+}
+
 FootholdPtrArray getNeutralStance(const FloatingBase& floating_base);
 FootholdPtrArray getNeutralStance(const FloatingBase& floating_base, const DiscreteResolution& resolution);
 
