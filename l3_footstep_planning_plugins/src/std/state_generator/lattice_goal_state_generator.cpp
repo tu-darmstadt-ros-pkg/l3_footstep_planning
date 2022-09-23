@@ -117,7 +117,7 @@ std::list<StateGenResult> LatticeGoalStateGenerator::generateNearStateResults(co
 
   /// expand neutral stance
   if (result.floating_base && expand_neutral_stance_)
-    expandNeutralStance(result.floating_base, target.getState(), planner_res_);
+    result.footholds = expandNeutralStance(result.floating_base, target.getState(), planner_res_);
 
   return std::list<StateGenResult>{ result };
 }
