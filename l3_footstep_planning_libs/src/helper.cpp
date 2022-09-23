@@ -151,4 +151,20 @@ FootholdPtrArray getNeutralStance(const FloatingBase& floating_base, const Discr
   FloatingBaseID id(floating_base, resolution);
   return getNeutralStance(id.getDiscreteFloatingBase(resolution));
 }
+
+FootholdPtrArray expandNeutralStance(FloatingBase::ConstPtr floating_base, State::ConstPtr ref_state, const DiscreteResolution& resolution)
+{
+  // generate neutral stance based on discretize floating base for more consistent results
+  FootholdPtrArray footholds = getNeutralStance(*floating_base, resolution);
+
+  // copy old heights (to be updated by terrain model later)
+  for (Foothold::Ptr f : footholds)
+  {
+    Foothold::ConstPtr f_ref = ref_state->getFoothold(f->idx);
+    if (f_ref)
+      f->setZ(f_ref->z());
+  }
+
+  return footholds;
+}
 }  // namespace l3_footstep_planning

@@ -34,11 +34,9 @@
 namespace l3_footstep_planning
 {
 /**
- * @brief Basestep represents the discrete translation. The constructor takes the
- * parameters relative to the base center, but afterwards a Basestep represents
- * the possible placement relative to the robot body (center). This means that the
- * final Footstep already considers the neutral stance pose of the base relative to
- * the robot's body.
+ * @brief FloatingBaseStepAction represents the discrete translation. The constructor takes the
+ * parameters relative to the base center, but afterwards a FloatingBaseStepAction represents
+ * the possible placement relative to the robot body (center).
  */
 class FloatingBaseStepAction : public DiscreteAction<FloatingBase>
 {

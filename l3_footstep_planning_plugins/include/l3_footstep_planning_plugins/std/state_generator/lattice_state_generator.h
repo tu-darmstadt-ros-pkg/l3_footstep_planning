@@ -42,10 +42,22 @@ namespace l3_footstep_planning
  * Params
  *  base_idx                  [int] (optional)
  *  expand_neutral_stance     [boolean] (default: false)
- *  turn_in_place             [boolean] (default: true)
+ *  turn_in_place             [boolean] (default: false)
  *  turn_in_place:            [dict]
  *    num_of_bins             [int]
  *    max_dyaw                [float]
+ *  omni_directional          [boolean] (default: false)
+ *  move_backwards            [boolean] (default: true)
+ *  max_dist                  # max dist for motion primitives (elliptical shape)
+ *    x:                      [float]
+ *    y:                      [float]
+ *  max_dyaw                  [float] (default: pi/4)
+ *  min_curve_radius          [float] (default: 0.5)
+ *  resolution:               # cell size resolution
+ *    x:                      [float]
+ *    y:                      [float]
+ *    z:                      [float]
+ *    num_angle_bins          [int]
  */
 class LatticeStateGenerator : public StateGeneratorPlugin
 {

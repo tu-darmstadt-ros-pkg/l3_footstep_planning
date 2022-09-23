@@ -21,9 +21,19 @@ bool LatticeGoalStateGenerator::loadParams(const ParameterSet& params)
   base_idx_ = param("base_idx", BaseInfo::MAIN_BODY_IDX, true);
   expand_neutral_stance_ = param("expand_neutral_stance", false, true);
 
-  max_dist_ = param("max_dist", 0.5, true);
-  max_dist_sq_ = max_dist_ * max_dist_;
+  turn_in_place_ = param("turn_in_place", false, true);
+  omni_directional_ = param("omni_directional", false, true);
+  move_backwards_ = param("move_backwards", true, true);
+
+  const vigir_generic_params::ParameterSet& p = getSubset("max_dist");
+  max_dist_.x() = p.param("x", 0.5);
+  max_dist_.y() = p.param("y", 0.5);
+
+  max_dyaw_ = param("max_dyaw", M_PI_4, true);
   min_curve_radius_ = param("min_curve_radius", 0.5, true);
+
+  // read resolution
+  planner_res_ = DiscreteResolution(params.getSubset("resolution"));
 
   return true;
 }
@@ -37,51 +47,77 @@ std::list<StateGenResult> LatticeGoalStateGenerator::generateNearStateResults(co
   if (!target.getState()->hasFloatingBases())
   {
     ROS_ERROR_NAMED(getName(), "[%s] Goal state must contain a floating base!", getName().c_str());
-    return std::list<StateGenResult>{ result };
+    return std::list<StateGenResult>();
   }
 
-  FloatingBase::ConstPtr current_base = current.getState()->getFloatingBase(l3::BaseInfo::MAIN_BODY_IDX);
-  FloatingBase::ConstPtr target_base = target.getState()->getFloatingBase(l3::BaseInfo::MAIN_BODY_IDX);
+  // check possible splines between current and target state
+  FloatingBase::ConstPtr current_base = current.getState()->getFloatingBase(base_idx_);
+  FloatingBase::ConstPtr target_base = target.getState()->getFloatingBase(base_idx_);
 
   Transform dstep = FloatingBase::getDelta2D(*current_base, *target_base);
 
-  // do not try to compute arc when 2D euclidian distance is too high
-  if (l3::norm_sq(dstep.x(), dstep.y()) > max_dist_sq_)
-    return std::list<StateGenResult>{ result };
+  // do not try to compute arc when point is not in ellipse
+  if (!l3::isPointInEllipse(l3::Point(dstep.x(), dstep.y(), 0.0), l3::Point(), max_dist_, 1.0, 0.0))
+    return std::list<StateGenResult>();
 
-  // compute curve
-  double dyaw = 0.0;
-  double radius = 0.0;
-  bool is_straight = !computeCircle(dstep.x(), dstep.y(), dyaw, radius);
+  /// check possible splines
 
-  /// check curve conditions
-  // target can be reached by just driving forward but orientation can mismatch
-  if (is_straight)
+  // reject any backwards movements
+  if (!move_backwards_ && dstep.x() < 0.0)
+    return std::list<StateGenResult>();
+
+  // only turn in place would be required
+  if (std::abs(dstep.x()) < 0.01 && std::abs(dstep.y()) < 0.01)
   {
-    result.floating_base = makeShared<FloatingBase>(*target_base);
-    result.floating_base->setYaw(current_base->yaw());
+    if (turn_in_place_)
+      result.floating_base = makeShared<FloatingBase>(*target_base);
   }
-  // driving a curve is possible but orientation can mismatch
-  else if (radius >= min_curve_radius_ && dyaw * radius <= max_dist_)
+  else
   {
-    result.floating_base = makeShared<FloatingBase>(*target_base);
-    result.floating_base->setYaw(current_base->yaw() + dyaw);
+    // compute curve
+    double dyaw = 0.0;
+    double radius = 0.0;
+    bool is_straight = !computeCircle(dstep.x(), dstep.y(), dyaw, radius);
+
+    // reject too large turning
+    if (std::abs(dstep.yaw()) > max_dyaw_)
+      return std::list<StateGenResult>();
+
+    // target can be reached by just driving forward
+    if (is_straight)
+    {
+      result.floating_base = makeShared<FloatingBase>(*target_base);
+
+      // if cannot move omnidirectional, then final orientation will mismatch
+      if (!omni_directional_)
+      {
+        // do not propose dead end states
+        if (!turn_in_place_ && std::abs(dstep.yaw()) > 0.01)
+          return std::list<StateGenResult>();
+        else
+          result.floating_base->setYaw(current_base->yaw());
+      }
+    }
+    // driving a curve is possible
+    else if (radius >= min_curve_radius_)
+    {
+      result.floating_base = makeShared<FloatingBase>(*target_base);
+
+      // if cannot move omnidirectional, then final orientation will mismatch
+      if (!omni_directional_)
+      {
+        // do not propose dead end states
+        if (!turn_in_place_ && std::abs(dstep.yaw() - dyaw) > 0.01)
+          return std::list<StateGenResult>();
+        else
+          result.floating_base->setYaw(current_base->yaw() + dyaw);
+      }
+    }
   }
 
   /// expand neutral stance
   if (result.floating_base && expand_neutral_stance_)
-  {
-    // generate neutral stance based on discretize floating base for more consistent results
-    result.footholds = getNeutralStance(*result.floating_base);
-
-    // copy old heights (to be updated by terrain model later)
-    for (Foothold::Ptr f : result.footholds)
-    {
-      Foothold::ConstPtr f_next = target.getState()->getFoothold(f->idx);
-      if (f_next)
-        f->setZ(f_next->z());
-    }
-  }
+    expandNeutralStance(result.floating_base, target.getState(), planner_res_);
 
   return std::list<StateGenResult>{ result };
 }

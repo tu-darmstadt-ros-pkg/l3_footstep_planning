@@ -64,19 +64,9 @@ std::list<StateGenResult> LatticeStateGenerator::generatePredStateResults(const 
     StateGenResult gen_state;
     FloatingBase::Ptr floating_base = step.getPredecessor(state.getState());
 
+    // generate neutral stance based on discretize floating base for more consistent results
     if (expand_neutral_stance_)
-    {
-      // generate neutral stance based on discretize floating base for more consistent results
-      gen_state.footholds = getNeutralStance(*floating_base, planner_res_);
-
-      // copy old heights (to be updated by terrain model later)
-      for (Foothold::Ptr f : gen_state.footholds)
-      {
-        Foothold::ConstPtr f_next = state.getState()->getFoothold(f->idx);
-        if (f_next)
-          f->setZ(f_next->z());
-      }
-    }
+      gen_state.footholds = expandNeutralStance(floating_base, state.getState(), planner_res_);
 
     gen_state.floating_base = floating_base;
 
@@ -111,19 +101,9 @@ std::list<StateGenResult> LatticeStateGenerator::generateSuccStateResults(const 
     StateGenResult gen_state;
     FloatingBase::Ptr floating_base = step.getSuccessor(state.getState());
 
+    // generate neutral stance based on discretize floating base for more consistent results
     if (expand_neutral_stance_)
-    {
-      // generate neutral stance based on discretize floating base for more consistent results
-      gen_state.footholds = getNeutralStance(*floating_base, planner_res_);
-
-      // copy old heights (to be updated by terrain model later)
-      for (Foothold::Ptr f : gen_state.footholds)
-      {
-        Foothold::ConstPtr f_old = state.getState()->getFoothold(f->idx);
-        if (f_old)
-          f->setZ(f_old->z());
-      }
-    }
+      gen_state.footholds = expandNeutralStance(floating_base, state.getState(), planner_res_);
 
     gen_state.floating_base = floating_base;
 
@@ -137,22 +117,24 @@ bool LatticeStateGenerator::generateMotionPrimitives(const DiscreteResolution& l
   // parameters used for motion primitive generation
   bool turn_in_place = param("turn_in_place", false, true);
   bool omni_directional = param("omni_directional", false, true);
-  bool drive_backwards = param("drive_backwards", true, true);
+  bool move_backwards = param("move_backwards", true, true);
 
-  double max_dist = param("max_dist", 0.5, true);
-  double max_dist_sq = max_dist * max_dist;
+  const vigir_generic_params::ParameterSet& p = getSubset("max_dist");
+  l3::Point max_dist;
+  max_dist.x() = p.param("x", 0.5);
+  max_dist.y() = p.param("y", 0.5);
 
-  double max_dyaw = param("max_dyaw", M_PI_2, true);
+  double max_dyaw = param("max_dyaw", M_PI_4, true);
 
   double min_curve_radius = param("min_curve_radius", 0.5, true);
 
   // sample area of interest
-  for (int y = lattice_res.toDiscY(-max_dist); y <= lattice_res.toDiscY(max_dist); y++)
+  for (int y = lattice_res.toDiscY(-max_dist.y()); y <= lattice_res.toDiscY(max_dist.y()); y++)
   {
-    for (int x = drive_backwards ? lattice_res.toDiscX(-max_dist) : 0; x <= lattice_res.toDiscX(max_dist); x++)
+    for (int x = move_backwards ? lattice_res.toDiscX(-max_dist.x()) : 0; x <= lattice_res.toDiscX(max_dist.x()); x++)
     {
-      // check distance
-      if (l3::norm_sq(lattice_res.toContX(x), lattice_res.toContY(y)) > max_dist_sq)
+      // check if within ellipse
+      if (!l3::isPointInEllipse(l3::Point(lattice_res.toContX(x), lattice_res.toContY(y), 0.0), l3::Point(), max_dist, 1.0, 0.0))
         continue;
 
       double dx = lattice_res.toContX(x);

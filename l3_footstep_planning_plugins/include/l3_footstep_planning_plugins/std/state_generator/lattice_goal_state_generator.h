@@ -35,6 +35,22 @@
 
 namespace l3_footstep_planning
 {
+/**
+ * @brief The LatticeStateGenerator finds final state transition to goal if in
+ * reach.
+ *
+ * Params
+ *  base_idx                  [int] (optional)
+ *  expand_neutral_stance     [boolean] (default: false)
+ *  turn_in_place             [boolean] (default: false)
+ *  omni_directional          [boolean] (default: false)
+ *  move_backwards            [boolean] (default: true)
+ *  max_dist                  # max dist for motion primitives (elliptical shape)
+ *    x:                      [float]
+ *    y:                      [float]
+ *  max_dyaw                  [float] (default: pi/4)
+ *  min_curve_radius          [float] (default: 0.5)
+ */
 class LatticeGoalStateGenerator : public StateGeneratorPlugin
 {
 public:
@@ -50,9 +66,16 @@ protected:
 
   bool expand_neutral_stance_;
 
-  double max_dist_;
-  double max_dist_sq_;
+  bool turn_in_place_;
+  bool omni_directional_;
+  bool move_backwards_;
+
+  l3::Point max_dist_;
+  double max_dyaw_;
   double min_curve_radius_;
+
+  // Resolution of planner
+  DiscreteResolution planner_res_;
 };
 }  // namespace l3_footstep_planning
 
