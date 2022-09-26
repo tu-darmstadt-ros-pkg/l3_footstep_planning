@@ -15,7 +15,6 @@ bool SimpleFloatingBasePostProcess::loadParams(const vigir_generic_params::Param
     return false;
 
   res_ = DiscreteResolution(params.getSubset("resolution"));
-  stabilize_base_ = param("stabilize_base", true, true);
   post_process_state_ = param("post_process_state", false, true);
   post_process_step_plan_ = param("post_process_step_plan", true, true);
 
@@ -60,17 +59,8 @@ FloatingBase::Ptr SimpleFloatingBasePostProcess::determineFloatingBase(const Foo
     return FloatingBase::Ptr();
   }
 
-  Pose center = feet_center;
-
-  // set roll and pitch to zero for stabilized base
-  if (stabilize_base_)
-  {
-    center.setRoll(0.0);
-    center.setPitch(0.0);
-  }
-
   // compute desired floating base pose
-  Pose base_pose = RobotModel::kinematics()->calcFeetCenterToBase(center, footholds) * center;
+  Pose base_pose = RobotModel::kinematics()->calcBasePose(feet_center, footholds);
 
   // generate discretized floating base
   return makeShared<FloatingBase>(BaseInfo::MAIN_BODY_IDX, base_pose, footholds.front()->header);
