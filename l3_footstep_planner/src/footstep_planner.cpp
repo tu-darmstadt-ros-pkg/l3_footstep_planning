@@ -821,12 +821,15 @@ msgs::ErrorStatus FootstepPlanner::stepPlanRequest(msgs::StepPlanRequestService:
   // prepare planning
   msgs::ErrorStatus status = preparePlanning(req);
 
-  // start planning in seperate thread
-  planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);
+  if (!hasError(status))
+  {
+    // start planning in seperate thread
+    planning_thread_ = boost::thread(&FootstepPlanner::doPlanning, this, req);
 
-  // transform feet poses back
-  FootPoseTransformer::transformToRobotFrame(req.plan_request.start_footholds);
-  FootPoseTransformer::transformToRobotFrame(req.plan_request.goal_footholds);
+    // transform feet poses back
+    FootPoseTransformer::transformToRobotFrame(req.plan_request.start_footholds);
+    FootPoseTransformer::transformToRobotFrame(req.plan_request.goal_footholds);
+  }
 
   return status;
 }
