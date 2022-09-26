@@ -181,8 +181,7 @@ msgs::FootholdArray FeetPoseGenerator::generateFeetPose(const geometry_msgs::Pos
     // determine base pose
     Pose feet_center;
     poseMsgToL3(pose.pose, feet_center);
-    Pose base_pose = RobotModel::kinematics()->getStaticBasePose(feet_center);
-
+    Pose base_pose = RobotModel::kinematics()->calcStaticBasePose(feet_center);
     footholdArrayL3ToMsg(getNeutralStance(FloatingBase(BaseInfo::MAIN_BODY_IDX, base_pose), planner_res), feet);
   }
   // otherwise use fallback to feet_center

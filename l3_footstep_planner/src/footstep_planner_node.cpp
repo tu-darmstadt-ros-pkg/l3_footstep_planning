@@ -271,7 +271,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
     FootholdArray footholds;
     footholdArrayMsgToL3(goal_footholds, footholds);
 
-    Pose pose = RobotModel::kinematics()->getBasePose(feet_center, footholds);
+    Pose pose = RobotModel::kinematics()->calcBasePose(feet_center, footholds);
     /// @todo Implement as optional feature
     // goal_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
   }

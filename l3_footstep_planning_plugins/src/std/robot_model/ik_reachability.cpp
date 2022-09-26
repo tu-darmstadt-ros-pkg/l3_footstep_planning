@@ -134,8 +134,6 @@ bool IKReachability::initialize(const ParameterSet& params)
       footholds.push_back(*f);
   }
 
-  Transform center_to_base = RobotModel::kinematics()->calcStaticFeetCenterToBase();
-
   bool print_rhm = param("print_rhm", false, true);
   std::string csv_file = param("csv_file", std::string(), true);
 
@@ -173,7 +171,7 @@ bool IKReachability::initialize(const ParameterSet& params)
             FootholdArray feet = footholds;
             feet.push_back(foothold);
 
-            Pose base_pose = RobotModel::kinematics()->calcFeetCenter(feet) * center_to_base;
+            Pose base_pose = RobotModel::kinematics()->calcStaticBasePose(RobotModel::kinematics()->calcFeetCenter(feet));
 
             if (!RobotModel::kinematics()->calcLegIK(base_pose, foothold, q_init, q))
             {
