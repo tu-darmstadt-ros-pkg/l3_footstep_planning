@@ -158,7 +158,7 @@ void FootstepPlannerNode::planningPreemptionActionCallback(SimpleActionServer<ms
 
 void FootstepPlannerNode::setParams(const std_msgs::StringConstPtr& params_name)
 {
-  vigir_generic_params::ParameterSet params;
+  ParameterSet params;
 
   if (!ParameterManager::getParameterSet(params_name->data, params))
     ROS_ERROR("[FootstepPlannerNode] setParams: Unknown parameter set '%s'!", params_name->data.c_str());
@@ -265,14 +265,13 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   if (RobotModel::kinematics())
   {
-    Pose pose;
-    poseMsgToL3(goal_pose->pose, pose);
+    Pose feet_center;
+    poseMsgToL3(goal_pose->pose, feet_center);
 
     FootholdArray footholds;
     footholdArrayMsgToL3(goal_footholds, footholds);
 
-    Transform t = RobotModel::kinematics()->calcFeetCenterToBase(*RobotModel::description(), pose, footholds);
-    pose = pose * t;
+    Pose pose = RobotModel::kinematics()->getBasePose(feet_center, footholds);
     /// @todo Implement as optional feature
     // goal_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
   }

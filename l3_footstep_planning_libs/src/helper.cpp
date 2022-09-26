@@ -153,7 +153,7 @@ FootholdPtrArray getNeutralStance(const FloatingBase& floating_base)
 {
   ROS_ASSERT(l3::RobotModel::kinematics());
 
-  l3::Pose feet_center = floating_base.pose() * l3::RobotModel::kinematics()->calcStaticFeetCenterToBase(*l3::RobotModel::description()).inverse();
+  l3::Pose feet_center = floating_base.pose() * l3::RobotModel::kinematics()->calcStaticFeetCenterToBase().inverse();
 
   return RobotModel::getNeutralStance(feet_center);
 }

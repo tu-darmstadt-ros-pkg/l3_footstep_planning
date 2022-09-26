@@ -70,7 +70,7 @@ FloatingBase::Ptr SimpleFloatingBasePostProcess::determineFloatingBase(const Foo
   }
 
   // compute desired floating base pose
-  Pose base_pose = RobotModel::kinematics()->calcFeetCenterToBase(*RobotModel::description(), center, footholds) * center;
+  Pose base_pose = RobotModel::kinematics()->calcFeetCenterToBase(center, footholds) * center;
 
   // generate discretized floating base
   return makeShared<FloatingBase>(BaseInfo::MAIN_BODY_IDX, base_pose, footholds.front()->header);

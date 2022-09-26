@@ -68,7 +68,7 @@ bool IKPolygonalStateGenerator::loadParams(const vigir_generic_params::Parameter
         for (int yaw = polygon.min_yaw; yaw <= polygon.max_yaw; yaw++)
         {
           std::vector<double> q;
-          if (!RobotModel::kinematics()->calcLegIK(Foothold(foot_idx, res.toContX(x), res.toContY(y), 0.0, res.toContAngle(yaw)), *RobotModel::description(), q))
+          if (!RobotModel::kinematics()->calcLegIK(Foothold(foot_idx, res.toContX(x), res.toContY(y), 0.0, res.toContAngle(yaw)), q))
             continue;
 
           /// @todo Check Jacobian and define limits next to singularities

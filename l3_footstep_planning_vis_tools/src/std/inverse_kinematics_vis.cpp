@@ -243,15 +243,14 @@ bool InverseKinematicsVis::calcLegIK(const Pose& base_pose, const Foothold& foot
 
   std::map<LegIndex, std::vector<double>>::const_iterator joint_states_itr = def_leg_joint_states_.find(leg_info.idx);
   if (joint_states_itr == def_leg_joint_states_.end())
-    return RobotModel::kinematics()->calcLegIK(base_pose, foothold, *RobotModel::description(), q);
+    return RobotModel::kinematics()->calcLegIK(base_pose, foothold, q);
   else
-    return RobotModel::kinematics()->calcLegIK(base_pose, foothold, *RobotModel::description(), joint_states_itr->second, q);
+    return RobotModel::kinematics()->calcLegIK(base_pose, foothold, joint_states_itr->second, q);
 }
 
 bool InverseKinematicsVis::calcNeutralStanceIK(std::map<LegIndex, std::vector<double>>& leg_joint_states) const
 {
-  return RobotModel::kinematics()->calcNeutralStanceIK(RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description()), *RobotModel::description(),
-                                                       leg_joint_states);
+  return RobotModel::kinematics()->calcNeutralStanceIK(RobotModel::kinematics()->calcStaticFeetCenterToBase(), leg_joint_states);
 }
 
 void InverseKinematicsVis::jointStateCB(const sensor_msgs::JointStateConstPtr& msg)

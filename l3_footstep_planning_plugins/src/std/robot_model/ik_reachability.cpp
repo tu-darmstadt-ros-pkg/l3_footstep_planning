@@ -134,7 +134,7 @@ bool IKReachability::initialize(const ParameterSet& params)
       footholds.push_back(*f);
   }
 
-  Transform center_to_base = RobotModel::kinematics()->calcStaticFeetCenterToBase(*RobotModel::description());
+  Transform center_to_base = RobotModel::kinematics()->calcStaticFeetCenterToBase();
 
   bool print_rhm = param("print_rhm", false, true);
   std::string csv_file = param("csv_file", std::string(), true);
@@ -144,7 +144,7 @@ bool IKReachability::initialize(const ParameterSet& params)
   size_t height = max_y_ - min_y_ + 1;
 
   std::vector<double> q_init;
-  RobotModel::kinematics()->calcLegIK(Foothold(foot_idx_, neutral_stance_), *RobotModel::description(), q_init);
+  RobotModel::kinematics()->calcLegIK(Foothold(foot_idx_, neutral_stance_), q_init);
 
   rhm_positive_.init(width, height);
   rhm_negative_.init(width, height);
@@ -175,7 +175,7 @@ bool IKReachability::initialize(const ParameterSet& params)
 
             Pose base_pose = RobotModel::kinematics()->calcFeetCenter(feet) * center_to_base;
 
-            if (!RobotModel::kinematics()->calcLegIK(base_pose, foothold, *RobotModel::description(), q_init, q))
+            if (!RobotModel::kinematics()->calcLegIK(base_pose, foothold, q_init, q))
             {
               // if (found_min)
               //  z = max_z_;  // terminate current loop
@@ -184,7 +184,7 @@ bool IKReachability::initialize(const ParameterSet& params)
           }
           else
           {
-            if (!RobotModel::kinematics()->calcLegIK(foothold, *RobotModel::description(), q_init, q))
+            if (!RobotModel::kinematics()->calcLegIK(foothold, q_init, q))
             {
               // if (found_min)
               //  z = max_z_;  // terminate current loop
