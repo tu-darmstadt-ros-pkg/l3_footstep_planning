@@ -51,8 +51,11 @@ void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
 {
   initPlugins(nh);
 
+  // init feet pose generator
+  feet_pose_generator_ = makeShared<FeetPoseGeneratorClient>(nh);
+
   // init planner
-  footstep_planner_.reset(new FootstepPlanner(nh));
+  footstep_planner_ = makeShared<FootstepPlanner>(nh);
 
   // subscribe topics
   set_active_parameter_set_sub_ = nh.subscribe<std_msgs::String>("set_active_parameter_set", 1, &FootstepPlannerNode::setParams, this);
@@ -66,9 +69,6 @@ void FootstepPlannerNode::initialize(ros::NodeHandle& nh)
   error_status_pub_ = nh.advertise<msgs::ErrorStatus>("error_status", 1, true);
   temp_step_plan_pub_ = nh.advertise<msgs::StepPlan>("temp_step_plan", 1, true);
   feedback_pub_ = nh.advertise<msgs::PlanningFeedback>("planning_feedback", 1, true);
-
-  // start service clients
-  generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
 
   // start own services
   step_plan_request_srv_ = nh.advertiseService("step_plan_request", &FootstepPlannerNode::stepPlanRequestService, this);
@@ -179,7 +179,7 @@ void FootstepPlannerNode::stepPlanRequest(const msgs::StepPlanRequestConstPtr& p
   {
     status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                  "stepPlanRequest: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client_, step_plan_request.plan_request.header);
+    status += feet_pose_generator_->getStartFootholds(step_plan_request.plan_request.start_footholds, step_plan_request.plan_request.header.frame_id);
 
     if (hasError(status))
     {
@@ -208,7 +208,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 {
   // get start feet pose
   msgs::FootholdArray start_footholds;
-  msgs::ErrorStatus status = determineStartFootholds(start_footholds, generate_feet_pose_client_, goal_pose->header);
+  msgs::ErrorStatus status = feet_pose_generator_->getStartFootholds(start_footholds, goal_pose->header.frame_id);
 
   if (hasError(status))
   {
@@ -229,7 +229,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   // get goal feet pose
   msgs::FootholdArray goal_footholds;
-  status = determineGoalFootholds(goal_footholds, generate_feet_pose_client_, *goal_pose);
+  status = feet_pose_generator_->getFootholds(goal_footholds, *goal_pose);
 
   if (hasError(status))
   {
@@ -290,9 +290,12 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   step_plan_request.plan_request.max_planning_time = 0.0;
   step_plan_request.plan_request.parameter_set_name.data = std::string();
 
+  // clang-format off
   // start planning
-  status = footstep_planner_->stepPlanRequest(step_plan_request, boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
+  status = footstep_planner_->stepPlanRequest(step_plan_request,
+                                              boost::bind(&FootstepPlannerNode::planningResultCallback, this, _1),
                                               boost::bind(&FootstepPlannerNode::planningFeedbackCallback, this, _1));
+  // clang-format on
 
   // visualize request
   step_plan_request_vis_pub_.publish(step_plan_request.plan_request);
@@ -310,7 +313,7 @@ bool FootstepPlannerNode::stepPlanRequestService(msgs::StepPlanRequestService::R
   {
     resp.status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                       "stepPlanRequestService: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    resp.status += determineStartFootholds(req.plan_request.start_footholds, generate_feet_pose_client_, req.plan_request.header);
+    resp.status += feet_pose_generator_->getStartFootholds(req.plan_request.start_footholds, req.plan_request.header.frame_id);
   }
 
   // start planning
@@ -377,7 +380,7 @@ void FootstepPlannerNode::stepPlanRequestAction(SimpleActionServer<msgs::StepPla
   {
     status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "FootstepPlannerNode",
                                  "stepPlanRequestAction: No valid frame_id was given as start pose. Try to use current robot pose as start.");
-    status += determineStartFootholds(step_plan_request.plan_request.start_footholds, generate_feet_pose_client_, step_plan_request.plan_request.header);
+    status += feet_pose_generator_->getStartFootholds(step_plan_request.plan_request.start_footholds, step_plan_request.plan_request.header.frame_id);
   }
 
   // clang-format off

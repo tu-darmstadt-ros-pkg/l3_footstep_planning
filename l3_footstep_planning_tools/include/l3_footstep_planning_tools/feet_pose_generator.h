@@ -77,18 +77,6 @@ protected:
 
   tf::TransformListener tf_listener_;
 };
-
-/**
- * Handler for convenient service calls
- */
-
-msgs::ErrorStatus determineFootholds(msgs::FootholdArray& footholds, ros::ServiceClient& generate_feet_pose_client, const geometry_msgs::PoseStamped& pose);
-
-msgs::ErrorStatus determineStartFootholds(msgs::FootholdArray& start_footholds, ros::ServiceClient& generate_feet_pose_client, const std_msgs::Header& header);
-inline msgs::ErrorStatus determineGoalFootholds(msgs::FootholdArray& goal_footholds, ros::ServiceClient& generate_feet_pose_client, const geometry_msgs::PoseStamped& goal_pose)
-{
-  return determineFootholds(goal_footholds, generate_feet_pose_client, goal_pose);
-}
 }  // namespace l3_footstep_planning
 
 #endif

@@ -10,6 +10,9 @@ PatternGenerator::PatternGenerator(ros::NodeHandle& nh)
 {
   joystick_handler_.reset(new JoystickHandler(nh));
 
+  // init feet pose generator
+  feet_pose_generator_ = makeShared<FeetPoseGeneratorClient>(nh);
+
   nh.param("world_frame_id", world_frame_id_, std::string("/world"));
   nh.param("pattern_generator/number_of_steps", (int&)number_of_steps_needed_, 5);
 
@@ -21,7 +24,6 @@ PatternGenerator::PatternGenerator(ros::NodeHandle& nh)
   ros::service::waitForService("step_plan_request");
 
   // start service clients: TODO use global footstep planner
-  generate_feet_pose_client_ = nh.serviceClient<msgs::GenerateFeetPoseService>("generate_feet_pose");
   step_plan_request_client_ = nh.serviceClient<l3_footstep_planning_msgs::StepPlanRequestService>("step_plan_request");
 
   // initialize action clients
@@ -226,13 +228,8 @@ void PatternGenerator::generateSteps(unsigned int n)
 
   if (start_feet_pose_.empty())
   {
-    std_msgs::Header header;
-    header.frame_id = world_frame_id_;
-    header.stamp = ros::Time::now();
-    msgs::FootholdArray start_feet_msg;
-    determineStartFootholds(start_feet_msg, generate_feet_pose_client_, header);
     FootholdArray start_feet;
-    footholdArrayMsgToL3(start_feet_msg, start_feet);
+    feet_pose_generator_->getStartFootholds(start_feet, world_frame_id_);
     updateFeetStartPose(start_feet);
   }
 

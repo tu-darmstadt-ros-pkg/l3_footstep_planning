@@ -39,6 +39,8 @@
 
 #include <l3_footstep_planning_msgs/footstep_planning_msgs.h>
 
+#include <l3_footstep_planning_tools/feet_pose_generator_client.h>
+
 #include <l3_footstep_planner/footstep_planner.h>
 
 namespace l3_footstep_planning
@@ -96,9 +98,6 @@ protected:
   ros::Publisher temp_step_plan_pub_;
   ros::Publisher feedback_pub_;
 
-  // service clients
-  ros::ServiceClient generate_feet_pose_client_;
-
   // service servers
   ros::ServiceServer step_plan_request_srv_;
   ros::ServiceServer update_foot_srv_;
@@ -112,6 +111,8 @@ protected:
   SimpleActionServer<msgs::UpdateStepPlanAction>::Ptr update_step_plan_as_;
 
   mutable boost::recursive_mutex step_plan_request_as_mutex_;
+
+  FeetPoseGeneratorClient::Ptr feet_pose_generator_;
 
   FootstepPlanner::Ptr footstep_planner_;
 };

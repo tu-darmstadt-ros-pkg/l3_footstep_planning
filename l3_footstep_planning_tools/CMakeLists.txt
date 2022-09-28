@@ -99,12 +99,14 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 ## Specify additional locations of header files
 set(HEADERS
   include/${PROJECT_NAME}/feet_pose_generator_node.h
+  include/${PROJECT_NAME}/feet_pose_generator_client.h
   include/${PROJECT_NAME}/feet_pose_generator.h
   include/${PROJECT_NAME}/foot_pose_transformer_node.h
   include/${PROJECT_NAME}/foot_pose_transformer.h
 )
 
 set(SOURCES
+  src/feet_pose_generator_client.cpp
   src/feet_pose_generator.cpp
   src/foot_pose_transformer.cpp
 )

@@ -45,6 +45,8 @@
 #include <l3_footstep_planning_libs/modeling/step_plan.h>
 #include <l3_footstep_planning_msgs/footstep_planning_msgs.h>
 
+#include <l3_footstep_planning_tools/feet_pose_generator_client.h>
+
 #include <l3_pattern_generator/joystick_handler.h>
 
 namespace l3_footstep_planning
@@ -117,8 +119,9 @@ private:
   StepPlan step_plan_;
   msgs::StepPlan last_step_sequence_;
 
+  FeetPoseGeneratorClient::Ptr feet_pose_generator_;
+
   // service clients
-  ros::ServiceClient generate_feet_pose_client_;
   ros::ServiceClient step_plan_request_client_;
   ros::ServiceClient stitch_step_plan_client;
 
