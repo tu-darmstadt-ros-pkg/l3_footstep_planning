@@ -11,6 +11,8 @@ DirectGoalStateGenerator::DirectGoalStateGenerator()
 bool DirectGoalStateGenerator::loadParams(const ParameterSet& params)
 {
   getParam("strict_mode", strict_mode_, false, true);
+  getParam("max_fb_dist", max_fb_dist_sq_, 0.0, true);
+  max_fb_dist_sq_ *= max_fb_dist_sq_;
 
   return true;
 }
@@ -38,7 +40,21 @@ std::list<StateGenResult> DirectGoalStateGenerator::generateNearStateResults(con
   /// @todo Not sure about ignore state_expansion_idx for floating bases;
   /// but usually it requires to expand the floating base to reach the final goal configuration
   if (target.getState()->hasFloatingBases())
-    result.floating_base = makeShared<FloatingBase>(*target.getState()->getFloatingBases()[l3::BaseInfo::MAIN_BODY_IDX]);
+  {
+    double dist_sq = 0.0;
+    FloatingBase::ConstPtr fb = target.getState()->getFloatingBases()[l3::BaseInfo::MAIN_BODY_IDX];
+
+    if (max_fb_dist_sq_ > 0.0)
+    {
+      FloatingBase::ConstPtr current_fb = current.getState()->getFloatingBases()[l3::BaseInfo::MAIN_BODY_IDX];
+      dist_sq = (fb->pose().getPosition() - current_fb->pose().getPosition()).squaredNorm();
+    }
+
+    if (dist_sq <= max_fb_dist_sq_)
+      result.floating_base = makeShared<FloatingBase>(*fb);
+    else
+      return std::list<StateGenResult>();
+  }
 
   return std::list<StateGenResult>{ result };
 }

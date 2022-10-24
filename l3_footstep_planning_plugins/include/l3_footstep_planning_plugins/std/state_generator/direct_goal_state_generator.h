@@ -49,6 +49,7 @@ protected:
   static bool hasEqualFloatingBaseElement(StateHashed::ConstPtr current, StateHashed::ConstPtr target);
 
   bool strict_mode_;
+  double max_fb_dist_sq_;
 };
 }  // namespace l3_footstep_planning
 
