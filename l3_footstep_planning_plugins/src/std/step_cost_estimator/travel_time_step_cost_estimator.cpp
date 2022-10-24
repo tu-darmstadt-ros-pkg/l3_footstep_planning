@@ -29,7 +29,7 @@ bool TravelTimeStepCostEstimator::getCost(const PlanningState& state, double& co
     const Pose& from = state.getAdjacentState()->getFeetCenter();
     const Pose& to = state.getState()->getFeetCenter();
 
-    double linear_cost = linear_vel_inv_ > 0.0 ? euclidean_distance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z()) * linear_vel_inv_ : 0.0;
+    double linear_cost = linear_vel_inv_ > 0.0 ? euclideanDistance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z()) * linear_vel_inv_ : 0.0;
     double angular_cost = angular_vel_inv_ > 0.0 ? std::abs(shortestAngularDistance(from.yaw(), to.yaw())) * angular_vel_inv_ : 0.0;
 
     cost = linear_cost + angular_cost;

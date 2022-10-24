@@ -23,7 +23,7 @@ bool EuclideanStepCostEstimator::getCost(const PlanningState& state, double& cos
     const Pose& from = state.getAdjacentState()->getFeetCenter();
     const Pose& to = state.getState()->getFeetCenter();
 
-    cost = euclidean_distance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
+    cost = euclideanDistance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
     cost_multiplier = 1.0;
     risk = 0.0;
     risk_multiplier = 1.0;

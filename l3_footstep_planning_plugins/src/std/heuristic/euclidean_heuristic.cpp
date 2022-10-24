@@ -26,7 +26,7 @@ double EuclideanHeuristic::getHeuristicValue(const State& from, const State& to,
     const Pose& from_pose = from.getFeetCenter();
     const Pose& to_pose = to.getFeetCenter();
 
-    return euclidean_distance(from_pose.x(), from_pose.y(), from_pose.z(), to_pose.x(), to_pose.y(), to_pose.z());
+    return euclideanDistance(from_pose.x(), from_pose.y(), from_pose.z(), to_pose.x(), to_pose.y(), to_pose.z());
   }
   else
     return normalizeResult(to, HeuristicPlugin::getHeuristicValue(from, to, start, goal));
@@ -37,7 +37,7 @@ double EuclideanHeuristic::getHeuristicValue(const Foothold& from, const Foothol
   if (from == to)
     return 0.0;
 
-  return euclidean_distance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
+  return euclideanDistance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
 }
 
 double EuclideanHeuristic::getHeuristicValue(const FloatingBase& from, const FloatingBase& to, const State& /*start*/, const State& /*goal*/) const
@@ -45,7 +45,7 @@ double EuclideanHeuristic::getHeuristicValue(const FloatingBase& from, const Flo
   if (from == to)
     return 0.0;
 
-  return euclidean_distance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
+  return euclideanDistance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
 }
 }  // namespace l3_footstep_planning
 

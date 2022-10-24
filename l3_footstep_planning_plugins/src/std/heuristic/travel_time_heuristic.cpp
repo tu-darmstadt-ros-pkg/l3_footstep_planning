@@ -32,7 +32,7 @@ double TravelTimeHeuristic::getHeuristicValue(const State& from, const State& to
     const Pose& pose_from = from.getFeetCenter();
     const Pose& pose_to = to.getFeetCenter();
 
-    double linear_cost = linear_vel_inv_ > 0.0 ? euclidean_distance(pose_from.x(), pose_from.y(), pose_from.z(), pose_to.x(), pose_to.y(), pose_to.z()) * linear_vel_inv_ : 0.0;
+    double linear_cost = linear_vel_inv_ > 0.0 ? euclideanDistance(pose_from.x(), pose_from.y(), pose_from.z(), pose_to.x(), pose_to.y(), pose_to.z()) * linear_vel_inv_ : 0.0;
     double angular_cost = angular_vel_inv_ > 0.0 ? std::abs(shortestAngularDistance(pose_from.yaw(), pose_to.yaw())) * angular_vel_inv_ : 0.0;
 
     return linear_cost + angular_cost;
@@ -64,7 +64,7 @@ double TravelTimeHeuristic::getHeuristicValue(const Foothold& from, const Footho
   if (from == to)
     return 0.0;
 
-  double linear_cost = linear_vel_inv_ > 0.0 ? euclidean_distance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z()) * linear_vel_inv_ : 0.0;
+  double linear_cost = linear_vel_inv_ > 0.0 ? euclideanDistance(from.x(), from.y(), from.z(), to.x(), to.y(), to.z()) * linear_vel_inv_ : 0.0;
   double angular_cost = angular_vel_inv_ > 0.0 ? std::abs(shortestAngularDistance(from.yaw(), to.yaw())) * angular_vel_inv_ : 0.0;
 
   return linear_cost + angular_cost;
