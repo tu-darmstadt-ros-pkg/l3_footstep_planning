@@ -52,7 +52,7 @@ public:
 
   bool isTerrainModelAvailable() const override;
 
-  void setTerrainModel(const l3_terrain_modeling::TerrainModelMsg::ConstPtr& terrain_model);
+  void setTerrainModel(l3_terrain_modeling::TerrainModelMsg::ConstPtr terrain_model);
 
   inline double getResolution() const override { return terrain_model_->getResolution(); }
 
@@ -68,6 +68,9 @@ protected:
 
   // subscribers
   ros::Subscriber terrain_model_sub_;
+
+  // publisher
+  ros::Publisher terrain_model_pub_;
 };
 }  // namespace l3_footstep_planning
 
