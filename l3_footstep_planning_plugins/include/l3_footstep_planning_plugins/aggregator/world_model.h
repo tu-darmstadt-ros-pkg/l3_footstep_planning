@@ -45,7 +45,7 @@ public:
 
   WorldModel();
 
-  void loadPlugins(bool print_warning = true) override;
+  bool loadPlugins(bool print_warning = true) override;
   bool loadParams(const vigir_generic_params::ParameterSet& params) override;
 
   void resetPlugins() override;

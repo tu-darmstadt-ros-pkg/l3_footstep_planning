@@ -6,9 +6,10 @@ WorldModel::WorldModel()
   : ExtendedPluginAggregator<WorldModel, WorldModelPlugin>("WorldModel")
 {}
 
-void WorldModel::loadPlugins(bool print_warning)
+bool WorldModel::loadPlugins(bool print_warning)
 {
-  ExtendedPluginAggregator<WorldModel, WorldModelPlugin>::loadPlugins(print_warning);
+  if (!ExtendedPluginAggregator<WorldModel, WorldModelPlugin>::loadPlugins(print_warning))
+    return false;
 
   // get terrain model
   vigir_pluginlib::PluginManager::getPlugin(terrain_model_plugin_);
@@ -16,7 +17,10 @@ void WorldModel::loadPlugins(bool print_warning)
   {
     ROS_INFO("[WorldModel] Found terrain model:");
     ROS_INFO("    %s (%s)", terrain_model_plugin_->getName().c_str(), terrain_model_plugin_->getTypeClass().c_str());
+    return true;
   }
+  else
+    return false;
 }
 
 bool WorldModel::loadParams(const vigir_generic_params::ParameterSet& params)
