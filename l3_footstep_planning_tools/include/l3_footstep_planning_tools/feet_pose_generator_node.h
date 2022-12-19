@@ -62,6 +62,7 @@ protected:
   ros::Subscriber robot_pose_sub_;
   ros::Subscriber robot_pose_with_cov_sub_;
   ros::Subscriber terrain_model_sub_;
+  ros::Subscriber grid_map_sub_;
 
   // service servers
   ros::ServiceServer generate_feet_pose_srv_;

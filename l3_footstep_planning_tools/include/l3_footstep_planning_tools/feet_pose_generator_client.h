@@ -98,7 +98,7 @@ private:
 
   // service clients
   ros::ServiceClient generate_feet_pose_client_;
-  ros::ServiceClient update_feet_client_;
+  ros::ServiceClient update_feet_client_; /// @todo provide functions such as moveToValid
 };
 }  // namespace l3_footstep_planning
 

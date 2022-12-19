@@ -52,8 +52,6 @@ public:
 
   bool isTerrainModelAvailable() const override;
 
-  void setTerrainModel(l3_terrain_modeling::TerrainModelMsg::ConstPtr terrain_model);
-
   inline double getResolution() const override { return terrain_model_->getResolution(); }
 
   inline TerrainResult getHeight(double x, double y, double& height) const override { return terrain_model_->getHeight(x, y, height) ? OK : NO_HEIGHT; }
@@ -62,12 +60,16 @@ public:
   inline TerrainResult getNormal(const Foothold& foothold, Vector3& normal) const override { return terrain_model_->getNormal(foothold, normal) ? OK : NO_NORMAL; }
 
 protected:
+  void setTerrainModel(l3_terrain_modeling::TerrainModelMsg::ConstPtr terrain_model);
+  void setGridMap(grid_map_msgs::GridMap::ConstPtr grid_map);
+
   virtual void notifyTerrainModelUpdate() {}
 
   l3_terrain_modeling::TerrainModel::Ptr terrain_model_;
 
   // subscribers
   ros::Subscriber terrain_model_sub_;
+  ros::Subscriber grid_map_sub_;
 
   // publisher
   ros::Publisher terrain_model_pub_;

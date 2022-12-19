@@ -77,8 +77,7 @@ plugin_sets:
         topic: /ground_level_grid_map
 
     # TerrainModelPlugins
-    terrain_model:
-      import: basic_terrain_model
+    terrain_model: basic_terrain_model
 
   vis:
     step_plan_request_vis: none

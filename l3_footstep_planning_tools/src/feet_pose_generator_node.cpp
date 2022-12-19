@@ -20,6 +20,7 @@ FeetPoseGeneratorNode::FeetPoseGeneratorNode(ros::NodeHandle& nh)
   robot_pose_sub_ = nh.subscribe("/robot_pose", 1, &FeetPoseGenerator::setRobotPose, &feet_pose_generator_);
   robot_pose_with_cov_sub_ = nh.subscribe("/initialpose", 1, &FeetPoseGenerator::setRobotPoseWithCovariance, &feet_pose_generator_);
   terrain_model_sub_ = nh.subscribe("/terrain_model", 1, &FeetPoseGenerator::setTerrainModel, &feet_pose_generator_);
+  grid_map_sub_ = nh.subscribe("/elevation_map", 1, &FeetPoseGenerator::setGridMap, &feet_pose_generator_);
 
   // start own services
   generate_feet_pose_srv_ = nh.advertiseService("generate_feet_pose", &FeetPoseGeneratorNode::generateFeetPoseService, this);

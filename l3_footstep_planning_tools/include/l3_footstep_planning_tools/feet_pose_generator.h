@@ -54,11 +54,13 @@ public:
   void setRobotPose(const geometry_msgs::PoseStampedConstPtr& robot_pose);
   void setRobotPoseWithCovariance(const geometry_msgs::PoseWithCovarianceStampedConstPtr& robot_pose);
 
-  void setTerrainModel(const l3_terrain_modeling::TerrainModelMsg::ConstPtr& terrain_model);
-
   msgs::ErrorStatus generateFeetPose(const msgs::FeetPoseRequest& request, msgs::FootholdArray& feet);
 
+  void setTerrainModel(l3_terrain_modeling::TerrainModelMsg::ConstPtr terrain_model);
+  void setGridMap(grid_map_msgs::GridMap::ConstPtr grid_map);
+
 protected:
+
   msgs::ErrorStatus updateFeetPose(msgs::FootholdArray& feet);
 
   bool getCurrentFeetPose(msgs::FootholdArray& feet, const std::string& request_frame);

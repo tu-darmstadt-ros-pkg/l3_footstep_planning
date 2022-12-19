@@ -33,13 +33,22 @@ void FeetPoseGenerator::setRobotPoseWithCovariance(const geometry_msgs::PoseWith
   has_robot_pose_ = true;
 }
 
-void FeetPoseGenerator::setTerrainModel(const l3_terrain_modeling::TerrainModelMsg::ConstPtr& terrain_model)
+void FeetPoseGenerator::setTerrainModel(l3_terrain_modeling::TerrainModelMsg::ConstPtr terrain_model)
 {
   // update terrain model
   if (this->terrain_model_)
     this->terrain_model_->fromMsg(*terrain_model);
   else
-    this->terrain_model_.reset(new l3_terrain_modeling::TerrainModel(*terrain_model));
+    this->terrain_model_ = l3::makeShared<l3_terrain_modeling::TerrainModel>(*terrain_model);
+}
+
+void FeetPoseGenerator::setGridMap(grid_map_msgs::GridMap::ConstPtr grid_map)
+{
+  // update terrain model
+  if (this->terrain_model_)
+    this->terrain_model_->fromMsg(*grid_map);
+  else
+    this->terrain_model_ = l3::makeShared<l3_terrain_modeling::TerrainModel>(*grid_map);
 }
 
 msgs::ErrorStatus FeetPoseGenerator::generateFeetPose(const msgs::FeetPoseRequest& request, msgs::FootholdArray& feet)
