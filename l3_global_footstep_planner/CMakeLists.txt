@@ -10,7 +10,15 @@ set(CMAKE_CXX_STANDARD 17)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy actionlib_msgs actionlib std_msgs l3_footstep_planning_msgs l3_footstep_planner)
+set(CATKIN_PACKAGE_DEPENDENCIES
+  roscpp
+  actionlib_msgs
+  actionlib
+  std_msgs
+  l3_footstep_planning_msgs
+  l3_footstep_planner
+)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGE_DEPENDENCIES})
 
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system)
@@ -82,8 +90,8 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy actionlib_msgs actionlib st
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES l3_global_footstep_planner
-  CATKIN_DEPENDS roscpp rospy actionlib_msgs actionlib std_msgs l3_footstep_planning_msgs l3_footstep_planner
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS ${CATKIN_PACKAGE_DEPENDENCIES}
 #  DEPENDS system_lib
 )
 

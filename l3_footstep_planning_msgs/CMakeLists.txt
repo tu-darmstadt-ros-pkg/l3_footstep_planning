@@ -10,7 +10,20 @@ set(CMAKE_CXX_STANDARD 17)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp tf actionlib_msgs actionlib message_generation std_msgs geometry_msgs nav_msgs visualization_msgs vigir_generic_params l3_msgs l3_libs)
+set(CATKIN_PACKAGE_DEPENDENCIES
+  roscpp
+  tf
+  actionlib_msgs
+  actionlib
+  std_msgs
+  geometry_msgs
+  nav_msgs
+  visualization_msgs
+  vigir_generic_params
+  l3_msgs
+  l3_libs
+)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGE_DEPENDENCIES} message_generation)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -93,7 +106,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp tf actionlib_msgs actionlib message_runtime std_msgs geometry_msgs nav_msgs visualization_msgs vigir_generic_params l3_msgs l3_libs
+  CATKIN_DEPENDS ${CATKIN_PACKAGE_DEPENDENCIES} message_runtime
 #  DEPENDS system_lib
 )
 

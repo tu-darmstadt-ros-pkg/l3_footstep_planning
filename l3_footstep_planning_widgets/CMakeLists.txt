@@ -7,7 +7,11 @@ project(l3_footstep_planning_widgets)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS l3_footstep_planning_msgs l3_footstep_planning_libs)
+set(CATKIN_PACKAGE_DEPENDENCIES
+  l3_footstep_planning_msgs
+  l3_footstep_planning_libs
+)
+find_package(catkin REQUIRED COMPONENTS ${CATKIN_PACKAGE_DEPENDENCIES})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -80,7 +84,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES
-  CATKIN_DEPENDS l3_footstep_planning_msgs l3_footstep_planning_libs
+  CATKIN_DEPENDS ${CATKIN_PACKAGE_DEPENDENCIES}
 #  DEPENDS system_widgets
 )
 
