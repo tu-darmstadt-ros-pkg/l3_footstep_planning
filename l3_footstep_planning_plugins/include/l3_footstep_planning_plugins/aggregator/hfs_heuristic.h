@@ -1,5 +1,5 @@
 //=================================================================================================
-// Copyright (c) 2022, Alexander Stumpf, Filip Bjelonic, TU Darmstadt
+// Copyright (c) 2023, Alexander Stumpf, Filip Bjelonic, TU Darmstadt
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without

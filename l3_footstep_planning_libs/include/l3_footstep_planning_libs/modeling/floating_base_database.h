@@ -1,5 +1,5 @@
 //=================================================================================================
-// Copyright (c) 2022, alexander stumpf, Felix Sternkopf, TU Darmstadt
+// Copyright (c) 2023, alexander stumpf, Felix Sternkopf, TU Darmstadt
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
