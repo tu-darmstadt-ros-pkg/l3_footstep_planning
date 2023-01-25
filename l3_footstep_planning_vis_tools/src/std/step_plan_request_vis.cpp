@@ -35,10 +35,6 @@ void StepPlanRequestVis::visualize(const msgs::StepPlanRequest& step_plan_reques
     floating_base_id = static_cast<int>(markers_.markers.size());
     marker.id = floating_base_id;
 
-    marker.scale.x = BASE_END_POSE_SIZE;
-    marker.scale.y = BASE_END_POSE_SIZE;
-    marker.scale.z = BASE_END_POSE_SIZE;
-
     markers_.markers.push_back(marker);
   }
 
@@ -53,10 +49,6 @@ void StepPlanRequestVis::visualize(const msgs::StepPlanRequest& step_plan_reques
   {
     visualization_msgs::Marker marker = baseToBaseMarker(step_plan_request.goal_floating_bases[BaseInfo::MAIN_BODY_IDX], *RobotModel::description(), color, "goal_base");
     marker.id = floating_base_id;
-
-    marker.scale.x = 0.07;
-    marker.scale.y = 0.07;
-    marker.scale.z = 0.07;
 
     markers_.markers.push_back(marker);
   }

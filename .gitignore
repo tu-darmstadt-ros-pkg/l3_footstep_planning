@@ -6,6 +6,7 @@ lib
 msg_gen
 srv_gen
 qtcreator-build
+cmake-build-debug
 *~
 *.backup
 *.user
@@ -13,3 +14,4 @@ qtcreator-build
 *.orig
 *.rej
 *.pyc
+*.idea

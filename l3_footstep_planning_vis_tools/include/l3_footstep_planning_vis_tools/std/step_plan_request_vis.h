@@ -32,8 +32,6 @@
 
 #include <l3_footstep_planning_vis_tools/base/planning_markers_vis_plugin.h>
 
-#define BASE_END_POSE_SIZE 0.07
-
 namespace l3_footstep_planning
 {
 class StepPlanRequestVis : public PlanningMarkersVisPlugin
