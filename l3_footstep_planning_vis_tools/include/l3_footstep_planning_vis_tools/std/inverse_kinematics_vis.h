@@ -101,7 +101,7 @@ protected:
   StepIndex current_step_idx_;
 
   // params
-  double animate_time_scale_;
+  double animate_speedup_;
 
   bool visualize_feedback_;
 

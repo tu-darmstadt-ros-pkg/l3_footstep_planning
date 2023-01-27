@@ -62,7 +62,7 @@ bool InverseKinematicsVis::initialize(const vigir_generic_params::ParameterSet& 
   // get other parameters
   tf_prefix_ = param("tf_prefix", std::string("planning_vis"), true);
   visualize_feedback_ = param("visualize_feedback", false, true);
-  animate_time_scale_ = param("animate_time_scale", 1.0, true);
+  animate_speedup_ = param("animate_speedup", 1.0, true);
 
   /// init ROS API stuff
 
@@ -329,9 +329,9 @@ void InverseKinematicsVis::animate(const ros::TimerEvent& /*event*/)
 
 void InverseKinematicsVis::scheduleAnimationStep(double time_step)
 {
-  if (animate_time_scale_ > 0.0)
+  if (animate_speedup_ > 0.0)
   {
-    animation_timer_.setPeriod(ros::Duration(time_step * animate_time_scale_));
+    animation_timer_.setPeriod(ros::Duration(time_step / animate_speedup_));
     animation_timer_.start();
   }
 }
