@@ -123,6 +123,7 @@ set(HEADERS
   include/${PROJECT_NAME}/threading/threading_manager.h
   include/${PROJECT_NAME}/threading/queue.h
   include/${PROJECT_NAME}/threading/worker.h
+  include/${PROJECT_NAME}/types/heuristic_lookup_table.h
   include/${PROJECT_NAME}/hash.h
   include/${PROJECT_NAME}/helper.h
   include/${PROJECT_NAME}/math.h
@@ -145,6 +146,7 @@ set(SOURCES
   src/modeling/transition.cpp
   src/modeling/transition_database.cpp
   src/modeling/transition_id.cpp
+  src/types/heuristic_lookup_table.cpp
   src/hash.cpp
   src/helper.cpp
   src/math.cpp

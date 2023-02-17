@@ -35,7 +35,7 @@ bool WorldModelPlugin::isAccessible(const State& state) const
       return false;
   }
 
-  return true;
+  return isAccessible(*state.getFloatingBase(BaseInfo::MAIN_BODY_IDX));
 }
 
 bool WorldModelPlugin::isAccessible(const PlanningState& state) const { return isAccessible(*state.getState()); }
