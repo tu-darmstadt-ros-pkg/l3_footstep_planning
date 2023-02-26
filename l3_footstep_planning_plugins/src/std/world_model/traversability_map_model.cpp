@@ -20,8 +20,8 @@ bool TraversabilityMapModel::loadParams(const vigir_generic_params::ParameterSet
   getParam("unknown_traversability_value", unknown_traversability_value_, 1.0f, true);
   getParam("check_foothold_accessibility", check_foothold_accessibility_, true, true);
   getParam("check_floating_base_accessibility", check_floating_base_accessibility_, true, true);
-  getParam("num_sampling_points_x", num_sampling_points_x_, 4, true);
-  getParam("num_sampling_points_y", num_sampling_points_y_, 9, true);
+  getParam("num_sampling_points_x", num_sampling_points_x_, 5, true);
+  getParam("num_sampling_points_y", num_sampling_points_y_, 10, true);
 
   if (min_traversability_weight_ + mean_traversability_weight_ != 1.0)
   {
@@ -106,7 +106,7 @@ bool TraversabilityMapModel::isAccessible(const Foothold& foothold) const
     if (traversability_map_.isInside(pos))
     {
       float traversability = traversability_map_.atPosition(traversability_map_layer_, pos);
-      if (!isnan(traversability))
+      if (!std::isnan(traversability))
         return traversability >= traversability_threshold_;
     }
     return unknown_area_is_accessible_;
@@ -189,7 +189,7 @@ bool TraversabilityMapModel::iteratePolygon(int num_sampling_points_min, int num
       }
 
       float traversability = traversability_map_.atPosition(traversability_map_layer_, pos);
-      if (isnan(traversability))
+      if (std::isnan(traversability))
       {
         sum_traversability += unknown_traversability_value_;
         continue;
