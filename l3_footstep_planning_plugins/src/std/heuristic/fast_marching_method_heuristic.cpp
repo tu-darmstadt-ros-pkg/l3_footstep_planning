@@ -31,13 +31,16 @@ HLUTHeuristicPlugin::hlutEntry FastMarchingMethodHeuristic::computeHLUTEntryOfNe
   l3::PositionIndex neighbor_right = neighbor;
   neighbor_right[1]++;
 
-  float a =
-      std::min(hlut_.isIndexInside(neighbor_up) ? hlut_.getHeuristicEntry(neighbor_up) : inf, hlut_.isIndexInside(neighbor_down) ? hlut_.getHeuristicEntry(neighbor_down) : inf);
-  float b = std::min(hlut_.isIndexInside(neighbor_left) ? hlut_.getHeuristicEntry(neighbor_left) : inf,
-                     hlut_.isIndexInside(neighbor_right) ? hlut_.getHeuristicEntry(neighbor_right) : inf);
+  float a_1 = hlut_.isIndexInside(neighbor_up) ? hlut_.getHeuristicEntry(neighbor_up) : inf;
+  float a_2 = hlut_.isIndexInside(neighbor_down) ? hlut_.getHeuristicEntry(neighbor_down) : inf;
+  float a = std::min(a_1, a_2);
+
+  float b_1 = hlut_.isIndexInside(neighbor_left) ? hlut_.getHeuristicEntry(neighbor_left) : inf;
+  float b_2 = hlut_.isIndexInside(neighbor_right) ? hlut_.getHeuristicEntry(neighbor_right) : inf;
+  float b = std::min(b_1, b_2);
 
   // TODO: Allow speed functions
-  float inv_f = 1.0f / static_cast<float>(resolution_.resolution().x);
+  auto inv_f = static_cast<float>(resolution_.resolution().x);
 
   hlutEntry valid_neighbor_entry;
   valid_neighbor_entry.index = neighbor;
@@ -45,11 +48,11 @@ HLUTHeuristicPlugin::hlutEntry FastMarchingMethodHeuristic::computeHLUTEntryOfNe
   if (inv_f > abs(a - b))
   {
     float c = a + b;
-    valid_neighbor_entry.heuristic_distance = 0.5f * (c + sqrt(c * c - 2.0f * (a * a + b * b - inv_f * inv_f)));
+    valid_neighbor_entry.heuristic_value = 0.5f * (c + sqrt(c * c - 2.0f * (a * a + b * b - inv_f * inv_f)));
   }
   else
   {
-    valid_neighbor_entry.heuristic_distance = std::min(a, b) + inv_f;
+    valid_neighbor_entry.heuristic_value = std::min(a, b) + inv_f;
   }
 
   return valid_neighbor_entry;

@@ -4,20 +4,20 @@ namespace l3_footstep_planning
 {
 HeuristicLookupTable::HeuristicLookupTable() {}
 
-HeuristicLookupTable::HeuristicLookupTable(DiscreteResolution resolution, const Eigen::Vector2i& length, const l3::Position2D& center = l3::Position2D(0, 0))
+HeuristicLookupTable::HeuristicLookupTable(DiscreteResolution resolution, const Eigen::Vector2i& size, const l3::Position2D& center = l3::Position2D(0, 0))
 {
-  length_ = length;
-  if (length_[0] <= 0 || length_[1] <= 0)
-    ROS_ERROR("[HeuristicLookupTable] Length of the heuristic lookup must be greater than 0!");
+  size_ = size;
+  if (size_[0] <= 0 || size_[1] <= 0)
+    ROS_ERROR("[HeuristicLookupTable] Size of the heuristic lookup must be greater than 0!");
 
   resolution_ = resolution;
   if (resolution_.resolution().x <= 0 || resolution_.resolution().y <= 0)
     ROS_ERROR("[HeuristicLookupTable] Resolution of the heuristic lookup table must be greater than 0!");
 
   center_ = center;
-  center_index_ = PositionIndex(resolution.toDiscX(length_[0] * 0.5), resolution.toDiscY(length_[1] * 0.5));
+  center_index_ = PositionIndex(resolution.toDiscX(size_[0] * 0.5), resolution.toDiscY(size_[1] * 0.5));
 
-  hlut_.resize(resolution.toDiscX(length_[0]), resolution.toDiscY(length_[1]));
+  hlut_.resize(resolution.toDiscX(size_[0]), resolution.toDiscY(size_[1]));
   hlut_.setConstant(std::numeric_limits<float>::infinity());
 }
 
@@ -53,7 +53,7 @@ bool HeuristicLookupTable::isIndexInside(const PositionIndex& index) const { ret
 
 Eigen::MatrixXf HeuristicLookupTable::getHeuristicMatrix() const { return hlut_; }
 
-Eigen::Vector2i HeuristicLookupTable::getLength() const { return length_; }
+Eigen::Vector2i HeuristicLookupTable::getSize() const { return size_; }
 
 DiscreteResolution HeuristicLookupTable::getResolution() const { return resolution_; }
 

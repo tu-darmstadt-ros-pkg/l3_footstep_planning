@@ -99,7 +99,7 @@ protected:
     l3::PositionIndex index;
 
     // The heuristic value of the entry.
-    float heuristic_distance;
+    float heuristic_value;
   };
 
   /**
@@ -107,8 +107,44 @@ protected:
    */
   struct gridMapHeuristicEntryCompare
   {
-    bool operator()(const hlutEntry& a, const hlutEntry& b) { return a.heuristic_distance > b.heuristic_distance; }
+    bool operator()(const hlutEntry& a, const hlutEntry& b) { return a.heuristic_value > b.heuristic_value; }
   };
+
+  /**
+   * @brief Initializes the HLUT.
+   * @param start_fb The start floating base (used to determine the HLUT size).
+   * @param goal_fb The goal floating base (used to determine the HLUT size).
+   * @param goal_pos The goal position (the center of the HLUT).
+   * @return The initialized HLUT.
+   */
+  virtual HeuristicLookupTable initializeHLUT(const FloatingBase& start_fb, const FloatingBase& goal_fb, const l3::Position2D& goal_pos) const;
+
+  /**
+   * @brief Get the neighbor indices of the specified index.
+   * @param current_index The index for which the neighbors should be computed.
+   * @return The neighbor indices of the specified index.
+   */
+  virtual std::vector<l3::PositionIndex> getNeighbors(const l3::PositionIndex& current_index) const { return {}; }
+
+  /**
+   * @brief Get the valid neighbor indices of the specified neighbor indices.
+   * @param neighbors The neighbor indices for which the valid ones should be computed.
+   * @return The valid neighbor indices.
+   */
+  virtual std::vector<l3::PositionIndex> getValidNeighbors(const std::vector<l3::PositionIndex>& neighbors) const;
+
+  /**
+   * @brief Computes the HLUT entry of the specified neighbor.
+   * @param neighbor The neighbor for which the HLUT entry should be computed.
+   * @param current_index The current index.
+   * @return The computed HLUT entry.
+   */
+  virtual hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const { return { neighbor, 0.0 }; }
+
+  /**
+   * @brief Publishes the HLUT as a grid map.
+   */
+  virtual void visualizeHLUT() const;
 
   // The heuristic lookup table.
   HeuristicLookupTable hlut_;
@@ -160,42 +196,6 @@ protected:
 
   // Cache for HLUT index accessibility
   mutable std::unordered_map<l3::PositionIndex, bool> is_accessible_;
-
-  /**
-   * @brief Initializes the HLUT.
-   * @param start_fb The start floating base (used to determine the HLUT size).
-   * @param goal_fb The goal floating base (used to determine the HLUT size).
-   * @param goal_pos The goal position (the center of the HLUT).
-   * @return The initialized HLUT.
-   */
-  virtual HeuristicLookupTable initializeHLUT(const FloatingBase& start_fb, const FloatingBase& goal_fb, const l3::Position2D& goal_pos) const;
-
-  /**
-   * @brief Get the neighbor indices of the specified index.
-   * @param current_index The index for which the neighbors should be computed.
-   * @return The neighbor indices of the specified index.
-   */
-  virtual std::vector<l3::PositionIndex> getNeighbors(const l3::PositionIndex& current_index) const { return {}; }
-
-  /**
-   * @brief Get the valid neighbor indices of the specified neighbor indices.
-   * @param neighbors The neighbor indices for which the valid ones should be computed.
-   * @return The valid neighbor indices.
-   */
-  virtual std::vector<l3::PositionIndex> getValidNeighbors(const std::vector<l3::PositionIndex>& neighbors) const;
-
-  /**
-   * @brief Computes the HLUT entry of the specified neighbor.
-   * @param neighbor The neighbor for which the HLUT entry should be computed.
-   * @param current_index The current index.
-   * @return The computed HLUT entry.
-   */
-  virtual hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const { return { neighbor, 0.0 }; }
-
-  /**
-   * @brief Publishes the HLUT as a grid map.
-   */
-  virtual void visualizeHLUT() const;
 };
 }  // namespace l3_footstep_planning
 

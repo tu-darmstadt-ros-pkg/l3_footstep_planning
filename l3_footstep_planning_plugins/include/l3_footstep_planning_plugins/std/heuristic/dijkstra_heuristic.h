@@ -58,6 +58,10 @@ public:
   bool loadParams(const vigir_generic_params::ParameterSet& params) override;
 
 protected:
+  std::vector<l3::PositionIndex> getNeighbors(const l3::PositionIndex& current_index) const override;
+
+  hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const override;
+
   // The vector containing the heuristic costs to the neighboring cells.
   std::vector<float> neighbor_costs_vector_;
 
@@ -67,12 +71,11 @@ protected:
   // One dimension of the neighboring_costs_matrix_.
   double neighbors_dimension_;
 
+  // Number of neighbors.
+  int num_neighbors_;
+
   // Half of neighbors_dimension_ (rounded down).
   int half_neighbors_dimension_;
-
-  std::vector<l3::PositionIndex> getNeighbors(const l3::PositionIndex& current_index) const override;
-
-  hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const override;
 };
 }  // namespace l3_footstep_planning
 

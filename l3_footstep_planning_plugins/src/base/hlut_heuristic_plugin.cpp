@@ -87,11 +87,11 @@ void HLUTHeuristicPlugin::preparePlanning(const l3_footstep_planning_msgs::StepP
 
     l3::PositionIndex current_index = min_element.index;
     // if there is already a lower heuristic value for this index, skip it
-    if (hlut_.getHeuristicEntry(current_index) <= min_element.heuristic_distance)
+    if (hlut_.getHeuristicEntry(current_index) <= min_element.heuristic_value)
       continue;
 
     // insert the new heuristic value into the HLUT
-    hlut_.setHeuristicEntry(current_index, min_element.heuristic_distance);
+    hlut_.setHeuristicEntry(current_index, min_element.heuristic_value);
 
     // stop if the start index has been reached
     if (current_index == start_index)
@@ -153,7 +153,8 @@ HeuristicLookupTable HLUTHeuristicPlugin::initializeHLUT(const FloatingBase& sta
 
 std::vector<l3::PositionIndex> HLUTHeuristicPlugin::getValidNeighbors(const std::vector<l3::PositionIndex>& neighbors) const
 {
-  std::vector<l3::PositionIndex> valid_neighbors = {};
+  std::vector<l3::PositionIndex> valid_neighbors;
+  valid_neighbors.reserve(neighbors.size());
 
   for (auto& neighbor : neighbors)
   {
@@ -230,7 +231,7 @@ void HLUTHeuristicPlugin::visualizeHLUT() const
   // publish HLUT
   grid_map::GridMap hlut_grid_map = grid_map::GridMap();
   hlut_grid_map.setFrameId(vis_frame_id_);
-  hlut_grid_map.setGeometry(grid_map::Length(hlut_.getLength().x(), hlut_.getLength().y()), hlut_.getResolution().resolution().x, hlut_.getCenter());
+  hlut_grid_map.setGeometry(grid_map::Length(hlut_.getSize().x(), hlut_.getSize().y()), hlut_.getResolution().resolution().x, hlut_.getCenter());
   hlut_grid_map.add(vis_layer_, hlut_.getHeuristicMatrix());
 
   grid_map_msgs::GridMap msg;

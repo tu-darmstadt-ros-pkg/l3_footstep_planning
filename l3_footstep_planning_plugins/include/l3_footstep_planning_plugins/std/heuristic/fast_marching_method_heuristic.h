@@ -60,7 +60,7 @@ protected:
   hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const override;
 
 private:
-  const float inf = std::numeric_limits<float>::infinity();
+  static constexpr float inf = std::numeric_limits<float>::infinity();
 };
 }  // namespace l3_footstep_planning
 

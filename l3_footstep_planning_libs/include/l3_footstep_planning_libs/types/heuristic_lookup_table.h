@@ -54,10 +54,10 @@ public:
   /**
    * @brief Constructor.
    * @param resolution The resolution of the heuristic lookup table.
-   * @param length The x and y length of the heuristic lookup table.
+   * @param size The x and y size of the heuristic lookup table.
    * @param center The position that lies in the center of the heuristic lookup table.
    */
-  HeuristicLookupTable(DiscreteResolution resolution, const Eigen::Vector2i& length, const l3::Position2D& center);
+  HeuristicLookupTable(DiscreteResolution resolution, const Eigen::Vector2i& size, const l3::Position2D& center);
 
   /**
    * @brief Set the heuristic value at a given position.
@@ -121,10 +121,10 @@ public:
   Eigen::MatrixXf getHeuristicMatrix() const;
 
   /**
-   * @brief Get the length of the heuristic lookup table.
-   * @return The length of the heuristic lookup table.
+   * @brief Get the size of the heuristic lookup table.
+   * @return The size of the heuristic lookup table.
    */
-  Eigen::Vector2i getLength() const;
+  Eigen::Vector2i getSize() const;
 
   /**
    * @brief Get the resolution of the heuristic lookup table.
@@ -144,8 +144,8 @@ protected:
   // The matrix representing the heuristic lookup table.
   Eigen::MatrixXf hlut_;
 
-  // The x and y length of the heuristic lookup table.
-  Eigen::Vector2i length_;
+  // The x and y size of the heuristic lookup table.
+  Eigen::Vector2i size_;
 
   // The resolution of the heuristic lookup table.
   DiscreteResolution resolution_;
