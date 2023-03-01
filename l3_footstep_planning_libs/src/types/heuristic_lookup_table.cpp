@@ -35,6 +35,8 @@ float HeuristicLookupTable::getHeuristicEntry(const Position2D& pos) const
   return hlut_(index[0], index[1]);
 }
 
+void HeuristicLookupTable::setHeuristicMatrix(const Eigen::MatrixXf& hlut) { hlut_ = hlut; }
+
 float HeuristicLookupTable::getHeuristicEntry(const PositionIndex& index) const { return hlut_(index[0], index[1]); }
 
 PositionIndex HeuristicLookupTable::getIndexFromPosition(const Position2D& pos) const

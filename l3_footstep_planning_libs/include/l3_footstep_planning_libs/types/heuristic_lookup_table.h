@@ -74,6 +74,12 @@ public:
   void setHeuristicEntry(const PositionIndex& index, float value);
 
   /**
+   * @brief Set the matrix containing the heuristic values.
+   * @param hlut The matrix containing the heuristic values.
+   */
+  void setHeuristicMatrix(const Eigen::MatrixXf& hlut);
+
+  /**
    * @brief Get the heuristic value at a given position.
    * @param pos The position where the heuristic value should be returned.
    * @return The heuristic value at the given position.
