@@ -136,14 +136,14 @@ HeuristicLookupTable HLUTHeuristicPlugin::initializeHLUT(const FloatingBase& sta
 
   // check if start lies within the HLUT with the specified size.
   // if not, resize the HLUT
-  if (euclideanDistance(start_fb.x(), 0.0, goal_fb.x(), 0.0) > size_x_ * 0.5)
+  if (euclideanDistance(start_fb.x(), 0.0, goal_fb.x(), 0.0) + 1 > size_x_ * 0.5)
   {
-    size_x = 2 * static_cast<int>(std::ceil(euclideanDistance(start_fb.x(), 0.0, goal_fb.x(), 0.0))) + 1;
+    size_x = 2 * static_cast<int>(std::ceil(euclideanDistance(start_fb.x(), 0.0, goal_fb.x(), 0.0))) + 2;
     ROS_WARN("[%s]: HLUT size_x is too small. Increasing to %d.", getName().c_str(), size_x);
   }
-  if (euclideanDistance(0.0, start_fb.y(), 0.0, goal_fb.y()) > size_y_ * 0.5)
+  if (euclideanDistance(0.0, start_fb.y(), 0.0, goal_fb.y()) + 1 > size_y_ * 0.5)
   {
-    size_y = 2 * static_cast<int>(std::ceil(euclideanDistance(0.0, start_fb.y(), 0.0, goal_fb.y()))) + 1;
+    size_y = 2 * static_cast<int>(std::ceil(euclideanDistance(0.0, start_fb.y(), 0.0, goal_fb.y()))) + 2;
     ROS_WARN("[%s]: HLUT size_y is too small. Increasing to %d.", getName().c_str(), size_y);
   }
 
