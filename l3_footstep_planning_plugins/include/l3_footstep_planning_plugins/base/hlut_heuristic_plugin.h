@@ -131,6 +131,18 @@ protected:
   // The vector containing the yaw angles to be considered for the accessibility check.
   std::vector<double> angle_bins_;
 
+  // The floating base of the start state.
+  FloatingBase start_fb_;
+
+  // The position of the start state.
+  l3::Position2D start_pos_;
+
+  // The floating base of the goal state.
+  FloatingBase goal_fb_;
+
+  // The position of the goal state.
+  l3::Position2D goal_pos_;
+
   // Specifies whether the HLUT should be visualized.
   bool visualize_;
 
@@ -156,7 +168,7 @@ protected:
    * @param goal_pos The goal position (the center of the HLUT).
    * @return The initialized HLUT.
    */
-  HeuristicLookupTable initializeHLUT(const FloatingBase& start_fb, const FloatingBase& goal_fb, const l3::Position2D& goal_pos) const;
+  virtual HeuristicLookupTable initializeHLUT(const FloatingBase& start_fb, const FloatingBase& goal_fb, const l3::Position2D& goal_pos) const;
 
   /**
    * @brief Get the neighbor indices of the specified index.
@@ -170,7 +182,7 @@ protected:
    * @param neighbors The neighbor indices for which the valid ones should be computed.
    * @return The valid neighbor indices.
    */
-  std::vector<l3::PositionIndex> getValidNeighbors(const std::vector<l3::PositionIndex>& neighbors) const;
+  virtual std::vector<l3::PositionIndex> getValidNeighbors(const std::vector<l3::PositionIndex>& neighbors) const;
 
   /**
    * @brief Computes the HLUT entry of the specified neighbor.
@@ -183,7 +195,7 @@ protected:
   /**
    * @brief Publishes the HLUT as a grid map.
    */
-  void visualizeHLUT() const;
+  virtual void visualizeHLUT() const;
 };
 }  // namespace l3_footstep_planning
 

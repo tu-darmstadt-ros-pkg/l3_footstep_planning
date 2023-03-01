@@ -33,9 +33,7 @@ bool HLUTHeuristicPlugin::loadParams(const vigir_generic_params::ParameterSet& p
 
   // calculate angle_bins_
   for (int i = 0; i < resolution_.numAngleBins(); i++)
-  {
     angle_bins_.push_back(normalizeAngle(i * resolution_.resolution().angle - M_PI));
-  }
 
   return true;
 }
@@ -57,23 +55,23 @@ void HLUTHeuristicPlugin::preparePlanning(const l3_footstep_planning_msgs::StepP
   // get start floating base and position
   l3::FloatingBaseArray start_floating_bases;
   l3::floatingBaseArrayMsgToL3(req.start_floating_bases, start_floating_bases);
-  FloatingBase start_fb = start_floating_bases.front();
-  l3::Position2D start_pos = l3::Position2D(start_fb.x(), start_fb.y());
+  start_fb_ = start_floating_bases.front();
+  start_pos_ = l3::Position2D(start_fb_.x(), start_fb_.y());
 
   // get goal floating base and position
   l3::FloatingBaseArray goal_floating_bases;
   l3::floatingBaseArrayMsgToL3(req.goal_floating_bases, goal_floating_bases);
-  FloatingBase goal_fb = goal_floating_bases.front();
-  l3::Position2D goal_pos = l3::Position2D(goal_fb.x(), goal_fb.y());
+  goal_fb_ = goal_floating_bases.front();
+  goal_pos_ = l3::Position2D(goal_fb_.x(), goal_fb_.y());
 
-  hlut_ = initializeHLUT(start_fb, goal_fb, goal_pos);
+  hlut_ = initializeHLUT(start_fb_, goal_fb_, goal_pos_);
 
   // ensure that the is accessible cache is empty before starting the pre-computation
   is_accessible_.clear();
 
   // get start and goal index in the HLUT
-  l3::PositionIndex start_index = hlut_.getIndexFromPosition(start_pos);
-  l3::PositionIndex goal_index = hlut_.getIndexFromPosition(goal_pos);
+  l3::PositionIndex start_index = hlut_.getIndexFromPosition(start_pos_);
+  l3::PositionIndex goal_index = hlut_.getIndexFromPosition(goal_pos_);
 
   // min heap for quick access of first element
   std::priority_queue<hlutEntry, std::vector<hlutEntry>, gridMapHeuristicEntryCompare> considered_next;
@@ -101,11 +99,9 @@ void HLUTHeuristicPlugin::preparePlanning(const l3_footstep_planning_msgs::StepP
 
     std::vector<l3::PositionIndex> valid_neighbors = getValidNeighbors(getNeighbors(current_index));
 
+    // insert the neighbors with the new heuristic value into the min heap
     for (auto& valid_neighbor : valid_neighbors)
-    {
-      // insert the neighbor with its heuristic value into the min heap
       considered_next.push(computeHLUTEntryOfNeighbor(valid_neighbor, min_element));
-    }
   }
 
   if (visualize_)
