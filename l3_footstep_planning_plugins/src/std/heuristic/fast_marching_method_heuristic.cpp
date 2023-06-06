@@ -60,5 +60,4 @@ HLUTHeuristicPlugin::hlutEntry FastMarchingMethodHeuristic::computeHLUTEntryOfNe
 }  // namespace l3_footstep_planning
 
 #include <pluginlib/class_list_macros.h>
-
 PLUGINLIB_EXPORT_CLASS(l3_footstep_planning::FastMarchingMethodHeuristic, l3_footstep_planning::HeuristicPlugin)
