@@ -212,5 +212,4 @@ bool TraversabilityMapModel::iteratePolygon(int num_sampling_points_min, int num
 }  // namespace l3_footstep_planning
 
 #include <pluginlib/class_list_macros.h>
-
 PLUGINLIB_EXPORT_CLASS(l3_footstep_planning::TraversabilityMapModel, l3_footstep_planning::WorldModelPlugin)
