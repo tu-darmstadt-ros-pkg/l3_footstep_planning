@@ -110,9 +110,24 @@
   </class>
 
   <!-- HeuristicPlugin -->
+  <class name="dijkstra_heuristic" type="l3_footstep_planning::DijkstraHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      DijkstraHeuristic: Calculates heuristic value based on Dijkstra's algorithm
+    </description>
+  </class>
+  <class name="dynamics_heuristic" type="l3_footstep_planning::DynamicsHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      DynamicsHeuristic: Checking reachability of goal state based on dynamic walking capabilities (e.g. upper body acceleration and velocity)
+    </description>
+  </class>
   <class name="euclidean_heuristic" type="l3_footstep_planning::EuclideanHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
     <description>
       EuclideanHeuristic: Estimates remaining travel distance to goals state
+    </description>
+  </class>
+  <class name="fast_marching_method_heuristic" type="l3_footstep_planning::FastMarchingMethodHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      FastMarchingMethodHeuristic: Calculates heuristic value based on the Fast Marching Method
     </description>
   </class>
   <class name="heading_heuristic" type="l3_footstep_planning::HeadingHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
@@ -120,19 +135,14 @@
       HeadingHeuristic: Calculates sliding heading near start and goal state 
     </description>
   </class>
-  <class name="step_cost_heuristic" type="l3_footstep_planning::StepCostHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
-    <description>
-      StepCostHeuristic: Estimates remaining step cost with respect to estimated number of steps needed
-    </description>
-  </class>
-  <class name="dynamics_heuristic" type="l3_footstep_planning::DynamicsHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
-    <description>
-      DynamicsHeuristic: Checking reachability of goal state based on dynamic walking capabilites (e.g. upper body acceleration and velocity)
-    </description>
-  </class>
   <class name="occupancy_grid_map_heuristic" type="l3_footstep_planning::OccupancyGridMapHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
     <description>
       OccupancyGridMapHeuristic: Punishing states which are near to obstacles
+    </description>
+  </class>
+  <class name="step_cost_heuristic" type="l3_footstep_planning::StepCostHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
+    <description>
+      StepCostHeuristic: Estimates remaining step cost with respect to estimated number of steps needed
     </description>
   </class>
   <class name="travel_time_heuristic" type="l3_footstep_planning::TravelTimeHeuristic" base_class_type="l3_footstep_planning::HeuristicPlugin">
@@ -156,19 +166,24 @@
 
   <class name="step_dynamics_post_process" type="l3_footstep_planning::StepDynamicsPostProcess" base_class_type="l3_footstep_planning::PostProcessPlugin">
     <description>
-      StepDynamicsPostProcess: Determining step dynamics and timings (e.g. upper body accerlation and velocity)
+      StepDynamicsPostProcess: Determining step dynamics and timings (e.g. upper body acceleration and velocity)
     </description>
   </class>
 
   <!-- WorldModelPlugin -->
   <class name="foot_grid_map_model" type="l3_footstep_planning::FootGridMapModel" base_class_type="l3_footstep_planning::WorldModelPlugin">
     <description>
-      FootGridMapModel: Performs collision checking for rectangular shaped feet using occupance grid maps
+      FootGridMapModel: Performs collision checking for rectangular shaped feet using occupancy grid maps
+    </description>
+  </class>
+  <class name="traversability_map_model" type="l3_footstep_planning::TraversabilityMapModel" base_class_type="l3_footstep_planning::WorldModelPlugin">
+    <description>
+      TraversabilityMapModel: Performs accessibility checks using traversability maps
     </description>
   </class>
   <class name="upper_body_grid_map_model" type="l3_footstep_planning::UpperBodyGridMapModel" base_class_type="l3_footstep_planning::WorldModelPlugin">
     <description>
-      UpperBodyGridMapModel: Performs collision checking for rectangular shaped upper body geometry using occupance grid maps
+      UpperBodyGridMapModel: Performs collision checking for rectangular shaped upper body geometry using occupancy grid maps
     </description>
   </class>
 

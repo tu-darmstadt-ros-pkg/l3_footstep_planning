@@ -124,6 +124,7 @@ set(HEADERS
   include/${PROJECT_NAME}/base/footstep_planning_plugin.h
   include/${PROJECT_NAME}/base/heuristic_plugin.h
   include/${PROJECT_NAME}/base/hfs_heuristic_plugin.h
+  include/${PROJECT_NAME}/base/hlut_heuristic_plugin.h
   include/${PROJECT_NAME}/base/state_generator_plugin.h
   include/${PROJECT_NAME}/base/post_process_plugin.h
   include/${PROJECT_NAME}/base/reachability_plugin.h
@@ -131,9 +132,11 @@ set(HEADERS
   include/${PROJECT_NAME}/base/terrain_model_plugin.h
   include/${PROJECT_NAME}/base/use_mask_generator_plugin.h
   include/${PROJECT_NAME}/base/world_model_plugin.h
+  include/${PROJECT_NAME}/std/heuristic/dijkstra_heuristic.h
   include/${PROJECT_NAME}/std/heuristic/dynamics_heuristic.h
-  include/${PROJECT_NAME}/std/heuristic/heading_heuristic.h
   include/${PROJECT_NAME}/std/heuristic/euclidean_heuristic.h
+  include/${PROJECT_NAME}/std/heuristic/fast_marching_method_heuristic.h
+  include/${PROJECT_NAME}/std/heuristic/heading_heuristic.h
   include/${PROJECT_NAME}/std/heuristic/occupancy_grid_map_heuristic.h
   include/${PROJECT_NAME}/std/heuristic/step_cost_heuristic.h
   include/${PROJECT_NAME}/std/heuristic/travel_time_heuristic.h
@@ -163,6 +166,7 @@ set(HEADERS
   include/${PROJECT_NAME}/std/world_model/foot_grid_map_model.h
   include/${PROJECT_NAME}/std/world_model/grid_map_2d.h
   include/${PROJECT_NAME}/std/world_model/grid_map_model.h
+  include/${PROJECT_NAME}/std/world_model/traversability_map_model.h
   include/${PROJECT_NAME}/std/world_model/upper_body_grid_map_model.h
 )
 
@@ -179,6 +183,7 @@ set(SOURCES
   src/base/footstep_planning_plugin.cpp
   src/base/heuristic_plugin.cpp
   src/base/hfs_heuristic_plugin.cpp
+  src/base/hlut_heuristic_plugin.cpp
   src/base/post_process_plugin.cpp
   src/base/reachability_plugin.cpp
   src/base/state_generator_plugin.cpp
@@ -186,9 +191,11 @@ set(SOURCES
   src/base/terrain_model_plugin.cpp
   src/base/use_mask_generator_plugin.cpp
   src/base/world_model_plugin.cpp
+  src/std/heuristic/dijkstra_heuristic.cpp
   src/std/heuristic/dynamics_heuristic.cpp
-  src/std/heuristic/heading_heuristic.cpp
   src/std/heuristic/euclidean_heuristic.cpp
+  src/std/heuristic/fast_marching_method_heuristic.cpp
+  src/std/heuristic/heading_heuristic.cpp
   src/std/heuristic/occupancy_grid_map_heuristic.cpp
   src/std/heuristic/step_cost_heuristic.cpp
   src/std/heuristic/travel_time_heuristic.cpp
@@ -218,6 +225,7 @@ set(SOURCES
   src/std/world_model/foot_grid_map_model.cpp
   src/std/world_model/grid_map_2d.cpp
   src/std/world_model/grid_map_model.cpp
+  src/std/world_model/traversability_map_model.cpp
   src/std/world_model/upper_body_grid_map_model.cpp
 )
 

@@ -1,5 +1,5 @@
 //=================================================================================================
-// Copyright (c) 2023, Alexander Stumpf, TU Darmstadt
+// Copyright (c) 2023, Simon Giegerich, Alexander Stumpf, TU Darmstadt
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without
@@ -26,50 +26,42 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //=================================================================================================
 
-#ifndef L3_FOOTSTEP_PLANNING_PLUGINS_WORLD_MODEL_PLUGIN_H__
-#define L3_FOOTSTEP_PLANNING_PLUGINS_WORLD_MODEL_PLUGIN_H__
+#ifndef L3_FOOTSTEP_PLANNING_PLUGINS_FAST_MARCHING_METHOD_HEURISTIC_H
+#define L3_FOOTSTEP_PLANNING_PLUGINS_FAST_MARCHING_METHOD_HEURISTIC_H
 
-#include <ros/ros.h>
-
-#include <boost/thread/mutex.hpp>
-
-#include <l3_libs/robot_description/base_info.h>
-
-#include <l3_footstep_planning_plugins/base/footstep_planning_plugin.h>
-
-#include <l3_footstep_planning_libs/modeling/planning_state.h>
+#include <l3_footstep_planning_plugins/base/hlut_heuristic_plugin.h>
 
 namespace l3_footstep_planning
 {
-class WorldModelPlugin : public virtual FootstepPlanningPlugin
+/**
+ * @brief Determining the heuristic value using the Fast Marching Method.
+ *
+ * @param resolution The resolution of the HLUT.
+ * @param size_x The size of the HLUT in x-direction.
+ * @param size_y The size of the HLUT in y-direction.
+ * @param check_foothold_accessibility Specifies whether the foothold of the robot should be used for the accessibility check.
+ * @param check_floating_base_accessibility Specifies whether the floating base of the robot (and its projection to the ground) should be used for the accessibility check.
+ * @param visualize Specifies whether the HLUT should be visualized.
+ * @param vis_frame_id The frame id of the HLUT visualization.
+ * @param vis_topic The topic of the HLUT visualization.
+ * @param vis_layer The layer of the HLUT visualization.
+ */
+class FastMarchingMethodHeuristic : public HLUTHeuristicPlugin
 {
 public:
-  // typedefs
-  typedef l3::SharedPtr<WorldModelPlugin> Ptr;
-  typedef l3::SharedPtr<const WorldModelPlugin> ConstPtr;
+  /**
+   * @brief Default constructor.
+   */
+  FastMarchingMethodHeuristic();
 
-  WorldModelPlugin(const std::string& name);
+protected:
+  std::vector<l3::PositionIndex> getNeighbors(const l3::PositionIndex& current_index) const override;
 
-  bool loadParams(const vigir_generic_params::ParameterSet& params) override;
-
-  bool isUnique() const override { return false; }
-
-  inline SharedLock lockModel() const { return SharedLock(model_lock_); }
-  bool isLocked() const;
-
-  virtual bool isCollisionCheckAvailable() const;
-
-  virtual bool isAccessible(const Foothold& foothold) const { return true; }
-  virtual bool isAccessible(const FloatingBase& floating_base) const { return true; }
-  virtual bool isAccessible(const State& state) const;
-  virtual bool isAccessible(const PlanningState& state) const;
+  hlutEntry computeHLUTEntryOfNeighbor(const l3::PositionIndex& neighbor, const hlutEntry& current_entry) const override;
 
 private:
-  mutable Mutex model_lock_;
-
-  bool collision_check_enabled_;
-  unsigned int collision_check_flag_ = 0;
+  static constexpr float inf = std::numeric_limits<float>::infinity();
 };
 }  // namespace l3_footstep_planning
 
-#endif
+#endif  // L3_FOOTSTEP_PLANNING_PLUGINS_FAST_MARCHING_METHOD_HEURISTIC_H
