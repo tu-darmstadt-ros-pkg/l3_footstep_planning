@@ -74,12 +74,13 @@ bool TraversabilityMapModel::loadParams(const vigir_generic_params::ParameterSet
   std::vector<FootIndex> foot_idx_list = RobotModel::description()->footIdxList();
   feet_sizes_.resize(foot_idx_list.size());
   feet_shapes_.resize(foot_idx_list.size());
-  for (size_t i = 0; i < foot_idx_list.size(); ++i)
+  for (FootIndex footIndex : foot_idx_list)
   {
     FootInfo foot_info;
-    RobotModel::description()->getFootInfo(foot_idx_list[i], foot_info);
-    feet_sizes_[i] = Vector2(foot_info.size.x() + foothold_margin_x_, foot_info.size.y() + foothold_margin_y_);
-    feet_shapes_[i] = foot_info.shape;
+    RobotModel::description()->getFootInfo(footIndex, foot_info);
+    size_t index = RobotModel::description()->getFootIdx(footIndex);
+    feet_sizes_[index] = Vector2(foot_info.size.x() + foothold_margin_x_, foot_info.size.y() + foothold_margin_y_);
+    feet_shapes_[index] = foot_info.shape;
   }
 
   return true;
@@ -108,8 +109,8 @@ bool TraversabilityMapModel::isAccessible(const Foothold& foothold) const
     return false;
   }
 
-  Vector2 foot_size = feet_sizes_[foothold.idx];
-  FootInfo::Shape foot_shape = feet_shapes_[foothold.idx];
+  Vector2 foot_size = feet_sizes_[RobotModel::description()->getFootIdx(foothold.idx)];
+  FootInfo::Shape foot_shape = feet_shapes_[RobotModel::description()->getFootIdx(foothold.idx)];
 
   if (foot_shape == FootInfo::Shape::CUBOID)
     return isPolygonAccessible(Vector2(foothold.x(), foothold.y()), foot_size, foothold.yaw());
