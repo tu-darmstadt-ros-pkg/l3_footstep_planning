@@ -133,6 +133,18 @@ protected:
   // Specifies whether the floating base of the robot should be used for the accessibility check
   bool check_floating_base_accessibility_;
 
+  // Safety margin for the robot's upper body in x direction
+  double upper_body_margin_x_;
+
+  // Safety margin for the robot's upper body in y direction
+  double upper_body_margin_y_;
+
+  // Safety margin for the robot's foothold in x direction
+  double foothold_margin_x_;
+
+  // Safety margin for the robot's foothold in y direction
+  double foothold_margin_y_;
+
   // Number of sampling points in x direction of the robot's upper body
   int num_sampling_points_x_;
 
