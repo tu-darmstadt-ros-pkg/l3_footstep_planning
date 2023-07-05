@@ -153,6 +153,12 @@ protected:
 
   // The size of the robot's upper body
   Vector2 upper_body_size_;
+
+  // The sizes of the robot's feet
+  std::vector<Vector2> feet_sizes_;
+
+  // teh shapes of the robot's feet
+  std::vector<FootInfo::Shape> feet_shapes_;
 };
 }  // namespace l3_footstep_planning
 
