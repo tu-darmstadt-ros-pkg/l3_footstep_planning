@@ -35,8 +35,9 @@
 
   <depend>l3_footstep_planning_msgs</depend>
   <depend>l3_footstep_planning_libs</depend>
-  <depend>l3_footstep_planning_tools</depend>
   <depend>l3_footstep_planning_plugins</depend>
+  <depend>l3_footstep_planning_tools</depend>
+  <depend>l3_footstep_planning_vis_tools</depend>
   <depend>l3_footstep_planner</depend>
   <depend>l3_global_footstep_planner</depend>
   <depend>l3_pattern_generator</depend>
