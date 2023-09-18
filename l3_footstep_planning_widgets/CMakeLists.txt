@@ -130,6 +130,14 @@ install(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+catkin_install_python(PROGRAMS
+  scripts/execute_step_plan_rqt
+  scripts/parameter_editor_rqt
+  scripts/pattern_generator_rqt
+  scripts/step_interface_rqt
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 ## Mark executables and/or libraries for installation
 # install(TARGETS l3_footstep_planner_plugin l3_footstep_planning_widgets_plugin_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -154,12 +162,10 @@ install(FILES plugin.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
-catkin_install_python(PROGRAMS
-  scripts/execute_step_plan_rqt
-  scripts/parameter_editor_rqt
-  scripts/pattern_generator_rqt
-  scripts/step_interface_rqt
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# Mark plugin description file for installation
+install(FILES
+  plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 #############

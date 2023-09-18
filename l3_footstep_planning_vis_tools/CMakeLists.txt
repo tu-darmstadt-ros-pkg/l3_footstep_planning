@@ -179,6 +179,12 @@ install(DIRECTORY launch
   PATTERN "*~" EXCLUDE
 )
 
+# Mark plugin description file for installation
+install(FILES
+  plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############
