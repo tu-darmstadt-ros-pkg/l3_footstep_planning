@@ -31,8 +31,6 @@
 
 #include <ros/ros.h>
 
-#include <pcl/point_cloud.h>
-
 #include <l3_footstep_planning_plugins/base/post_process_plugin.h>
 
 namespace l3_footstep_planning

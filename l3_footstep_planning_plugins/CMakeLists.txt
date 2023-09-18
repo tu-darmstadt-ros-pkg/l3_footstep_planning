@@ -16,7 +16,6 @@ set(CATKIN_PACKAGE_DEPENDENCIES
   std_msgs
   nav_msgs
   cv_bridge
-  pcl_conversions
   vigir_generic_params
   vigir_pluginlib
   l3_plugins
@@ -238,7 +237,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${boost_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${boost_LIBRARIES})
 
 #############
 ## Install ##
