@@ -263,18 +263,18 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
   // get start floating bases
   msgs::FloatingBaseArray goal_floating_bases;
 
-  if (RobotModel::kinematics())
-  {
-    Pose feet_center;
-    poseMsgToL3(goal_pose->pose, feet_center);
+  // if (RobotModel::kinematics())
+  // {
+  //   Pose feet_center;
+  //   poseMsgToL3(goal_pose->pose, feet_center);
 
-    FootholdArray footholds;
-    footholdArrayMsgToL3(goal_footholds, footholds);
+  //   FootholdArray footholds;
+  //   footholdArrayMsgToL3(goal_footholds, footholds);
 
-    Pose pose = RobotModel::kinematics()->calcBasePose(feet_center, footholds);
-    /// @todo Implement as optional feature
-    // goal_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
-  }
+  //   Pose pose = RobotModel::kinematics()->calcBasePose(feet_center, footholds);
+  //   /// @todo Implement as optional feature
+  //   // goal_floating_bases.push_back(FloatingBase(l3::BaseInfo::MAIN_BODY_IDX, pose, goal_pose->header).toMsg());
+  // }
 
   // request step plan
   msgs::StepPlanRequestService::Request step_plan_request;

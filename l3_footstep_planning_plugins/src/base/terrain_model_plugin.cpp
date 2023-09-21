@@ -55,10 +55,6 @@ TerrainResult TerrainModelPlugin::getMaxHeightUnderFoot(const Foothold& foothold
   if (!isTerrainModelAvailable())
     return result;
 
-  unsigned int contacts = 0;
-  unsigned int unknown = 0;
-  unsigned int total = 0;
-
   Point orig_pos;
   orig_pos.z() = 0.0;
 

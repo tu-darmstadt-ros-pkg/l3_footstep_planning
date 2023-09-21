@@ -45,7 +45,7 @@ bool IKPolygonalStateGenerator::loadParams(const vigir_generic_params::Parameter
   }
 
   // iterate all feet
-  for (size_t i = 0; i < p.size(); i++)
+  for (int i = 0; i < p.size(); i++)
   {
     FootIndex foot_idx;
     if (!l3::getYamlValue(p[i], "idx", foot_idx))

@@ -8,7 +8,7 @@ FootPoseTransformer::FootPoseTransformer() {}
 
 bool FootPoseTransformer::initialize(ros::NodeHandle& nh)
 {
-  RobotDescription::ConstPtr robot_description = RobotDescription::Ptr(new RobotDescription(nh));
+  RobotDescription::ConstPtr robot_description = l3::makeShared<RobotDescription>(nh);
   return initialize(robot_description);
 }
 

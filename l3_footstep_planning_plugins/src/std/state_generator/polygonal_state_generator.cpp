@@ -40,7 +40,7 @@ bool PolygonalStateGenerator::loadParams(const vigir_generic_params::ParameterSe
   foot_step_actions_.clear();
 
   // iterate over all feet
-  for (size_t i = 0; i < feet_params.size(); i++)
+  for (int i = 0; i < feet_params.size(); i++)
   {
     FootIndex foot_idx;
     if (!l3::getYamlValue(feet_params[i], "idx", foot_idx))

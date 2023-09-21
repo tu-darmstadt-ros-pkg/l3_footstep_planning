@@ -124,7 +124,7 @@ bool PolygonalReachability::initFootReachability()
   foot_polygons_.clear();
 
   // iterate through all feet
-  for (size_t i = 0; i < p.size(); i++)
+  for (int i = 0; i < p.size(); i++)
   {
     FootIndex foot_idx;
     if (!getYamlValue(p[i], "idx", foot_idx))
@@ -163,7 +163,7 @@ bool PolygonalReachability::initFloatingBaseReachability()
     }
 
     // iterate through all bases
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
       BaseIndex base_idx;
       if (!getYamlValue(p[i], "idx", base_idx))

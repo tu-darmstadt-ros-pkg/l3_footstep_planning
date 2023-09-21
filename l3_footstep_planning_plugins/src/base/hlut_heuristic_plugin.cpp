@@ -32,7 +32,7 @@ bool HLUTHeuristicPlugin::loadParams(const vigir_generic_params::ParameterSet& p
   }
 
   // calculate angle_bins_
-  for (int i = 0; i < resolution_.numAngleBins(); i++)
+  for (unsigned int i = 0; i < resolution_.numAngleBins(); i++)
     angle_bins_.push_back(normalizeAngle(i * resolution_.resolution().angle - M_PI));
 
   return true;

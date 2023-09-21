@@ -79,7 +79,7 @@ msgs::ErrorStatus PatternPlanner::planPattern(StepPtrArray& path, StateHashed::C
       if (params.mode == msgs::PatternParameters::STEP_UP || params.mode == msgs::PatternParameters::STEP_OVER)
       {
         /// @TODO
-        double step_up_height = std::abs(params.dz);
+        //double step_up_height = std::abs(params.dz);
         status += ErrorStatusWarning(msgs::ErrorStatus::WARN_UNKNOWN, "PatternPlanner", "Step over pattern is not supported yet.");
       }
 
@@ -262,7 +262,7 @@ msgs::ErrorStatus PatternPlanner::generateWalkPattern(const l3_footstep_planning
       return status;
 
     // in single step mode, the robot must return in neutral stance before the next step sequence
-    if (single_step_mode_ && (!params.close_step || i < (params.steps - 1)))
+    if (single_step_mode_ && (!params.close_step || i < (static_cast<unsigned int>(params.steps) - 1)))
     {
       status += generateNeutralStancePattern(params);
       if (hasError(status))

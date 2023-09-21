@@ -147,10 +147,10 @@ bool IKReachability::initialize(const ParameterSet& params)
   rhm_positive_.init(width, height);
   rhm_negative_.init(width, height);
 
-  for (int y = 0; y < height; y++)
+  for (size_t y = 0; y < height; y++)
   {
     //ROS_INFO("[%s] %i / %lu", getName().c_str(), y, height);
-    for (int x = 0; x < width; x++)
+    for (size_t x = 0; x < width; x++)
     {
       rhm_positive_.at(x, y) = -std::numeric_limits<float>::max();
       rhm_negative_.at(x, y) = std::numeric_limits<float>::max();
@@ -257,11 +257,11 @@ bool IKReachability::isReachable(const Pose& feet_center, const Foothold& footho
   Transform delta = Transform::getTransform(foothold.pose(), feet_center);
 
   int disc_dx = res_.toDiscX(delta.x()) - min_x_;
-  if (disc_dx >= rhm_positive_.width())
+  if (disc_dx >= static_cast<int>(rhm_positive_.width()))
     return false;
 
   int disc_dy = res_.toDiscY(delta.y()) - min_y_;
-  if (disc_dy >= rhm_positive_.height())
+  if (disc_dy >= static_cast<int>(rhm_positive_.height()))
     return false;
 
   // check if in range
@@ -274,7 +274,7 @@ std::string IKReachability::toString(const Array2D<float>& array, const std::str
 
   msg += "--- " + name + " ---\n";
 
-  for (int y = array.height() - 1; y >= 0; y--)
+  for (int y = static_cast<int>(array.height()) - 1; y >= 0; y--)
   {
     if (y >= 0)
       msg += " ";
@@ -282,7 +282,7 @@ std::string IKReachability::toString(const Array2D<float>& array, const std::str
       msg += " ";
     msg += std::to_string(y) + ": ";
 
-    for (int x = 0; x < array.width(); x++)
+    for (int x = 0; x < static_cast<int>(array.width()); x++)
     {
       if (std::abs(array.at(x, y)) == std::numeric_limits<float>::max())
         msg += "    x    ";
@@ -307,9 +307,9 @@ bool IKReachability::toCSV(const std::string file, const Array2D<float>& array) 
     return false;
   }
 
-  for (int y = 0; y < array.height(); y++)
+  for (size_t y = 0; y < array.height(); y++)
   {
-    for (int x = 0; x < array.width(); x++)
+    for (size_t x = 0; x < array.width(); x++)
     {
       if (std::abs(array.at(x, y)) == std::numeric_limits<float>::max())
         outfile << "NaN";

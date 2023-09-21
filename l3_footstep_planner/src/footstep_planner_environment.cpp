@@ -317,7 +317,7 @@ void FootstepPlannerEnvironment::PrintState(int stateID, bool bVerbose, FILE* fO
   if (fOut == nullptr)
     fOut = stdout;
 
-  if (stateID == state_space_->getGoalPlanningState()->getUID() && bVerbose)
+  if (static_cast<UID>(stateID) == state_space_->getGoalPlanningState()->getUID() && bVerbose)
     SBPL_FPRINTF(fOut, "the state is a goal state\n");
 
   PlanningState::ConstPtr s = StateSpaceManager::getPlanningState(static_cast<UID>(stateID));

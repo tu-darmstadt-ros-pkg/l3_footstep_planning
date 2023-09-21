@@ -200,7 +200,7 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids, const UID& 
 
     Step::Ptr step;
 
-    if (uid == start_uid)
+    if (static_cast<UID>(uid) == start_uid)
     {
       // start state consists of all "non-moving step data" of all feet and all floating bases
       step = Step::make();
@@ -209,7 +209,7 @@ bool FootstepPlanner::extractPath(const std::vector<int>& state_ids, const UID& 
       for (FloatingBase::ConstPtr fb : pstate->getState()->getFloatingBases())
         step->baseStep().updateNonMovingLink(fb->idx, fb);
     }
-    else if (uid == goal_uid)
+    else if (static_cast<UID>(uid) == goal_uid)
     {
       // goal state should not be the first state
       if (path_.empty())

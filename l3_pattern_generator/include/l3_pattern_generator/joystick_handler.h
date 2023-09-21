@@ -77,7 +77,7 @@ public:
 
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) override
   {
-    if (joy_msg->buttons.size() <= button_id_)
+    if (static_cast<int>(joy_msg->buttons.size()) <= button_id_)
       ROS_ERROR_THROTTLE(1.0, "Couldn't read button %i as only %lu buttons exist. Maybe wrong controller connected?", button_id_, joy_msg->buttons.size());
     else
       val_ = joy_msg->buttons[button_id_];
@@ -110,7 +110,7 @@ public:
 
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy_msg) override
   {
-    if (joy_msg->axes.size() <= axis_id_)
+    if (static_cast<int>(joy_msg->axes.size()) <= axis_id_)
       ROS_ERROR_THROTTLE(1.0, "Couldn't read axis %i as only %lu axes exist. Maybe wrong controller connected?", axis_id_, joy_msg->axes.size());
     else
     {
