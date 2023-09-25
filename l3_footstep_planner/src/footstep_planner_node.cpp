@@ -260,7 +260,7 @@ void FootstepPlannerNode::goalPoseCallback(const geometry_msgs::PoseStampedConst
 
   footstep_planner_->updateFeet(goal_footholds, msgs::UpdateMode::UPDATE_MODE_MOVE_TO_VALID);
 
-  // get start floating bases
+  // get goal floating bases
   msgs::FloatingBaseArray goal_floating_bases;
 
   // if (RobotModel::kinematics())
