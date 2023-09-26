@@ -20,6 +20,10 @@ bool TraversabilityMapModel::loadParams(const vigir_generic_params::ParameterSet
   getParam("unknown_traversability_value", unknown_traversability_value_, 1.0f, true);
   getParam("check_foothold_accessibility", check_foothold_accessibility_, true, true);
   getParam("check_floating_base_accessibility", check_floating_base_accessibility_, true, true);
+  getParam("upper_body_margin_x", upper_body_margin_x_, 0.0, true);
+  getParam("upper_body_margin_y", upper_body_margin_y_, 0.0, true);
+  getParam("foothold_margin_x", foothold_margin_x_, 0.0, true);
+  getParam("foothold_margin_y", foothold_margin_y_, 0.0, true);
   getParam("num_sampling_points_x", num_sampling_points_x_, 5, true);
   getParam("num_sampling_points_y", num_sampling_points_y_, 10, true);
 
@@ -64,7 +68,19 @@ bool TraversabilityMapModel::loadParams(const vigir_generic_params::ParameterSet
   // get the size of the upper body
   BaseInfo base_info;
   RobotModel::description()->getBaseInfo(BaseInfo::MAIN_BODY_IDX, base_info);
-  upper_body_size_ = Vector2(base_info.size.x(), base_info.size.y());
+  upper_body_size_ = Vector2(base_info.size.x() + upper_body_margin_x_, base_info.size.y() + upper_body_margin_y_);
+
+  // get the sizes of the feet
+  std::vector<FootIndex> foot_idx_list = RobotModel::description()->footIdxList();
+  feet_sizes_.resize(foot_idx_list.size());
+  feet_shapes_.resize(foot_idx_list.size());
+  for (const FootIndex& footIndex : foot_idx_list)
+  {
+    FootInfo foot_info = RobotModel::description()->getFootInfo(footIndex);
+    size_t index = RobotModel::description()->getFootIdx(footIndex);
+    feet_sizes_[index] = Vector2(foot_info.size.x() + foothold_margin_x_, foot_info.size.y() + foothold_margin_y_);
+    feet_shapes_[index] = foot_info.shape;
+  }
 
   return true;
 }
@@ -92,14 +108,13 @@ bool TraversabilityMapModel::isAccessible(const Foothold& foothold) const
     return false;
   }
 
-  FootInfo foot_info;
-  RobotModel::description()->getFootInfo(foothold.idx, foot_info);
-  Vector2 foot_size = Vector2(foot_info.size.x(), foot_info.size.y());
+  Vector2 foot_size = feet_sizes_[RobotModel::description()->getFootIdx(foothold.idx)];
+  FootInfo::Shape foot_shape = feet_shapes_[RobotModel::description()->getFootIdx(foothold.idx)];
 
-  if (foot_info.shape == FootInfo::Shape::CUBOID)
+  if (foot_shape == FootInfo::Shape::CUBOID)
     return isPolygonAccessible(Vector2(foothold.x(), foothold.y()), foot_size, foothold.yaw());
 
-  if (foot_info.shape == FootInfo::Shape::SPHERICAL)
+  if (foot_shape == FootInfo::Shape::SPHERICAL)
   {
     l3::Position2D pos(foothold.x(), foothold.y());
 
