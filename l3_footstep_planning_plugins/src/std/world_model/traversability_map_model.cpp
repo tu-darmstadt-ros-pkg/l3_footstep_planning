@@ -74,10 +74,9 @@ bool TraversabilityMapModel::loadParams(const vigir_generic_params::ParameterSet
   std::vector<FootIndex> foot_idx_list = RobotModel::description()->footIdxList();
   feet_sizes_.resize(foot_idx_list.size());
   feet_shapes_.resize(foot_idx_list.size());
-  for (FootIndex footIndex : foot_idx_list)
+  for (const FootIndex& footIndex : foot_idx_list)
   {
-    FootInfo foot_info;
-    RobotModel::description()->getFootInfo(footIndex, foot_info);
+    FootInfo foot_info = RobotModel::description()->getFootInfo(footIndex);
     size_t index = RobotModel::description()->getFootIdx(footIndex);
     feet_sizes_[index] = Vector2(foot_info.size.x() + foothold_margin_x_, foot_info.size.y() + foothold_margin_y_);
     feet_shapes_[index] = foot_info.shape;

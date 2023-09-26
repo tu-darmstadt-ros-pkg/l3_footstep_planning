@@ -157,7 +157,7 @@ protected:
   // The sizes of the robot's feet
   std::vector<Vector2> feet_sizes_;
 
-  // teh shapes of the robot's feet
+  // The shapes of the robot's feet
   std::vector<FootInfo::Shape> feet_shapes_;
 };
 }  // namespace l3_footstep_planning
