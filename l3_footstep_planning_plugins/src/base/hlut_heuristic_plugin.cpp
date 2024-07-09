@@ -20,6 +20,7 @@ bool HLUTHeuristicPlugin::loadParams(const vigir_generic_params::ParameterSet& p
   getParam("size_y", size_y_, 10);
   getParam("check_foothold_accessibility", check_foothold_accessibility_, false, true);
   getParam("check_floating_base_accessibility", check_floating_base_accessibility_, false, true);
+  getParam("hlut_padding", hlut_padding_, 1.0, true);
   getParam("visualize", visualize_, false);
   getParam("vis_frame_id", vis_frame_id_, std::string("map"), !visualize_);
   getParam("vis_topic", vis_topic_, std::string(getName() + "_values"), !visualize_);
@@ -28,6 +29,12 @@ bool HLUTHeuristicPlugin::loadParams(const vigir_generic_params::ParameterSet& p
   if (resolution_.numAngleBins() <= 0)
   {
     ROS_ERROR("[%s]: num_angle_bins_ must be greater than 0", getName().c_str());
+    return false;
+  }
+
+  if (hlut_padding_ < 0.0)
+  {
+    ROS_ERROR("[%s]: hlut_padding_ must be greater than or equal to 0.0", getName().c_str());
     return false;
   }
 
@@ -63,6 +70,11 @@ void HLUTHeuristicPlugin::preparePlanning(const l3_footstep_planning_msgs::StepP
   l3::floatingBaseArrayMsgToL3(req.goal_floating_bases, goal_floating_bases);
   goal_fb_ = goal_floating_bases.front();
   goal_pos_ = l3::Position2D(goal_fb_.x(), goal_fb_.y());
+
+  // update the start to include the padding
+  start_pos_ += hlut_padding_ * (start_pos_ - goal_pos_).normalized();
+  start_fb_.setX(start_pos_.x());
+  start_fb_.setY(start_pos_.y());
 
   hlut_ = initializeHLUT(start_fb_, goal_fb_, goal_pos_);
 
