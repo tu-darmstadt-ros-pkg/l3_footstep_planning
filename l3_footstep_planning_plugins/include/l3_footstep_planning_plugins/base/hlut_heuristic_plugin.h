@@ -164,6 +164,9 @@ protected:
   // Specifies whether the floating base of the robot should be used for the accessibility check.
   bool check_floating_base_accessibility_;
 
+  // The additional radius for expanding the HLUT after reaching the start index.
+  double hlut_padding_;
+
   // The vector containing the yaw angles to be considered for the accessibility check.
   std::vector<double> angle_bins_;
 
