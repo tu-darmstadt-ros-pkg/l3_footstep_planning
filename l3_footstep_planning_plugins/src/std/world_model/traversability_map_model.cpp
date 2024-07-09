@@ -102,10 +102,10 @@ bool TraversabilityMapModel::isAccessible(const Foothold& foothold) const
   if (foot_info.shape == FootInfo::Shape::SPHERICAL)
   {
     l3::Position2D pos(foothold.x(), foothold.y());
-
-    if (traversability_map_.isInside(pos))
+    grid_map::Index index;
+    if (traversability_map_.getIndex(pos, index))
     {
-      float traversability = traversability_map_.atPosition(traversability_map_layer_, pos);
+      float traversability = traversability_map_.at(traversability_map_layer_, index);
       if (!std::isnan(traversability))
         return traversability >= traversability_threshold_;
     }
@@ -177,18 +177,19 @@ bool TraversabilityMapModel::iteratePolygon(int num_sampling_points_min, int num
   {
     // subtracted max_step_x and max_step_y because of the pos update at the start of the loop
     l3::Position2D pos = bottom_left_corner + l3::Position2D(i * min_step_x - max_step_x, i * min_step_y - max_step_y);
+    grid_map::Index index;
     for (int j = 0; j < num_sampling_points_max; ++j)
     {
       ++num_cells;
       pos += l3::Position2D(max_step_x, max_step_y);
 
-      if (!traversability_map_.isInside(pos))
+      if (!traversability_map_.getIndex(pos, index))
       {
         sum_traversability += unknown_traversability_value_;
         continue;
       }
 
-      float traversability = traversability_map_.atPosition(traversability_map_layer_, pos);
+      float traversability = traversability_map_.at(traversability_map_layer_, index);
       if (std::isnan(traversability))
       {
         sum_traversability += unknown_traversability_value_;
