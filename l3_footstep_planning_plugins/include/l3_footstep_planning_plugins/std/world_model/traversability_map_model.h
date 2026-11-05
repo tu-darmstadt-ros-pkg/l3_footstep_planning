@@ -29,6 +29,7 @@
 #ifndef L3_FOOTSTEP_PLANNING_PLUGINS_TRAVERSABILITY_MAP_MODEL_H
 #define L3_FOOTSTEP_PLANNING_PLUGINS_TRAVERSABILITY_MAP_MODEL_H
 
+#include <cstdint>  // grid_map_core's TypeDefs.hpp uses uint64_t without including it (GCC 13)
 #include <grid_map_ros/grid_map_ros.hpp>
 
 #include <l3_plugins/robot_model.h>

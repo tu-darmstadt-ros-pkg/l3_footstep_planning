@@ -31,6 +31,7 @@
 
 #include <queue>
 
+#include <cstdint>  // grid_map_core's TypeDefs.hpp uses uint64_t without including it (GCC 13)
 #include <grid_map_ros/grid_map_ros.hpp>
 
 #include <l3_libs/conversions/l3_msg_conversions.h>
